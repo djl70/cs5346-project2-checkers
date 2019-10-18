@@ -5,9 +5,11 @@
 class CheckersGameEngine
 {
 public:
-	CheckersGameEngine(sf::RenderWindow* pWindow)
+	CheckersGameEngine(sf::RenderWindow* pWindow, unsigned int fps)
 	{
 		m_pWindow = pWindow;
+		m_fps = fps;
+		m_timePerUpdate = sf::milliseconds(1000 / fps);
 	}
 
 	void run()
@@ -18,53 +20,66 @@ public:
 private:
 	sf::RenderWindow* m_pWindow;
 	Checkerboard m_board;
+	sf::Vector2i mouseDragStart;
+	sf::Vector2i mouseDragEnd;
+	bool isMouseDragging = false;
+	unsigned int m_fps;
+	sf::Time m_timePerUpdate;
+
+	void processEvents()
+	{
+		sf::Event event;
+		while (m_pWindow->pollEvent(event))
+		{
+			switch (event.type)
+			{
+			case sf::Event::Closed:
+				m_pWindow->close();
+				break;
+
+			case sf::Event::MouseButtonPressed:
+				if (event.mouseButton.button == sf::Mouse::Button::Left)
+				{
+					mouseDragStart = { event.mouseButton.x, event.mouseButton.y };
+					m_board.dragPiece(mouseDragStart.y / 100, mouseDragStart.x / 100);
+					isMouseDragging = true;
+				}
+				break;
+
+			case sf::Event::MouseButtonReleased:
+				if (isMouseDragging && event.mouseButton.button == sf::Mouse::Button::Left)
+				{
+					mouseDragEnd = { event.mouseButton.x, event.mouseButton.y };
+					m_board.movePiece(mouseDragStart.y / 100, mouseDragStart.x / 100, mouseDragEnd.y / 100, mouseDragEnd.x / 100);
+					isMouseDragging = false;
+				}
+				break;
+			}
+		}
+	}
 
 	void mainLoop()
 	{
-		sf::Vector2i mouseDragStart;
-		sf::Vector2i mouseDragEnd;
-		bool isMouseDragging = false;
-
 		sf::Clock clock;
+		sf::Time previousTime = clock.getElapsedTime();
+		sf::Time lagTime;
 
 		while (m_pWindow->isOpen())
 		{
-			sf::Time deltaTime = clock.restart();
+			sf::Time currentTime = clock.getElapsedTime();
+			sf::Time deltaTime = currentTime - previousTime;
+			previousTime = currentTime;
+			lagTime += deltaTime;
 
-			sf::Event event;
-			while (m_pWindow->pollEvent(event))
+			processEvents();
+
+			while (lagTime >= m_timePerUpdate)
 			{
-				switch (event.type)
-				{
-				case sf::Event::Closed:
-					m_pWindow->close();
-					break;
-
-				case sf::Event::MouseButtonPressed:
-					if (event.mouseButton.button == sf::Mouse::Button::Left)
-					{
-						mouseDragStart = { event.mouseButton.x, event.mouseButton.y };
-						m_board.dragPiece(mouseDragStart.y / 100, mouseDragStart.x / 100);
-						isMouseDragging = true;
-					}
-					break;
-
-				case sf::Event::MouseButtonReleased:
-					if (isMouseDragging && event.mouseButton.button == sf::Mouse::Button::Left)
-					{
-						mouseDragEnd = { event.mouseButton.x, event.mouseButton.y };
-						m_board.movePiece(mouseDragStart.y / 100, mouseDragStart.x / 100, mouseDragEnd.y / 100, mouseDragEnd.x / 100);
-						isMouseDragging = false;
-					}
-					break;
-				}
+				update(m_timePerUpdate);
+				lagTime -= m_timePerUpdate;
 			}
 
-			update(deltaTime);
-
-			m_pWindow->clear();
 			render();
-			m_pWindow->display();
 		}
 	}
 
@@ -75,6 +90,10 @@ private:
 
 	void render() const
 	{
+		m_pWindow->clear();
+
 		m_board.draw(m_pWindow);
+
+		m_pWindow->display();
 	}
 };

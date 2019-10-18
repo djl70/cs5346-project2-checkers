@@ -9,7 +9,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(800, 800), "Checkers", sf::Style::Titlebar | sf::Style::Close);
 	window.setFramerateLimit(fps);
 	
-	CheckersGameEngine gameEngine(&window);
+	CheckersGameEngine gameEngine(&window, fps);
 	gameEngine.run();
 
 	return 0;
