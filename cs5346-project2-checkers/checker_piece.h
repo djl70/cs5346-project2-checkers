@@ -118,6 +118,8 @@ private:
 			return sf::Color(107, 73, 63, 255);
 		case kWhite:
 			return sf::Color(244, 200, 69, 255);
+		default:
+			return sf::Color::Black;
 		}
 	}
 };
