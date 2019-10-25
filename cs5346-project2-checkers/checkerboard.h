@@ -1,5 +1,6 @@
 #pragma once
 
+/*
 #include "checker_square.h"
 
 #include <array>
@@ -238,3 +239,4 @@ private:
 		return false;
 	}
 };
+*/

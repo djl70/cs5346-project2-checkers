@@ -6,10 +6,12 @@ int main()
 {
 	const unsigned int fps = 60;
 
-	sf::RenderWindow window(sf::VideoMode(800, 800), "Checkers", sf::Style::Titlebar | sf::Style::Close);
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "Checkers", sf::Style::Titlebar | sf::Style::Close);
 	window.setFramerateLimit(fps);
 	
-	CheckersGameEngine gameEngine(&window, fps);
+	//CheckersGameEngine gameEngine(&window, fps);
+	//gameEngine.run();
+	CheckersGameEngine gameEngine(&window);
 	gameEngine.run();
 
 	return 0;

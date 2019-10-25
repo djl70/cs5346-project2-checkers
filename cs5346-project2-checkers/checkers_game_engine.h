@@ -1,5 +1,42 @@
 #pragma once
 
+#include "checkers_game_state.h"
+
+#include <SFML/Graphics.hpp>
+
+#include <stack>
+#include <vector>
+
+class Command;
+class Gui;
+
+class CheckersGameEngine
+{
+public:
+	CheckersGameEngine(sf::RenderWindow* pWindow);
+
+	void performCommand(Command* command);
+	void undoLastCommand();
+
+	void run();
+
+private:
+	sf::RenderWindow* m_pWindow;
+	sf::Sprite m_background;
+	sf::FloatRect m_boardRect;
+	std::stack<Command*> m_commandHistory;
+	CheckersGameState m_gameState;
+	Gui* m_gui;
+
+	bool loadResources();
+	void applyTextures();
+
+	void mainLoop();
+	void processEvent(const sf::Event& event);
+	void render();
+};
+
+/*
 #include "checkerboard.h"
 
 class CheckersGameEngine
@@ -97,3 +134,4 @@ private:
 		m_pWindow->display();
 	}
 };
+*/

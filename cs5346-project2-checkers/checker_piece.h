@@ -5,6 +5,50 @@
 enum CheckerColor
 {
 	kBlack,
+	kRed
+};
+
+enum CheckerRank
+{
+	kMan,
+	kKing
+};
+
+class CheckerPiece
+{
+public:
+	CheckerPiece(CheckerColor color)
+		: m_color{ color }
+		, m_rank{ kMan }
+		, m_shape()
+		, m_isInPlay(true)
+	{
+
+	}
+
+	void setRadius(float radius)
+	{
+		m_shape.setRadius(radius);
+	}
+
+	void setPosition(const sf::Vector2f& position)
+	{
+		m_shape.setPosition(position);
+	}
+
+private:
+	CheckerColor m_color;
+	CheckerRank m_rank;
+	sf::CircleShape m_shape;
+	bool m_isInPlay;
+};
+
+
+
+/*
+enum CheckerColor
+{
+	kBlack,
 	kWhite
 };
 
@@ -123,3 +167,4 @@ private:
 		}
 	}
 };
+*/

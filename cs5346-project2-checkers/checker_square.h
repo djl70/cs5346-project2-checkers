@@ -1,5 +1,25 @@
 #pragma once
 
+class CheckerPiece;
+
+class CheckerSquare
+{
+public:
+	CheckerPiece* getPiece() const
+	{
+		return m_piece;
+	}
+
+private:
+	CheckerPiece* m_piece;
+};
+
+//bool isEmpty(const CheckerSquare& square)
+//{
+//	return square.getPiece() == nullptr;
+//}
+
+/*
 #include "checker_piece.h"
 
 #include <stdexcept>
@@ -149,3 +169,4 @@ private:
 		}
 	}
 };
+*/
