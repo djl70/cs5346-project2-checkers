@@ -16,6 +16,8 @@ namespace resources
 
 	std::unordered_map<std::string, sf::Texture> textures;
 
+	sf::RenderWindow* pWindow;
+
 	bool loadResources()
 	{
 		bool success;
@@ -33,6 +35,7 @@ namespace resources
 
 namespace config
 { 
+	const unsigned int kFps = 60;
 	const float kScaling = 1.0f; // Controls the scaling of everything. For values other than 1, the graphics will likely be blurry.
 	const float kScreenWidth = 1920.0f * kScaling;
 	const float kScreenHeight = 1080.0f * kScaling;
@@ -43,44 +46,54 @@ namespace config
 	const sf::Vector2f capturedBlackTopLeft{ kScreenWidth - config::kSquareWidth * 3.0f - kCapturedAreaOffsetFromEdge, (config::kScreenHeight - config::kSquareWidth * 4.0f) * 0.5f };
 }
 
-int main()
+class BaseState
 {
-	const unsigned int fps = 60;
+public:
+	virtual void enter() = 0;
+	virtual BaseState* event() = 0;
+	virtual void render() = 0;
+	virtual void exit() = 0;
+};
 
-	sf::RenderWindow window(sf::VideoMode(config::kScreenWidth, config::kScreenHeight), "Checkers", sf::Style::Titlebar | sf::Style::Close);
-	window.setFramerateLimit(fps);
+class CheckersGameState : public BaseState
+{
+public:
+	void enter() override
+	{
+		resources::loadResources();
 
-	resources::loadResources();
+		m_background.setTexture(resources::textures["background"]);
+		m_background.setScale({ config::kScaling, config::kScaling });
 
-	sf::Sprite background;
-	background.setTexture(resources::textures["background"]);
-	background.setScale({ config::kScaling, config::kScaling });
+		m_sprite.setScale({ config::kScaling, config::kScaling });
 
-	sf::Sprite sprite;
-	sprite.setScale({ config::kScaling, config::kScaling });
+		m_blackPieceColor = { 143, 67, 15, 200 };
+		m_redPieceColor = { 242, 174, 126, 200 };
 
-	sf::Color colorBrown(143, 67, 15, 200);
-	sf::Color colorCream(242, 174, 126, 200);
+		m_rect.setSize({ config::kSquareWidth, config::kSquareWidth });
+	}
 
-	sf::RectangleShape rect;
-	rect.setSize({ config::kSquareWidth, config::kSquareWidth });
-
-	while (window.isOpen())
+	BaseState* event() override
 	{
 		sf::Event event;
-		while (window.pollEvent(event))
+		while (resources::pWindow->pollEvent(event))
 		{
 			switch (event.type)
 			{
 			case sf::Event::Closed:
-				window.close();
+				resources::pWindow->close();
 				break;
 			}
 		}
 
-		window.clear(sf::Color::White);
+		return nullptr;
+	}
 
-		window.draw(background);
+	void render() override
+	{
+		resources::pWindow->clear(sf::Color::White);
+
+		resources::pWindow->draw(m_background);
 
 		// Draw game board
 		int i = 0;
@@ -90,38 +103,38 @@ int main()
 			{
 				sf::Vector2f position{ config::boardTopLeft.x + config::kSquareWidth * c, config::boardTopLeft.y + config::kSquareWidth * r };
 
-				rect.setPosition(position);
-				rect.setFillColor((i + r) % 2 == 0 ? colorCream : colorBrown);
-				window.draw(rect);
+				m_rect.setPosition(position);
+				m_rect.setFillColor((i + r) % 2 == 0 ? m_redPieceColor : m_blackPieceColor);
+				resources::pWindow->draw(m_rect);
 
 				if (r < 3)
 				{
 					if (c < 4)
 					{
-						sprite.setTexture(resources::textures["red_king"]);
-						sprite.setPosition(position);
-						window.draw(sprite);
+						m_sprite.setTexture(resources::textures["red_king"]);
+						m_sprite.setPosition(position);
+						resources::pWindow->draw(m_sprite);
 					}
 					else
 					{
-						sprite.setTexture(resources::textures["red_man"]);
-						sprite.setPosition(position);
-						window.draw(sprite);
+						m_sprite.setTexture(resources::textures["red_man"]);
+						m_sprite.setPosition(position);
+						resources::pWindow->draw(m_sprite);
 					}
 				}
 				else if (r > 4)
 				{
 					if (c < 4)
 					{
-						sprite.setTexture(resources::textures["black_king"]);
-						sprite.setPosition(position);
-						window.draw(sprite);
+						m_sprite.setTexture(resources::textures["black_king"]);
+						m_sprite.setPosition(position);
+						resources::pWindow->draw(m_sprite);
 					}
 					else
 					{
-						sprite.setTexture(resources::textures["black_man"]);
-						sprite.setPosition(position);
-						window.draw(sprite);
+						m_sprite.setTexture(resources::textures["black_man"]);
+						m_sprite.setPosition(position);
+						resources::pWindow->draw(m_sprite);
 					}
 				}
 
@@ -139,29 +152,100 @@ int main()
 
 				if (r < 2)
 				{
-					sprite.setTexture(resources::textures["red_king"]);
-					sprite.setPosition(redPosition);
-					window.draw(sprite);
+					m_sprite.setTexture(resources::textures["red_king"]);
+					m_sprite.setPosition(redPosition);
+					resources::pWindow->draw(m_sprite);
 
-					sprite.setTexture(resources::textures["black_king"]);
-					sprite.setPosition(blackPosition);
-					window.draw(sprite);
+					m_sprite.setTexture(resources::textures["black_king"]);
+					m_sprite.setPosition(blackPosition);
+					resources::pWindow->draw(m_sprite);
 				}
 				else
 				{
-					sprite.setTexture(resources::textures["red_man"]);
-					sprite.setPosition(redPosition);
-					window.draw(sprite);
+					m_sprite.setTexture(resources::textures["red_man"]);
+					m_sprite.setPosition(redPosition);
+					resources::pWindow->draw(m_sprite);
 
-					sprite.setTexture(resources::textures["black_man"]);
-					sprite.setPosition(blackPosition);
-					window.draw(sprite);
+					m_sprite.setTexture(resources::textures["black_man"]);
+					m_sprite.setPosition(blackPosition);
+					resources::pWindow->draw(m_sprite);
 				}
 			}
 		}
 
-		window.display();
+		resources::pWindow->display();
 	}
+
+	void exit() override
+	{
+
+	}
+
+private:
+	sf::Sprite m_background;
+	sf::Sprite m_sprite;
+	sf::Color m_blackPieceColor;
+	sf::Color m_redPieceColor;
+	sf::RectangleShape m_rect;
+};
+
+class CheckersGameEngine
+{
+public:
+	CheckersGameEngine(unsigned int fps)
+		: m_window(sf::VideoMode(config::kScreenWidth, config::kScreenHeight), "Checkers", sf::Style::Titlebar | sf::Style::Close)
+		, m_pState{ nullptr }
+	{
+		m_window.setFramerateLimit(fps);
+		resources::pWindow = &m_window;
+
+		m_pState = new CheckersGameState;
+		m_pState->enter();
+	}
+
+	~CheckersGameEngine()
+	{
+		if (m_pState)
+		{
+			m_pState->exit();
+			delete m_pState;
+			m_pState = nullptr;
+		}
+	}
+
+	void run()
+	{
+		while (resources::pWindow->isOpen())
+		{
+			BaseState* pNextState = m_pState->event();
+			m_pState->render();
+
+			if (pNextState)
+			{
+				m_pState->exit();
+				delete m_pState;
+				m_pState = pNextState;
+				m_pState->enter();
+			}
+		}
+
+		if (m_pState)
+		{
+			m_pState->exit();
+			delete m_pState;
+			m_pState = nullptr;
+		}
+	}
+
+private:
+	sf::RenderWindow m_window;
+	BaseState* m_pState;
+};
+
+int main()
+{
+	CheckersGameEngine game(config::kFps);
+	game.run();
 
 	return 0;
 }
