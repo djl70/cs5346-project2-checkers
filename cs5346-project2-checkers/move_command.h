@@ -2,42 +2,27 @@
 
 #include "command.h"
 
-class CheckerPiece;
-class CheckerSquare;
+#include <cstddef>
+
+struct CheckersGameState;
 
 struct MoveInfo
 {
-	MoveInfo(CheckerSquare& from, CheckerSquare& to, CheckerPiece& movedPiece)
-		: from{ from }
-		, to{ to }
-		, movedPiece{ movedPiece }
-	{
+	MoveInfo(CheckersGameState& gameState, std::size_t moveFrom, std::size_t moveTo, std::size_t movedPiece);
 
-	}
-
-	CheckerSquare& from;
-	CheckerSquare& to;
-	CheckerPiece& movedPiece;
+	CheckersGameState& gameState;
+	std::size_t moveFrom;
+	std::size_t moveTo;
+	std::size_t movedPiece;
 };
 
 class MoveCommand : public Command
 {
 public:
-	MoveCommand(const MoveInfo& info)
-		: m_info{ info }
-	{
+	MoveCommand(const MoveInfo& info);
 
-	}
-
-	void execute() override
-	{
-
-	}
-
-	void undo() override
-	{
-
-	}
+	void execute() override;
+	void undo() override;
 
 private:
 	MoveInfo m_info;

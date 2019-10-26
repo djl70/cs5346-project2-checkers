@@ -1,18 +1,27 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 class CheckerPiece;
 
 class CheckerSquare
 {
 public:
-	CheckerPiece* getPiece() const
-	{
-		return m_piece;
-	}
+	CheckerSquare(const sf::FloatRect& rect);
+
+	sf::FloatRect getRect() const;
+
+	void placePiece(CheckerPiece* piece);
+	CheckerPiece* getPiece() const;
 
 private:
+	sf::FloatRect m_rect;
 	CheckerPiece* m_piece;
 };
+
+void movePiece(CheckerSquare& from, CheckerSquare& to);
+
+
 
 //bool isEmpty(const CheckerSquare& square)
 //{

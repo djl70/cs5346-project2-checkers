@@ -20,27 +20,28 @@ public:
 	CheckerPiece(CheckerColor color)
 		: m_color{ color }
 		, m_rank{ kMan }
-		, m_shape()
-		, m_isInPlay(true)
 	{
 
 	}
 
-	void setRadius(float radius)
+	void setRank(CheckerRank rank)
 	{
-		m_shape.setRadius(radius);
+		m_rank = rank;
 	}
 
-	void setPosition(const sf::Vector2f& position)
+	CheckerColor getColor() const
 	{
-		m_shape.setPosition(position);
+		return m_color;
+	}
+
+	CheckerRank getRank() const
+	{
+		return m_rank;
 	}
 
 private:
 	CheckerColor m_color;
 	CheckerRank m_rank;
-	sf::CircleShape m_shape;
-	bool m_isInPlay;
 };
 
 

@@ -14,6 +14,7 @@ class CheckersGameEngine
 {
 public:
 	CheckersGameEngine(sf::RenderWindow* pWindow);
+	~CheckersGameEngine();
 
 	void performCommand(Command* command);
 	void undoLastCommand();
@@ -25,11 +26,16 @@ private:
 	sf::Sprite m_background;
 	sf::FloatRect m_boardRect;
 	std::stack<Command*> m_commandHistory;
+
+	std::vector<CheckerPiece> m_pieces;
+	std::vector<CheckerSquare> m_squares;
 	CheckersGameState m_gameState;
+
 	Gui* m_gui;
 
 	bool loadResources();
 	void applyTextures();
+	void initializeGameState();
 
 	void mainLoop();
 	void processEvent(const sf::Event& event);

@@ -132,10 +132,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="checkers_game_engine.cpp" />
+    <ClCompile Include="checker_square.cpp" />
     <ClCompile Include="game_gui.cpp" />
     <ClCompile Include="human_player.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu.cpp" />
+    <ClCompile Include="move_command.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="resources.cpp" />

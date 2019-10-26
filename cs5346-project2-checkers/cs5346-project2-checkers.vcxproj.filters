@@ -28,6 +28,9 @@
     <Filter Include="Source Files\GUIs">
       <UniqueIdentifier>{e69ceb05-d8ba-400c-a357-47b13074fb88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Commands">
+      <UniqueIdentifier>{828c3344-26b9-4916-957d-5f4f33467945}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -53,6 +56,12 @@
     </ClCompile>
     <ClCompile Include="game_gui.cpp">
       <Filter>Source Files\GUIs</Filter>
+    </ClCompile>
+    <ClCompile Include="move_command.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="checker_square.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
