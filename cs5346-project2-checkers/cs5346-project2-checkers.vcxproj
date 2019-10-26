@@ -131,33 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="checkers_game_engine.cpp" />
-    <ClCompile Include="checker_square.cpp" />
-    <ClCompile Include="game_gui.cpp" />
-    <ClCompile Include="human_player.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="main_menu.cpp" />
-    <ClCompile Include="move_command.cpp" />
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="renderer.cpp" />
-    <ClCompile Include="resources.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="checkerboard.h" />
-    <ClInclude Include="checkers_game_engine.h" />
-    <ClInclude Include="checkers_game_state.h" />
-    <ClInclude Include="checker_piece.h" />
-    <ClInclude Include="checker_square.h" />
-    <ClInclude Include="command.h" />
-    <ClInclude Include="game_gui.h" />
-    <ClInclude Include="gui.h" />
-    <ClInclude Include="human_player.h" />
-    <ClInclude Include="jump_command.h" />
-    <ClInclude Include="main_menu.h" />
-    <ClInclude Include="move_command.h" />
-    <ClInclude Include="player.h" />
-    <ClInclude Include="renderer.h" />
-    <ClInclude Include="resources.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

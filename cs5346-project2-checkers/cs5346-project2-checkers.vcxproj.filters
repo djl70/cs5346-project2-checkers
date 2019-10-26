@@ -13,102 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Commands">
-      <UniqueIdentifier>{a9d0c2e4-3b50-434e-95b3-aee808034bec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Players">
-      <UniqueIdentifier>{418a72f8-8df8-46e4-9f43-73e3944a34b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Players">
-      <UniqueIdentifier>{83aa6dcd-7a06-4841-9d50-528d73db4101}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\GUIs">
-      <UniqueIdentifier>{a676be16-344e-4226-b217-e98154995681}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GUIs">
-      <UniqueIdentifier>{e69ceb05-d8ba-400c-a357-47b13074fb88}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Commands">
-      <UniqueIdentifier>{828c3344-26b9-4916-957d-5f4f33467945}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="checkers_game_engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Source Files\Players</Filter>
-    </ClCompile>
-    <ClCompile Include="human_player.cpp">
-      <Filter>Source Files\Players</Filter>
-    </ClCompile>
-    <ClCompile Include="resources.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main_menu.cpp">
-      <Filter>Source Files\GUIs</Filter>
-    </ClCompile>
-    <ClCompile Include="game_gui.cpp">
-      <Filter>Source Files\GUIs</Filter>
-    </ClCompile>
-    <ClCompile Include="move_command.cpp">
-      <Filter>Source Files\Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="checker_square.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="checkers_game_engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="checker_piece.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="checkerboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="checker_square.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="command.h">
-      <Filter>Header Files\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="move_command.h">
-      <Filter>Header Files\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="jump_command.h">
-      <Filter>Header Files\Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="checkers_game_state.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>Header Files\Players</Filter>
-    </ClInclude>
-    <ClInclude Include="human_player.h">
-      <Filter>Header Files\Players</Filter>
-    </ClInclude>
-    <ClInclude Include="gui.h">
-      <Filter>Header Files\GUIs</Filter>
-    </ClInclude>
-    <ClInclude Include="resources.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="main_menu.h">
-      <Filter>Header Files\GUIs</Filter>
-    </ClInclude>
-    <ClInclude Include="game_gui.h">
-      <Filter>Header Files\GUIs</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
