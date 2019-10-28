@@ -136,7 +136,7 @@ BaseState* CheckersGameState::event()
 					case kBlack:
 						for (int i = 0; i < m_capturedBlackSquares.size(); ++i)
 						{
-							if (m_capturedBlackSquares[i].getPiece() == nullptr)
+							if (m_capturedBlackSquares[i].isEmpty())
 							{
 								m_moveSound.play();
 								m_capturedBlackSquares[i].setPiece(piece);
@@ -147,7 +147,7 @@ BaseState* CheckersGameState::event()
 					case kRed:
 						for (int i = 0; i < m_capturedRedSquares.size(); ++i)
 						{
-							if (m_capturedRedSquares[i].getPiece() == nullptr)
+							if (m_capturedRedSquares[i].isEmpty())
 							{
 								m_jumpSound.play();
 								m_capturedRedSquares[i].setPiece(piece);
@@ -161,6 +161,13 @@ BaseState* CheckersGameState::event()
 			}
 			break;
 		}
+	}
+
+	CheckerColor winningColor;
+	if (isGameOver(winningColor))
+	{
+		// return new GameOverState(winningColor);
+		return new MainMenuState;
 	}
 
 	return nullptr;
@@ -210,4 +217,41 @@ void CheckersGameState::exit()
 
 	}
 	m_jumpSound.resetBuffer();
+}
+
+bool CheckersGameState::isGameOver(CheckerColor& outWinningColor) const
+{
+	// Check for black win
+	bool isBlackWin = true;
+	for (const auto& square : m_capturedRedSquares)
+	{
+		if (square.isEmpty())
+		{
+			isBlackWin = false;
+			break;
+		}
+	}
+	if (isBlackWin)
+	{
+		outWinningColor = kBlack;
+		return true;
+	}
+
+	// Check for red win
+	bool isRedWin = true;
+	for (const auto& square : m_capturedBlackSquares)
+	{
+		if (square.isEmpty())
+		{
+			isRedWin = false;
+			break;
+		}
+	}
+	if (isRedWin)
+	{
+		outWinningColor = kRed;
+		return true;
+	}
+
+	return false;
 }

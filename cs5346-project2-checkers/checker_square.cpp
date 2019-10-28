@@ -50,6 +50,11 @@ void CheckerSquare::setPiece(CheckerPiece* piece)
 	}
 }
 
+bool CheckerSquare::isEmpty() const
+{
+	return m_piece == nullptr;
+}
+
 CheckerPiece* CheckerSquare::getPiece()
 {
 	return m_piece;

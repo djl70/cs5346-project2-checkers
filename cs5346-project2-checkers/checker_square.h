@@ -21,6 +21,7 @@ public:
 	void setPosition(const sf::Vector2f& position);
 	void setPiece(CheckerPiece* piece);
 
+	bool isEmpty() const;
 	CheckerPiece* getPiece();
 	bool contains(const sf::Vector2f& point) const;
 

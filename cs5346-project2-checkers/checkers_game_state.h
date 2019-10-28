@@ -28,6 +28,8 @@ private:
 	std::vector<CheckerSquare> m_capturedRedSquares;
 	std::vector<CheckerSquare> m_capturedBlackSquares;
 
+	bool isGameOver(CheckerColor& outWinningColor) const;
+
 	enum CheckerSelectionProgress
 	{
 		// Player's turn just started, no piece is selected yet
