@@ -12,6 +12,16 @@ enum CheckerSquareType
 	kCapturedRed
 };
 
+class CheckerSquare;
+
+struct NeighboringSquares
+{
+	CheckerSquare* pNeighborNorthWest = nullptr;
+	CheckerSquare* pNeighborNorthEast = nullptr;
+	CheckerSquare* pNeighborSouthWest = nullptr;
+	CheckerSquare* pNeighborSouthEast = nullptr;
+};
+
 class CheckerSquare
 {
 public:
@@ -20,6 +30,9 @@ public:
 	void setPromotionColor(CheckerColor color);
 	void setPosition(const sf::Vector2f& position);
 	void setPiece(CheckerPiece* piece);
+
+	void setNeighbors(const NeighboringSquares& neighbors);
+	NeighboringSquares getNeighbors() const;
 
 	bool isEmpty() const;
 	CheckerPiece* getPiece();
@@ -34,6 +47,8 @@ private:
 	CheckerPiece* m_piece;
 	bool m_isKingRow;
 	CheckerColor m_promoteColor;
+
+	NeighboringSquares m_neighbors;
 
 	sf::RectangleShape m_shape;
 };

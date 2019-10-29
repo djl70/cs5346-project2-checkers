@@ -2,6 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <string>
+#include <unordered_map>
+
 namespace config
 {
 	extern const unsigned int kFps;
@@ -21,4 +24,8 @@ namespace config
 	extern const sf::FloatRect multiPlayerButtonRect;
 	extern const sf::FloatRect singlePlayerButtonRect;
 	extern const sf::FloatRect autoPlayButtonRect;
+	extern const sf::FloatRect menuButtonRect;
+
+	extern const std::unordered_map<std::string, std::string> textureFiles;
+	extern const std::unordered_map<std::string, std::string> soundFiles;
 }

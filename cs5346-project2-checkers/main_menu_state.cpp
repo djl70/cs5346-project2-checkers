@@ -2,21 +2,21 @@
 
 #include "checkers_game_state.h"
 #include "config.h"
-#include "resources.h"
 
-MainMenuState::MainMenuState()
-	: m_singlePlayerButton{ config::singlePlayerButtonRect, resources::textures["button_singleplayer"], resources::textures["button_singleplayer_hover"], resources::textures["button_singleplayer_press"] }
-	, m_multiPlayerButton{ config::multiPlayerButtonRect, resources::textures["button_multiplayer"], resources::textures["button_multiplayer_hover"], resources::textures["button_multiplayer_press"] }
-	, m_autoPlayButton{ config::autoPlayButtonRect, resources::textures["button_autoplay"], resources::textures["button_autoplay_hover"], resources::textures["button_autoplay_press"] }
+MainMenuState::MainMenuState(ResourceManager& resources)
+	: m_resources{ resources }
+	, m_singlePlayerButton{ config::singlePlayerButtonRect, m_resources.getTexture("button_singleplayer"), m_resources.getTexture("button_singleplayer_hover"), m_resources.getTexture("button_singleplayer_press"), m_resources.getSound("sound_move") }
+	, m_multiPlayerButton{ config::multiPlayerButtonRect, m_resources.getTexture("button_multiplayer"), m_resources.getTexture("button_multiplayer_hover"), m_resources.getTexture("button_multiplayer_press"), m_resources.getSound("sound_move") }
+	, m_autoPlayButton{ config::autoPlayButtonRect, m_resources.getTexture("button_autoplay"), m_resources.getTexture("button_autoplay_hover"), m_resources.getTexture("button_autoplay_press"), m_resources.getSound("sound_move") }
 {
 	m_title.setPosition({ config::titleRect.left, config::titleRect.top });
-	m_title.setTexture(resources::textures["title"]);
+	m_title.setTexture(m_resources.getTexture("title"));
 	m_title.setScale({ config::kScaling, config::kScaling });
 
-	m_background.setTexture(resources::textures["plain_background"]);
+	m_background.setTexture(m_resources.getTexture("plain_background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
 
-	m_buttonClick.setBuffer(resources::sounds["sound_move"]);
+	//m_buttonClick.setBuffer(resources::sounds["sound_move"]);
 }
 
 void MainMenuState::enter()
@@ -26,30 +26,32 @@ void MainMenuState::enter()
 
 BaseState* MainMenuState::event()
 {
+	sf::Vector2f mousePositionInWindow = static_cast<sf::Vector2f>(sf::Mouse::getPosition(*m_resources.getWindow()));
+
 	sf::Event event;
-	while (resources::pWindow->pollEvent(event))
+	while (m_resources.getWindow()->pollEvent(event))
 	{
 		switch (event.type)
 		{
 		case sf::Event::Closed:
-			resources::pWindow->close();
+			m_resources.getWindow()->close();
 			break;
 		}
 
-		if (m_singlePlayerButton.update(event))
+		if (m_singlePlayerButton.update(event, mousePositionInWindow))
 		{
-			m_buttonClick.play();
-			return new CheckersGameState;
+			//m_buttonClick.play();
+			return new CheckersGameState(m_resources);
 		}
-		else if (m_multiPlayerButton.update(event))
+		else if (m_multiPlayerButton.update(event, mousePositionInWindow))
 		{
-			m_buttonClick.play();
-			return new CheckersGameState;
+			//m_buttonClick.play();
+			return new CheckersGameState(m_resources);
 		}
-		else if (m_autoPlayButton.update(event))
+		else if (m_autoPlayButton.update(event, mousePositionInWindow))
 		{
-			m_buttonClick.play();
-			return new CheckersGameState;
+			//m_buttonClick.play();
+			return new CheckersGameState(m_resources);
 		}
 	}
 
@@ -58,21 +60,22 @@ BaseState* MainMenuState::event()
 
 void MainMenuState::render()
 {
-	resources::pWindow->clear(sf::Color::White);
+	m_resources.getWindow()->clear(sf::Color::White);
 
-	resources::pWindow->draw(m_background);
+	m_resources.getWindow()->draw(m_background);
 
 	// Draw title and buttons
-	resources::pWindow->draw(m_title);
-	m_singlePlayerButton.render(resources::pWindow);
-	m_multiPlayerButton.render(resources::pWindow);
-	m_autoPlayButton.render(resources::pWindow);
+	m_resources.getWindow()->draw(m_title);
+	m_singlePlayerButton.render(m_resources.getWindow());
+	m_multiPlayerButton.render(m_resources.getWindow());
+	m_autoPlayButton.render(m_resources.getWindow());
 
-	resources::pWindow->display();
+	m_resources.getWindow()->display();
 }
 
 void MainMenuState::exit()
 {
+	/*
 	// We need this so that the sound will finish playing before it is destroyed
 	while (m_buttonClick.getStatus() == sf::Sound::Status::Playing)
 	{
@@ -80,5 +83,5 @@ void MainMenuState::exit()
 	}
 
 	// If we don't include this, the program will throw an exception on close
-	m_buttonClick.resetBuffer();
+	m_buttonClick.resetBuffer();*/
 }

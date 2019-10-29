@@ -1,11 +1,12 @@
 #include "checker_piece.h"
 
 #include "config.h"
-#include "resources.h"
 
-CheckerPiece::CheckerPiece(CheckerColor color)
+CheckerPiece::CheckerPiece(CheckerColor color, const sf::Texture& manTexture, const sf::Texture& kingTexture)
 	: m_color{ color }
 	, m_rank{ kMan }
+	, m_manTexture{ manTexture }
+	, m_kingTexture{ kingTexture }
 {
 	m_sprite.setScale({ config::kScaling, config::kScaling });
 	updateTexture();
@@ -41,15 +42,24 @@ void CheckerPiece::render(sf::RenderWindow* pWindow) const
 
 void CheckerPiece::updateTexture()
 {
-	switch (m_color)
+	/*switch (m_color)
 	{
 	case kBlack:
-		if (m_rank == kMan) { m_sprite.setTexture(resources::textures["black_man"]); }
-		else if (m_rank == kKing) { m_sprite.setTexture(resources::textures["black_king"]); }
+		if (m_rank == kMan) { m_sprite.setTexture(resources::pResources->getTexture("black_man")); }
+		else if (m_rank == kKing) { m_sprite.setTexture(resources::pResources->getTexture("black_king")); }
 		break;
 	case kRed:
-		if (m_rank == kMan) { m_sprite.setTexture(resources::textures["red_man"]); }
-		else if (m_rank == kKing) { m_sprite.setTexture(resources::textures["red_king"]); }
+		if (m_rank == kMan) { m_sprite.setTexture(resources::pResources->getTexture("red_man")); }
+		else if (m_rank == kKing) { m_sprite.setTexture(resources::pResources->getTexture("red_king")); }
+		break;
+	}*/
+	switch (m_rank)
+	{
+	case kMan:
+		m_sprite.setTexture(m_manTexture);
+		break;
+	case kKing:
+		m_sprite.setTexture(m_kingTexture);
 		break;
 	}
 }

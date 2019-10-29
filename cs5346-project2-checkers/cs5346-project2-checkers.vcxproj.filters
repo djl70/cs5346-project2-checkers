@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{db68325d-f739-4685-907c-a7919f6dded1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Commands">
+      <UniqueIdentifier>{db9494c2-e3de-404b-baae-c9aea40f0bb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Commands">
+      <UniqueIdentifier>{42912e44-84a4-4e18-890d-050f1374ed3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,9 +40,6 @@
       <Filter>Source Files\States</Filter>
     </ClCompile>
     <ClCompile Include="config.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="resources.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
     <ClCompile Include="checker_piece.cpp">
@@ -57,6 +60,18 @@
     <ClCompile Include="game_over_state.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
+    <ClCompile Include="player_configuration_menu_state.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="resource_manager.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="move_command.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="checkerboard.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h">
@@ -66,9 +81,6 @@
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="config.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="resources.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="checker_piece.h">
@@ -88,6 +100,21 @@
     </ClInclude>
     <ClInclude Include="game_over_state.h">
       <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="player_configuration_menu_state.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="resource_manager.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="command.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="move_command.h">
+      <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="checkerboard.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="button.cpp" />
+    <ClCompile Include="checkerboard.cpp" />
     <ClCompile Include="checkers_game_engine.cpp" />
     <ClCompile Include="checkers_game_state.cpp" />
     <ClCompile Include="checker_piece.cpp" />
@@ -140,19 +141,25 @@
     <ClCompile Include="game_over_state.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_state.cpp" />
-    <ClCompile Include="resources.cpp" />
+    <ClCompile Include="move_command.cpp" />
+    <ClCompile Include="player_configuration_menu_state.cpp" />
+    <ClCompile Include="resource_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h" />
     <ClInclude Include="button.h" />
+    <ClInclude Include="checkerboard.h" />
     <ClInclude Include="checkers_game_engine.h" />
     <ClInclude Include="checkers_game_state.h" />
     <ClInclude Include="checker_piece.h" />
     <ClInclude Include="checker_square.h" />
+    <ClInclude Include="command.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="game_over_state.h" />
     <ClInclude Include="main_menu_state.h" />
-    <ClInclude Include="resources.h" />
+    <ClInclude Include="move_command.h" />
+    <ClInclude Include="player_configuration_menu_state.h" />
+    <ClInclude Include="resource_manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

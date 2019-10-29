@@ -3,19 +3,28 @@
 #include "base_state.h"
 #include "checker_piece.h"
 #include "checker_square.h"
+#include "checkerboard.h"
+#include "resource_manager.h"
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <stack>
+
+class Command;
+
 class CheckersGameState : public BaseState
 {
 public:
+	CheckersGameState(ResourceManager& resources);
+
 	void enter() override;
 	BaseState* event() override;
 	void render() override;
 	void exit() override;
 
 private:
+	ResourceManager& m_resources;
 	sf::Sound m_moveSound;
 	sf::Sound m_jumpSound;
 	sf::Sprite m_background;
@@ -24,11 +33,15 @@ private:
 	sf::Color m_redPieceColor;
 	sf::RectangleShape m_rect;
 	std::vector<CheckerPiece> m_pieces;
-	std::vector<CheckerSquare> m_squares;
-	std::vector<CheckerSquare> m_capturedRedSquares;
-	std::vector<CheckerSquare> m_capturedBlackSquares;
+	Checkerboard m_board;
+	//std::vector<CheckerSquare> m_squares;
+	//std::vector<CheckerSquare> m_capturedRedSquares;
+	//std::vector<CheckerSquare> m_capturedBlackSquares;
+
+	std::stack<Command*> m_commands;
 
 	bool isGameOver(CheckerColor& outWinningColor) const;
+	bool capturePieceFromSquare(CheckerSquare& square);
 
 	enum CheckerSelectionProgress
 	{

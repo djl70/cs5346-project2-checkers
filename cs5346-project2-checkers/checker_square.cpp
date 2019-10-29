@@ -50,6 +50,16 @@ void CheckerSquare::setPiece(CheckerPiece* piece)
 	}
 }
 
+void CheckerSquare::setNeighbors(const NeighboringSquares& neighbors)
+{
+	m_neighbors = neighbors;
+}
+
+NeighboringSquares CheckerSquare::getNeighbors() const
+{
+	return m_neighbors;
+}
+
 bool CheckerSquare::isEmpty() const
 {
 	return m_piece == nullptr;
