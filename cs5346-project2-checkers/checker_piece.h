@@ -22,6 +22,7 @@ public:
 	void promote();
 	void setPosition(const sf::Vector2f& position);
 
+	bool isKing() const;
 	CheckerColor getColor() const;
 	bool contains(const sf::Vector2f& point) const;
 

@@ -75,8 +75,17 @@ bool CheckerSquare::contains(const sf::Vector2f& point) const
 	return m_interactable && m_rect.contains(point);
 }
 
-void CheckerSquare::render(sf::RenderWindow* pWindow) const
+void CheckerSquare::render(sf::RenderWindow* pWindow, bool highlight)
 {
+	if (highlight)
+	{
+		m_shape.setOutlineThickness(config::kSquareWidth * 0.05f);
+		m_shape.setOutlineColor(sf::Color::White);
+	}
+	else
+	{
+		m_shape.setOutlineThickness(0.0f);
+	}
 	pWindow->draw(m_shape);
 	if (m_piece)
 	{

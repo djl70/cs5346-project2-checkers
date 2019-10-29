@@ -133,8 +133,9 @@ void CheckersGameState::enter()
 		}
 	}
 
-	m_selectionProgress = kNoCheckerSelected;
-	m_selectedPiece = -1;
+	//m_selectionProgress = kNoCheckerSelected;
+	//m_selectedPiece = -1;
+	m_pSelectedSquare = nullptr;
 }
 
 BaseState* CheckersGameState::event()
@@ -154,22 +155,14 @@ BaseState* CheckersGameState::event()
 			}
 			break;
 		case sf::Event::MouseButtonPressed:
-			// For testing purposes, capture all 5 pieces around the left mouse click
-			if (event.mouseButton.button == sf::Mouse::Button::Left)
+			// For testing purposes, capture all 5 pieces around the right mouse click
+			if (event.mouseButton.button == sf::Mouse::Button::Right)
 			{
-				int clickedSquare = -1;
-				for (int i = 0; i < m_board.board.size(); ++i)
+				CheckerSquare* clickedSquare = getClickedSquare();
+				if (clickedSquare)
 				{
-					if (m_board.board[i].contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*m_resources.getWindow()))))
-					{
-						clickedSquare = i;
-						break;
-					}
-				}
-				if (clickedSquare >= 0)
-				{
-					capturePieceFromSquare(m_board.board[clickedSquare]);
-					NeighboringSquares neighbors = m_board.board[clickedSquare].getNeighbors();
+					capturePieceFromSquare(*clickedSquare);
+					NeighboringSquares neighbors = clickedSquare->getNeighbors();
 					if (neighbors.pNeighborNorthEast)
 					{
 						capturePieceFromSquare(*neighbors.pNeighborNorthEast);
@@ -188,47 +181,110 @@ BaseState* CheckersGameState::event()
 					}
 				}
 			}
-			// For testing purposes, move the piece south-west for red and north-east for black on right mouse click
-			else if (event.mouseButton.button == sf::Mouse::Button::Right)
+			// For testing purposes, perform automatic movements on left mouse click
+			/*else if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
-				int clickedSquare = -1;
-				for (int i = 0; i < m_board.board.size(); ++i)
+				CheckerSquare* clickedSquare = getClickedSquare();
+				if (clickedSquare)
 				{
-					if (m_board.board[i].contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*m_resources.getWindow()))))
-					{
-						clickedSquare = i;
-						break;
-					}
-				}
-				if (clickedSquare >= 0)
-				{
-					CheckerPiece* piece = m_board.board[clickedSquare].getPiece();
+					CheckerPiece* piece = clickedSquare->getPiece();
 					if (piece)
 					{
-						if (piece->getColor() == kRed)
+						// Move to one of the neighbors, if possible
+						std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, piece->getColor());
+						if (!moves.empty())
 						{
-							// Move south-west if empty
-							CheckerSquare& from = m_board.board[clickedSquare];
-							CheckerSquare* to = from.getNeighbors().pNeighborSouthWest;
-							if (to && !to->getPiece())
+							Command* pCommand = new MoveCommand(m_board, moves[0]);
+							pCommand->execute();
+							m_commands.push(pCommand);
+
+							// Now, we'll have the other color move once
+							moves = findAllValidMoves(m_board, piece->getColor() == kRed ? kBlack : kRed);
+							if (!moves.empty())
 							{
-								Command* pCommand = new MoveCommand(m_board, { from, *to });
+								pCommand = new MoveCommand(m_board, moves[0]);
 								pCommand->execute();
 								m_commands.push(pCommand);
 							}
 						}
-						else if (piece->getColor() == kBlack)
-						{
-							// Move north-east
-							CheckerSquare& from = m_board.board[clickedSquare];
-							CheckerSquare* to = from.getNeighbors().pNeighborNorthEast;
-							if (to && !to->getPiece())
+					}
+				}
+			}*/
+			// Player can only move black
+			// If no square is selected, highlight the clicked square and the potential moves
+			// If a square is selected, check if it would be a valid move from the selected square
+			else if (event.mouseButton.button == sf::Mouse::Button::Left)
+			{
+				bool clearSelectedSquare = true;
+				bool moved = false;
+				CheckerSquare* clickedSquare = getClickedSquare();
+				if (clickedSquare)
+				{
+					CheckerPiece* piece = clickedSquare->getPiece();
+					// New selection
+					if (!m_pSelectedSquare && piece && piece->getColor() == kBlack)
+					{
+						std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, kBlack);
+						// if (!moves.empty())
+						// {
+							m_validMovesFromSelectedSquare.clear();
+							for (auto& info : moves)
 							{
-								Command* pCommand = new MoveCommand(m_board, { from, *to });
+								m_validMovesFromSelectedSquare.push_back(&info.to);
+							}
+							m_pSelectedSquare = clickedSquare;
+							clearSelectedSquare = false;
+						// }
+					}
+					// Attempt to perform a move
+					else if (m_pSelectedSquare && !piece)
+					{
+						for (CheckerSquare* square : m_validMovesFromSelectedSquare)
+						{
+							if (square == clickedSquare)
+							{
+								Command* pCommand = new MoveCommand(m_board, { *m_pSelectedSquare, *square });
 								pCommand->execute();
 								m_commands.push(pCommand);
+								m_pSelectedSquare = nullptr;
+								m_validMovesFromSelectedSquare.clear();
+								moved = true;
+								break;
 							}
 						}
+					}
+					// Starting a different selection
+					else if (m_pSelectedSquare && piece && piece->getColor() == kBlack)
+					{
+						std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, kBlack);
+						// if (!moves.empty())
+						// {
+							m_validMovesFromSelectedSquare.clear();
+							for (auto& info : moves)
+							{
+								m_validMovesFromSelectedSquare.push_back(&info.to);
+							}
+							m_pSelectedSquare = clickedSquare;
+							clearSelectedSquare = false;
+						// }
+					}
+				}
+
+				if (clearSelectedSquare)
+				{
+					m_validMovesFromSelectedSquare.clear();
+					m_pSelectedSquare = nullptr;
+				}
+
+				// Opponent's turn
+				if (moved)
+				{
+					std::vector<MoveInfo> moves = findAllValidMoves(m_board, kRed);
+					if (!moves.empty())
+					{
+						Command* pCommand = new MoveCommand(m_board, moves[0]);
+						pCommand->execute();
+						m_commands.push(pCommand);
 					}
 				}
 			}
@@ -263,19 +319,42 @@ void CheckersGameState::render()
 	m_resources.getWindow()->draw(m_background);
 
 	// Draw game board
-	for (const auto& square : m_board.board)
+	for (auto& square : m_board.board)
 	{
-		square.render(m_resources.getWindow());
+		if (&square == m_pSelectedSquare) { continue; }
+		bool drawLater = false;
+		for (CheckerSquare* valid : m_validMovesFromSelectedSquare)
+		{
+			if (&square == valid)
+			{
+				drawLater = true;
+				break;
+			}
+		}
+		if (!drawLater)
+		{
+			square.render(m_resources.getWindow(), false);
+		}
 	}
 
-	for (const auto& square : m_board.capturedRedSquares)
+	// Draw selected squares later to draw them on top
+	if (m_pSelectedSquare)
 	{
-		square.render(m_resources.getWindow());
+		for (CheckerSquare* valid : m_validMovesFromSelectedSquare)
+		{
+			valid->render(m_resources.getWindow(), true);
+		}
+		m_pSelectedSquare->render(m_resources.getWindow(), true);
 	}
 
-	for (const auto& square : m_board.capturedBlackSquares)
+	for (auto& square : m_board.capturedRedSquares)
 	{
-		square.render(m_resources.getWindow());
+		square.render(m_resources.getWindow(), false);
+	}
+
+	for (auto& square : m_board.capturedBlackSquares)
+	{
+		square.render(m_resources.getWindow(), false);
 	}
 
 	// Draw pieces
@@ -337,6 +416,25 @@ bool CheckersGameState::isGameOver(CheckerColor& outWinningColor) const
 	}
 
 	return false;
+}
+
+CheckerSquare* CheckersGameState::getClickedSquare()
+{
+	int clickedSquare = -1;
+	for (int i = 0; i < m_board.board.size(); ++i)
+	{
+		if (m_board.board[i].contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*m_resources.getWindow()))))
+		{
+			clickedSquare = i;
+			break;
+		}
+	}
+	if (clickedSquare >= 0)
+	{
+		return &m_board.board[clickedSquare];
+	}
+
+	return nullptr;
 }
 
 bool CheckersGameState::capturePieceFromSquare(CheckerSquare& square)

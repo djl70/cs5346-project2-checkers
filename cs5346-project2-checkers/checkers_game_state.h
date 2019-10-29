@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <stack>
+#include <vector>
 
 class Command;
 
@@ -38,12 +39,15 @@ private:
 	//std::vector<CheckerSquare> m_capturedRedSquares;
 	//std::vector<CheckerSquare> m_capturedBlackSquares;
 
+	CheckerSquare* m_pSelectedSquare;
+	std::vector<CheckerSquare*> m_validMovesFromSelectedSquare;
 	std::stack<Command*> m_commands;
 
 	bool isGameOver(CheckerColor& outWinningColor) const;
+	CheckerSquare* getClickedSquare();
 	bool capturePieceFromSquare(CheckerSquare& square);
 
-	enum CheckerSelectionProgress
+	/*enum CheckerSelectionProgress
 	{
 		// Player's turn just started, no piece is selected yet
 		kNoCheckerSelected,
@@ -58,5 +62,5 @@ private:
 		kCheckerSelected
 	};
 	CheckerSelectionProgress m_selectionProgress;
-	int m_selectedPiece;
+	int m_selectedPiece;*/
 };

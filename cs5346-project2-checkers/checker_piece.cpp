@@ -24,6 +24,11 @@ void CheckerPiece::setPosition(const sf::Vector2f& position)
 	m_sprite.setPosition(position);
 }
 
+bool CheckerPiece::isKing() const
+{
+	return m_rank == kKing;
+}
+
 CheckerColor CheckerPiece::getColor() const
 {
 	return m_color;

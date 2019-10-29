@@ -38,7 +38,7 @@ public:
 	CheckerPiece* getPiece();
 	bool contains(const sf::Vector2f& point) const;
 
-	void render(sf::RenderWindow* pWindow) const;
+	void render(sf::RenderWindow* pWindow, bool highlight);// const;
 
 private:
 	CheckerSquareType m_type;
