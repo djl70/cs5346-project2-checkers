@@ -31,7 +31,7 @@ void MoveCommand::execute()
 	}
 	else
 	{
-		throw ("Error: No piece to move");
+		throw ("Error: No piece to move with");
 	}
 }
 

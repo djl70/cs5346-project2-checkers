@@ -139,6 +139,7 @@
     <ClCompile Include="checker_square.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="game_over_state.cpp" />
+    <ClCompile Include="jump_command.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_state.cpp" />
     <ClCompile Include="move_command.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="command.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="game_over_state.h" />
+    <ClInclude Include="jump_command.h" />
     <ClInclude Include="main_menu_state.h" />
     <ClInclude Include="move_command.h" />
     <ClInclude Include="player_configuration_menu_state.h" />

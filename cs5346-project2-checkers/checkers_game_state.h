@@ -41,11 +41,15 @@ private:
 
 	CheckerSquare* m_pSelectedSquare;
 	std::vector<CheckerSquare*> m_validMovesFromSelectedSquare;
+	bool m_jumpIsPossible;
+	bool m_validMoveIsJump;
+	// bool m_jumpAgain;
 	std::stack<Command*> m_commands;
 
 	bool isGameOver(CheckerColor& outWinningColor) const;
 	CheckerSquare* getClickedSquare();
 	bool capturePieceFromSquare(CheckerSquare& square);
+	CheckerSquare* findJumpedSquare(CheckerSquare& from, CheckerSquare& to);
 
 	/*enum CheckerSelectionProgress
 	{

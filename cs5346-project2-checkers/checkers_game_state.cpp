@@ -136,6 +136,9 @@ void CheckersGameState::enter()
 	//m_selectionProgress = kNoCheckerSelected;
 	//m_selectedPiece = -1;
 	m_pSelectedSquare = nullptr;
+	m_validMoveIsJump = false;
+	m_jumpIsPossible = false;
+	// m_jumpAgain = false;
 }
 
 BaseState* CheckersGameState::event()
@@ -213,28 +216,54 @@ BaseState* CheckersGameState::event()
 			// Player can only move black
 			// If no square is selected, highlight the clicked square and the potential moves
 			// If a square is selected, check if it would be a valid move from the selected square
+			// TODO: If a jump is possible, force it. On a jump, remove the jumped piece. After a jump, check for other possible jumps and force them.
 			else if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				bool clearSelectedSquare = true;
 				bool moved = false;
+				bool jumped = false;
 				CheckerSquare* clickedSquare = getClickedSquare();
 				if (clickedSquare)
 				{
+					// Determine if a jump is at all possible
+					std::vector<JumpInfo> globalJumps = findAllValidJumps(m_board, kBlack);
+					m_jumpIsPossible = !globalJumps.empty();
+
 					CheckerPiece* piece = clickedSquare->getPiece();
 					// New selection
-					if (!m_pSelectedSquare && piece && piece->getColor() == kBlack)
+					//if (!m_pSelectedSquare && piece && piece->getColor() == kBlack)
+					if (piece && piece->getColor() == kBlack)
 					{
-						std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, kBlack);
-						// if (!moves.empty())
-						// {
+						// First, check if a jump is possible
+						std::vector<JumpInfo> jumps = findValidJumps(*clickedSquare, kBlack);
+						if (jumps.empty() && !m_jumpIsPossible)
+						{
+							// No jump possible; check moves
+							std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, kBlack);
+							// if (!moves.empty())
+							// {
 							m_validMovesFromSelectedSquare.clear();
 							for (auto& info : moves)
 							{
 								m_validMovesFromSelectedSquare.push_back(&info.to);
 							}
 							m_pSelectedSquare = clickedSquare;
+							m_validMoveIsJump = false;
 							clearSelectedSquare = false;
-						// }
+							// }
+						}
+						else
+						{
+							// A jump is possible, so force it
+							m_validMovesFromSelectedSquare.clear();
+							for (auto& info : jumps)
+							{
+								m_validMovesFromSelectedSquare.push_back(&info.to);
+							}
+							m_pSelectedSquare = clickedSquare;
+							m_validMoveIsJump = true;
+							clearSelectedSquare = false;
+						}
 					}
 					// Attempt to perform a move
 					else if (m_pSelectedSquare && !piece)
@@ -243,30 +272,31 @@ BaseState* CheckersGameState::event()
 						{
 							if (square == clickedSquare)
 							{
-								Command* pCommand = new MoveCommand(m_board, { *m_pSelectedSquare, *square });
-								pCommand->execute();
-								m_commands.push(pCommand);
-								m_pSelectedSquare = nullptr;
-								m_validMovesFromSelectedSquare.clear();
-								moved = true;
+								if (m_validMoveIsJump)
+								{
+									// Figure out which square is being jumped
+									CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *square);
+									Command* pCommand = new JumpCommand(m_board, { *m_pSelectedSquare, *square, *jumpedSquare });
+									pCommand->execute();
+									m_commands.push(pCommand);
+									m_pSelectedSquare = nullptr;
+									m_validMovesFromSelectedSquare.clear();
+									m_validMoveIsJump = false;
+									jumped = true;
+								}
+								else
+								{
+									Command* pCommand = new MoveCommand(m_board, { *m_pSelectedSquare, *square });
+									pCommand->execute();
+									m_commands.push(pCommand);
+									m_pSelectedSquare = nullptr;
+									m_validMovesFromSelectedSquare.clear();
+									m_validMoveIsJump = false;
+									moved = true;
+								}
 								break;
 							}
 						}
-					}
-					// Starting a different selection
-					else if (m_pSelectedSquare && piece && piece->getColor() == kBlack)
-					{
-						std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, kBlack);
-						// if (!moves.empty())
-						// {
-							m_validMovesFromSelectedSquare.clear();
-							for (auto& info : moves)
-							{
-								m_validMovesFromSelectedSquare.push_back(&info.to);
-							}
-							m_pSelectedSquare = clickedSquare;
-							clearSelectedSquare = false;
-						// }
 					}
 				}
 
@@ -274,6 +304,32 @@ BaseState* CheckersGameState::event()
 				{
 					m_validMovesFromSelectedSquare.clear();
 					m_pSelectedSquare = nullptr;
+				}
+
+				if (jumped)
+				{
+					// Check if another jump is possible; if not, continue to the opponent's turn
+					std::vector<JumpInfo> globalJumps = findAllValidJumps(m_board, kBlack);
+					m_jumpIsPossible = !globalJumps.empty();
+					m_validMoveIsJump = true;
+					moved = !m_jumpIsPossible;
+
+					//// First, check if a jump is possible
+					//std::vector<JumpInfo> jumps = findValidJumps(*clickedSquare, kBlack);
+					//if (!jumps.empty())
+					//{
+					//	// A jump is possible, so force it
+					//	m_validMovesFromSelectedSquare.clear();
+					//	for (auto& info : jumps)
+					//	{
+					//		m_validMovesFromSelectedSquare.push_back(&info.to);
+					//	}
+					//	m_pSelectedSquare = clickedSquare;
+					//	m_validMoveIsJump = true;
+					//	m_jumpAgain = true;
+					//	moved = false; // prevent opponent from going next
+					//	clearSelectedSquare = false;
+					//}
 				}
 
 				// Opponent's turn
@@ -473,4 +529,38 @@ bool CheckersGameState::capturePieceFromSquare(CheckerSquare& square)
 	}
 
 	return false;
+}
+
+CheckerSquare* CheckersGameState::findJumpedSquare(CheckerSquare& from, CheckerSquare& to)
+{
+	// Check north-west
+	CheckerSquare* neighbor = to.getNeighbors().pNeighborNorthWest;
+	if (neighbor && neighbor->getNeighbors().pNeighborNorthWest == &from)
+	{
+		return neighbor;
+	}
+
+	// Check north-east
+	neighbor = to.getNeighbors().pNeighborNorthEast;
+	if (neighbor && neighbor->getNeighbors().pNeighborNorthEast == &from)
+	{
+		return neighbor;
+	}
+
+	// Check south-west
+	neighbor = to.getNeighbors().pNeighborSouthWest;
+	if (neighbor && neighbor->getNeighbors().pNeighborSouthWest == &from)
+	{
+		return neighbor;
+	}
+
+	// Check south-east
+	neighbor = to.getNeighbors().pNeighborSouthEast;
+	if (neighbor && neighbor->getNeighbors().pNeighborSouthEast == &from)
+	{
+		return neighbor;
+	}
+
+	// Something went wrong at this point
+	throw ("Error: Could not identify jumped square");
 }
