@@ -271,6 +271,8 @@ BaseState* CheckersGameState::event()
 							{
 								if (m_validMoveIsJump)
 								{
+									m_jumpSound.play();
+
 									// Figure out which square is being jumped
 									CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *square);
 									Command* pCommand = new JumpCommand(m_board, { *m_pSelectedSquare, *square, *jumpedSquare });
@@ -283,6 +285,8 @@ BaseState* CheckersGameState::event()
 								}
 								else
 								{
+									m_moveSound.play();
+
 									Command* pCommand = new MoveCommand(m_board, { *m_pSelectedSquare, *square });
 									pCommand->execute();
 									m_commands.push(pCommand);
@@ -323,6 +327,15 @@ BaseState* CheckersGameState::event()
 							Command* pCommand = performRandomMovement(didJump);
 							pCommand->execute();
 							m_commands.push(pCommand);
+
+							if (didJump)
+							{
+								m_jumpSound.play();
+							}
+							else
+							{
+								m_moveSound.play();
+							}
 						} while (didJump && !findAllValidJumps(m_board, kRed).empty());
 
 						// Red wins if black cannot move
