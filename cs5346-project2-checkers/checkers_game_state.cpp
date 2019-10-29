@@ -122,13 +122,11 @@ void CheckersGameState::enter()
 			sf::Vector2f redPosition{ config::capturedRedTopLeft.x + config::kSquareWidth * c, config::capturedRedTopLeft.y + config::kSquareWidth * r };
 			CheckerSquare redSquare(kCapturedRed);
 			redSquare.setPosition(redPosition);
-			redSquare.setPromotionColor(kRed);
 			m_board.capturedRedSquares.push_back(redSquare);
 
 			sf::Vector2f blackPosition{ config::capturedBlackTopLeft.x + config::kSquareWidth * c, config::capturedBlackTopLeft.y + config::kSquareWidth * r };
 			CheckerSquare blackSquare(kCapturedBlack);
 			blackSquare.setPosition(blackPosition);
-			blackSquare.setPromotionColor(kBlack);
 			m_board.capturedBlackSquares.push_back(blackSquare);
 		}
 	}
