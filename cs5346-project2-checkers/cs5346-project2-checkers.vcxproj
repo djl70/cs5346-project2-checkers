@@ -137,6 +137,7 @@
     <ClCompile Include="checker_piece.cpp" />
     <ClCompile Include="checker_square.cpp" />
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="game_over_state.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_state.cpp" />
     <ClCompile Include="resources.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="checker_piece.h" />
     <ClInclude Include="checker_square.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="game_over_state.h" />
     <ClInclude Include="main_menu_state.h" />
     <ClInclude Include="resources.h" />
   </ItemGroup>

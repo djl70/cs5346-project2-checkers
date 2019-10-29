@@ -1,6 +1,7 @@
 #include "checkers_game_state.h"
 
 #include "config.h"
+#include "game_over_state.h"
 #include "main_menu_state.h"
 #include "resources.h"
 
@@ -166,8 +167,7 @@ BaseState* CheckersGameState::event()
 	CheckerColor winningColor;
 	if (isGameOver(winningColor))
 	{
-		// return new GameOverState(winningColor);
-		return new MainMenuState;
+		return new GameOverState(winningColor);
 	}
 
 	return nullptr;

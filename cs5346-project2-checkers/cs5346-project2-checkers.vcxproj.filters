@@ -54,6 +54,9 @@
     <ClCompile Include="checkers_game_engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game_over_state.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h">
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="checkers_game_engine.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game_over_state.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
