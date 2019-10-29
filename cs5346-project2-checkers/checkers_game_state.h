@@ -50,6 +50,7 @@ private:
 	CheckerSquare* getClickedSquare();
 	bool capturePieceFromSquare(CheckerSquare& square);
 	CheckerSquare* findJumpedSquare(CheckerSquare& from, CheckerSquare& to);
+	Command* performRandomMovement(bool& didJump);
 
 	/*enum CheckerSelectionProgress
 	{

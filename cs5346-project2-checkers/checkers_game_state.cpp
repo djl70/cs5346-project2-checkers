@@ -224,8 +224,7 @@ BaseState* CheckersGameState::event()
 				if (clickedSquare)
 				{
 					// Determine if a jump is at all possible
-					std::vector<JumpInfo> globalJumps = findAllValidJumps(m_board, kBlack);
-					m_jumpIsPossible = !globalJumps.empty();
+					m_jumpIsPossible = !findAllValidJumps(m_board, kBlack).empty();
 
 					CheckerPiece* piece = clickedSquare->getPiece();
 					// New selection
@@ -307,27 +306,9 @@ BaseState* CheckersGameState::event()
 				if (jumped)
 				{
 					// Check if another jump is possible; if not, continue to the opponent's turn
-					std::vector<JumpInfo> globalJumps = findAllValidJumps(m_board, kBlack);
-					m_jumpIsPossible = !globalJumps.empty();
-					m_validMoveIsJump = true;
+					m_jumpIsPossible = !findAllValidJumps(m_board, kBlack).empty();
+					m_validMoveIsJump = m_jumpIsPossible;
 					moved = !m_jumpIsPossible;
-
-					//// First, check if a jump is possible
-					//std::vector<JumpInfo> jumps = findValidJumps(*clickedSquare, kBlack);
-					//if (!jumps.empty())
-					//{
-					//	// A jump is possible, so force it
-					//	m_validMovesFromSelectedSquare.clear();
-					//	for (auto& info : jumps)
-					//	{
-					//		m_validMovesFromSelectedSquare.push_back(&info.to);
-					//	}
-					//	m_pSelectedSquare = clickedSquare;
-					//	m_validMoveIsJump = true;
-					//	m_jumpAgain = true;
-					//	moved = false; // prevent opponent from going next
-					//	clearSelectedSquare = false;
-					//}
 				}
 
 				// Opponent's turn
@@ -336,9 +317,24 @@ BaseState* CheckersGameState::event()
 					std::vector<MoveInfo> moves = findAllValidMoves(m_board, kRed);
 					if (!moves.empty())
 					{
-						Command* pCommand = new MoveCommand(m_board, moves[0]);
-						pCommand->execute();
-						m_commands.push(pCommand);
+						bool didJump;
+						do
+						{
+							Command* pCommand = performRandomMovement(didJump);
+							pCommand->execute();
+							m_commands.push(pCommand);
+						} while (didJump && !findAllValidJumps(m_board, kRed).empty());
+
+						// Red wins if black cannot move
+						if (findAllValidMoves(m_board, kBlack).empty())
+						{
+							return new GameOverState(m_resources, kRed);
+						}
+					}
+					// Black wins if red cannot move
+					else
+					{
+						return new GameOverState(m_resources, kBlack);
 					}
 				}
 			}
@@ -357,6 +353,7 @@ BaseState* CheckersGameState::event()
 		}
 	}
 
+	// TODO: Remove this because it is redundant
 	CheckerColor winningColor;
 	if (isGameOver(winningColor))
 	{
@@ -422,6 +419,12 @@ void CheckersGameState::render()
 
 void CheckersGameState::exit()
 {
+	while (!m_commands.empty())
+	{
+		delete m_commands.top();
+		m_commands.pop();
+	}
+
 	while (m_moveSound.getStatus() == sf::Sound::Status::Playing)
 	{
 
@@ -561,4 +564,20 @@ CheckerSquare* CheckersGameState::findJumpedSquare(CheckerSquare& from, CheckerS
 
 	// Something went wrong at this point
 	throw ("Error: Could not identify jumped square");
+}
+
+Command* CheckersGameState::performRandomMovement(bool& didJump)
+{
+	// First, check if a jump is globally possible
+	std::vector<JumpInfo> jumps = findAllValidJumps(m_board, kRed);
+	if (!jumps.empty())
+	{
+		didJump = true;
+		return new JumpCommand(m_board, jumps[0]);
+	}
+
+	// No jump is possible, so pick a random movement
+	std::vector<MoveInfo> moves = findAllValidMoves(m_board, kRed);
+	didJump = false;
+	return new MoveCommand(m_board, moves[0]);
 }
