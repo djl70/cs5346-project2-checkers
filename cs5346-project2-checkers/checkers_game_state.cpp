@@ -134,12 +134,20 @@ BaseState* CheckersGameState::event()
 			// Undo the previous command when right mouse button pressed
 			if (event.mouseButton.button == sf::Mouse::Button::Right)
 			{
+				// Undo past 2 moves and have player take turn again (temporary fix for P1 vs COM)
 				if (!m_commands.empty())
 				{
 					Command* pCommand = m_commands.top();
 					m_commands.pop();
 					pCommand->undo();
 					delete pCommand;
+
+					pCommand = m_commands.top();
+					m_commands.pop();
+					pCommand->undo();
+					delete pCommand;
+
+					m_players.at(m_currentPlayer)->takeTurn();
 				}
 			}
 			break;
