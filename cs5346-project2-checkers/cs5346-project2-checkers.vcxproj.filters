@@ -90,6 +90,9 @@
     <ClCompile Include="ai_player.cpp">
       <Filter>Source Files\Players</Filter>
     </ClCompile>
+    <ClCompile Include="full_move_command.cpp">
+      <Filter>Source Files\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="ai_player.h">
       <Filter>Header Files\Players</Filter>
+    </ClInclude>
+    <ClInclude Include="full_move_command.h">
+      <Filter>Header Files\Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

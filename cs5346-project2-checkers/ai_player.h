@@ -4,6 +4,7 @@
 
 #include "jump_command.h"
 #include "move_command.h"
+#include "full_move_command.h"
 
 class AIPlayer : public Player
 {
@@ -18,6 +19,10 @@ public:
 private:
 	bool m_mustJump;
 	bool m_checkForAnotherJump;
+	bool m_doneBuildingMove;
+	FullMoveInfo m_fullMove;
+
+	CheckerSquare* m_pJumpedTo;
 
 	JumpInfo chooseBestJump(const std::vector<JumpInfo>& jumps);
 	MoveInfo chooseBestMove(const std::vector<MoveInfo>& moves);

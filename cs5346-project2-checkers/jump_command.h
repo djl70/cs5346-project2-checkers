@@ -2,15 +2,17 @@
 
 #include "command.h"
 
+#include <SFML/Graphics.hpp>
+
 class CheckerSquare;
 class Checkerboard;
 
 struct JumpInfo
 {
 	JumpInfo(CheckerSquare& from, CheckerSquare& to, CheckerSquare& jumped);
-	CheckerSquare& from;
-	CheckerSquare& to;
-	CheckerSquare& jumped;
+	sf::Vector2i from;
+	sf::Vector2i to;
+	sf::Vector2i jumped;
 	bool promoted;
 };
 

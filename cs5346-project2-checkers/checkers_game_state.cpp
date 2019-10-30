@@ -130,19 +130,19 @@ BaseState* CheckersGameState::event()
 				return new MainMenuState(m_resources);
 			}
 			break;
-		//case sf::Event::MouseButtonPressed:
-		//	// Undo the previous command when right mouse button pressed
-		//	if (event.mouseButton.button == sf::Mouse::Button::Right)
-		//	{
-		//		if (!m_commands.empty())
-		//		{
-		//			Command* pCommand = m_commands.top();
-		//			m_commands.pop();
-		//			pCommand->undo();
-		//			delete pCommand;
-		//		}
-		//	}
-		//	break;
+		case sf::Event::MouseButtonPressed:
+			// Undo the previous command when right mouse button pressed
+			if (event.mouseButton.button == sf::Mouse::Button::Right)
+			{
+				if (!m_commands.empty())
+				{
+					Command* pCommand = m_commands.top();
+					m_commands.pop();
+					pCommand->undo();
+					delete pCommand;
+				}
+			}
+			break;
 		}
 
 		m_players.at(m_currentPlayer)->event(event);
@@ -162,6 +162,8 @@ BaseState* CheckersGameState::event()
 		m_players.at(m_currentPlayer)->takeTurn();
 	}
 
+	// TODO: Only check if no moves are available for the current player (since we just switched players by this point)
+	// Also, check if either captured area is full of pieces
 	CheckerColor winningColor;
 	if (isGameOver(winningColor))
 	{

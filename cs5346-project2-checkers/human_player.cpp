@@ -138,7 +138,7 @@ std::vector<CheckerSquare*> HumanPlayer::getValidMovesForSquare(CheckerSquare& f
 		std::vector<JumpInfo> jumps = findValidJumps(*m_pBoard, m_color, from.getPositionOnBoard());
 		for (auto& info : jumps)
 		{
-			destinations.push_back(&info.to);
+			destinations.push_back(&m_pBoard->board.at(info.to.y * 8 + info.to.x));
 		}
 	}
 	else
@@ -146,7 +146,7 @@ std::vector<CheckerSquare*> HumanPlayer::getValidMovesForSquare(CheckerSquare& f
 		std::vector<MoveInfo> moves = findValidMoves(*m_pBoard, m_color, from.getPositionOnBoard());
 		for (auto& info : moves)
 		{
-			destinations.push_back(&info.to);
+			destinations.push_back(&m_pBoard->board.at(info.to.y * 8 + info.to.x));
 		}
 	}
 

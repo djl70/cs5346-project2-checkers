@@ -2,14 +2,16 @@
 
 #include "command.h"
 
+#include <SFML/Graphics.hpp>
+
 class CheckerSquare;
 class Checkerboard;
 
 struct MoveInfo
 {
 	MoveInfo(CheckerSquare& from, CheckerSquare& to);
-	CheckerSquare& from;
-	CheckerSquare& to;
+	sf::Vector2i from;
+	sf::Vector2i to;
 	bool promoted;
 };
 
