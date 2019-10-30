@@ -21,9 +21,10 @@ int ToggleButtonGroup::getActiveButtonIndex() const
 	return m_activeButton;
 }
 
-void ToggleButtonGroup::update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow)
+bool ToggleButtonGroup::update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow)
 {
 	bool activeButtonChanged = false;
+
 	for (int i = 0; i < m_buttons.size(); ++i)
 	{
 		if (m_buttons.at(i).update(event, mousePositionInWindow))
@@ -46,6 +47,8 @@ void ToggleButtonGroup::update(const sf::Event& event, const sf::Vector2f& mouse
 			}
 		}
 	}
+
+	return activeButtonChanged;
 }
 void ToggleButtonGroup::render(sf::RenderWindow* pWindow) const
 {

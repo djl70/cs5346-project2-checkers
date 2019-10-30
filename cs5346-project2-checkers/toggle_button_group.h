@@ -12,7 +12,7 @@ public:
 	void addButton(const ToggleButton& button);
 	int getActiveButtonIndex() const;
 
-	void update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow);
+	bool update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow);
 	void render(sf::RenderWindow* pWindow) const;
 
 private:

@@ -25,6 +25,15 @@ Button::Button()
 	m_sprite.setScale({ config::kScaling, config::kScaling });
 }
 
+Button::~Button()
+{
+	//while (m_clickSound.getStatus() == sf::Sound::Status::Playing)
+	//{
+	//
+	//}
+	//m_clickSound.resetBuffer();
+}
+
 void Button::setRect(const sf::FloatRect& rect)
 {
 	m_rect = rect;
@@ -51,11 +60,10 @@ void Button::setTexture(ButtonState state, sf::Texture* texture)
 	}
 }
 
-void Button::setClickSound(sf::SoundBuffer* sound)
-{
-	m_soundBuffer = sound;
-	m_clickSound.setBuffer(*m_soundBuffer);
-}
+//void Button::setClickSound(sf::SoundBuffer* sound)
+//{
+//	m_clickSound.setBuffer(*sound);
+//}
 
 void Button::setEnabled(bool enabled)
 {
@@ -117,14 +125,14 @@ bool Button::update(const sf::Event& event, const sf::Vector2f& mousePositionInW
 				isButtonClicked = true;
 				// We have to set the buffer outside of the constructor for some reason, so we set it here.
 				//m_clickSound.setBuffer(m_soundBuffer);
-				m_clickSound.play();
+				//m_clickSound.play();
 				// We have to wait until the sound finishes, then reset the buffer for some reason. Otherwise, it'll throw an exception on close.
 				// And we can't call this from the destructor.
-				while (m_clickSound.getStatus() == sf::Sound::Status::Playing)
-				{
-
-				}
-				m_clickSound.resetBuffer();
+				//while (m_clickSound.getStatus() == sf::Sound::Status::Playing)
+				//{
+				//
+				//}
+				//m_clickSound.resetBuffer();
 			}
 		}
 		else

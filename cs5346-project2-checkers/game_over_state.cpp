@@ -14,7 +14,7 @@ GameOverState::GameOverState(ResourceManager* pResources, CheckerColor winningCo
 	m_menuButton.setTexture(kDefault, m_pResources->getTexture("button_menu"));
 	m_menuButton.setTexture(kHovered, m_pResources->getTexture("button_menu_hover"));
 	m_menuButton.setTexture(kPressed, m_pResources->getTexture("button_menu_press"));
-	m_menuButton.setClickSound(m_pResources->getSound("sound_move"));
+	//m_menuButton.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 
 	m_background.setTexture(*m_pResources->getTexture("plain_background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
@@ -45,6 +45,7 @@ BaseState* GameOverState::event()
 
 		if (m_menuButton.update(event, mousePositionInWindow))
 		{
+			m_pResources->playSound("sound_move");
 			return new MainMenuState{ m_pResources };
 		}
 	}

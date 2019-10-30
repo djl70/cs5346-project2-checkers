@@ -11,19 +11,19 @@ MainMenuState::MainMenuState(ResourceManager* resources)
 	m_multiPlayerButton.setTexture(kDefault, m_pResources->getTexture("button_multiplayer"));
 	m_multiPlayerButton.setTexture(kHovered, m_pResources->getTexture("button_multiplayer_hover"));
 	m_multiPlayerButton.setTexture(kPressed, m_pResources->getTexture("button_multiplayer_press"));
-	m_multiPlayerButton.setClickSound(m_pResources->getSound("sound_move"));
-
+	//m_multiPlayerButton.setClickSound(m_pResources->getSoundBuffer("sound_move"));
+	
 	m_singlePlayerButton.setRect(config::singlePlayerButtonRect);
 	m_singlePlayerButton.setTexture(kDefault, m_pResources->getTexture("button_singleplayer"));
 	m_singlePlayerButton.setTexture(kHovered, m_pResources->getTexture("button_singleplayer_hover"));
 	m_singlePlayerButton.setTexture(kPressed, m_pResources->getTexture("button_singleplayer_press"));
-	m_singlePlayerButton.setClickSound(m_pResources->getSound("sound_move"));
+	//m_singlePlayerButton.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 
 	m_autoPlayButton.setRect(config::autoPlayButtonRect);
 	m_autoPlayButton.setTexture(kDefault, m_pResources->getTexture("button_autoplay"));
 	m_autoPlayButton.setTexture(kHovered, m_pResources->getTexture("button_autoplay_hover"));
 	m_autoPlayButton.setTexture(kPressed, m_pResources->getTexture("button_autoplay_press"));
-	m_autoPlayButton.setClickSound(m_pResources->getSound("sound_move"));
+	//m_autoPlayButton.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 
 	m_title.setPosition({ config::titleRect.left, config::titleRect.top });
 	m_title.setTexture(*m_pResources->getTexture("title"));
@@ -31,8 +31,6 @@ MainMenuState::MainMenuState(ResourceManager* resources)
 
 	m_background.setTexture(*m_pResources->getTexture("plain_background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
-
-	//m_buttonClick.setBuffer(resources::sounds["sound_move"]);
 }
 
 void MainMenuState::enter()
@@ -54,24 +52,23 @@ BaseState* MainMenuState::event()
 			break;
 		}
 
+		
 		if (m_multiPlayerButton.update(event, mousePositionInWindow))
 		{
-			//m_buttonClick.play();
+			m_pResources->playSound("sound_move");
 			return new CheckersGameState{ m_pResources };
 			//return new PlayerConfigurationMenuState{ m_resources, 0 };
 		}
 
 		if (m_singlePlayerButton.update(event, mousePositionInWindow))
 		{
-			//m_buttonClick.play();
-			//return new CheckersGameState(m_resources);
+			m_pResources->playSound("sound_move");
 			return new PlayerConfigurationMenuState{ m_pResources, 1 };
 		}
 		
 		if (m_autoPlayButton.update(event, mousePositionInWindow))
 		{
-			//m_buttonClick.play();
-			//return new CheckersGameState(m_resources);
+			m_pResources->playSound("sound_move");
 			return new PlayerConfigurationMenuState{ m_pResources, 2 };
 		}
 	}
@@ -87,6 +84,7 @@ void MainMenuState::render()
 
 	// Draw title and buttons
 	m_pResources->getWindow()->draw(m_title);
+
 	m_multiPlayerButton.render(m_pResources->getWindow());
 	m_singlePlayerButton.render(m_pResources->getWindow());
 	m_autoPlayButton.render(m_pResources->getWindow());
@@ -96,13 +94,5 @@ void MainMenuState::render()
 
 void MainMenuState::exit()
 {
-	/*
-	// We need this so that the sound will finish playing before it is destroyed
-	while (m_buttonClick.getStatus() == sf::Sound::Status::Playing)
-	{
 
-	}
-
-	// If we don't include this, the program will throw an exception on close
-	m_buttonClick.resetBuffer();*/
 }

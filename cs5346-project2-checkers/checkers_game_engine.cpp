@@ -12,7 +12,7 @@ CheckersGameEngine::CheckersGameEngine()
 {
 	m_window.setFramerateLimit(config::kFps);
 
-	m_resources.setup(&m_window);
+	m_resources.loadResources(&m_window);
 
 	// m_pState = new CheckersGameState;
 	m_pState = new MainMenuState{ &m_resources };
@@ -28,14 +28,15 @@ CheckersGameEngine::~CheckersGameEngine()
 		m_pState = nullptr;
 	}
 
-	m_resources.getSound("sound_move")->~SoundBuffer();
-	m_resources.getSound("sound_jump")->~SoundBuffer();
+	m_resources.freeResources();
 }
 
 void CheckersGameEngine::run()
 {
 	while (m_resources.getWindow()->isOpen())
 	{
+		m_resources.update();
+
 		BaseState* pNextState = m_pState->event();
 		m_pState->render();
 
@@ -46,12 +47,5 @@ void CheckersGameEngine::run()
 			m_pState = pNextState;
 			m_pState->enter();
 		}
-	}
-
-	if (m_pState)
-	{
-		m_pState->exit();
-		delete m_pState;
-		m_pState = nullptr;
 	}
 }

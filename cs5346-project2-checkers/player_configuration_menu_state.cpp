@@ -24,41 +24,41 @@ void PlayerConfigurationMenuState::enter()
 	button.setTexture(kDefault, m_pResources->getTexture("button_minimax"));
 	button.setTexture(kHovered, m_pResources->getTexture("button_minimax_hover"));
 	button.setTexture(kPressed, m_pResources->getTexture("button_minimax_press"));
-	button.setClickSound(m_pResources->getSound("sound_move"));
+	//button.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 	m_algorithmButtons.addButton(button);
 
 	button.setRect({ config::multiPlayerButtonRect.left + config::menuButtonSize.x * 0.5f, config::multiPlayerButtonRect.top, config::menuButtonSize.x, config::menuButtonSize.y });
 	button.setTexture(kDefault, m_pResources->getTexture("button_alphabeta"));
 	button.setTexture(kHovered, m_pResources->getTexture("button_alphabeta_hover"));
 	button.setTexture(kPressed, m_pResources->getTexture("button_alphabeta_press"));
-	button.setClickSound(m_pResources->getSound("sound_move"));
+	//button.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 	m_algorithmButtons.addButton(button);
 
 	button.setRect({ config::singlePlayerButtonRect.left - config::menuButtonSize.x * 0.5f, config::singlePlayerButtonRect.top, config::menuButtonSize.x, config::menuButtonSize.y });
 	button.setTexture(kDefault, m_pResources->getTexture("button_h1"));
 	button.setTexture(kHovered, m_pResources->getTexture("button_h1_hover"));
 	button.setTexture(kPressed, m_pResources->getTexture("button_h1_press"));
-	button.setClickSound(m_pResources->getSound("sound_move"));
+	//button.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 	m_heuristicButtons.addButton(button);
 
 	button.setRect({ config::singlePlayerButtonRect.left + config::menuButtonSize.x * 0.5f, config::singlePlayerButtonRect.top, config::menuButtonSize.x, config::menuButtonSize.y });
 	button.setTexture(kDefault, m_pResources->getTexture("button_h2"));
 	button.setTexture(kHovered, m_pResources->getTexture("button_h2_hover"));
 	button.setTexture(kPressed, m_pResources->getTexture("button_h2_press"));
-	button.setClickSound(m_pResources->getSound("sound_move"));
+	//button.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 	m_heuristicButtons.addButton(button);
 
 	m_startGameButton.setRect(config::autoPlayButtonRect);
 	m_startGameButton.setTexture(kDefault, m_pResources->getTexture("button_start"));
 	m_startGameButton.setTexture(kHovered, m_pResources->getTexture("button_start_hover"));
 	m_startGameButton.setTexture(kPressed, m_pResources->getTexture("button_start_press"));
-	m_startGameButton.setClickSound(m_pResources->getSound("sound_move"));
+	//m_startGameButton.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 
 	m_mainMenuButton.setRect(config::menuButtonRect);
 	m_mainMenuButton.setTexture(kDefault, m_pResources->getTexture("button_menu"));
 	m_mainMenuButton.setTexture(kHovered, m_pResources->getTexture("button_menu_hover"));
 	m_mainMenuButton.setTexture(kPressed, m_pResources->getTexture("button_menu_press"));
-	m_mainMenuButton.setClickSound(m_pResources->getSound("sound_move"));
+	//m_mainMenuButton.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 
 	m_background.setTexture(*m_pResources->getTexture("plain_background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
@@ -78,16 +78,25 @@ BaseState* PlayerConfigurationMenuState::event()
 			break;
 		}
 
-		m_algorithmButtons.update(event, mousePositionInWindow);
-		m_heuristicButtons.update(event, mousePositionInWindow);
+		if (m_algorithmButtons.update(event, mousePositionInWindow))
+		{
+			m_pResources->playSound("sound_move");
+		}
+		
+		if (m_heuristicButtons.update(event, mousePositionInWindow))
+		{
+			m_pResources->playSound("sound_move");
+		}
 
 		if (m_startGameButton.update(event, mousePositionInWindow))
 		{
+			m_pResources->playSound("sound_move");
 			return new CheckersGameState{ m_pResources };
 		}
 
 		if (m_mainMenuButton.update(event, mousePositionInWindow))
 		{
+			m_pResources->playSound("sound_move");
 			return new MainMenuState{ m_pResources };
 		}
 	}

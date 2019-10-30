@@ -2,7 +2,7 @@
 
 #include "config.h"
 
-bool ResourceManager::setup(sf::RenderWindow* pWindow)
+bool ResourceManager::loadResources(sf::RenderWindow* pWindow)
 {
 	m_pWindow = pWindow;
 
@@ -15,10 +15,20 @@ bool ResourceManager::setup(sf::RenderWindow* pWindow)
 	for (const auto& pair : config::soundFiles)
 	{
 		success &= m_soundBuffers[pair.first].loadFromFile(pair.second);
-		// m_sounds[pair.first].setBuffer(m_soundBuffers[pair.first]);
 	}
 
 	return success;
+}
+
+void ResourceManager::freeResources()
+{
+	// Stop and remove all queued sounds
+	while (!m_playingSounds.empty())
+	{
+		m_playingSounds.front().stop();
+		m_playingSounds.front().resetBuffer();
+		m_playingSounds.pop_front();
+	}
 }
 
 sf::RenderWindow* ResourceManager::getWindow()
@@ -30,11 +40,21 @@ sf::Texture* ResourceManager::getTexture(const std::string& name)
 {
 	return &m_textures.at(name);
 }
-sf::SoundBuffer* ResourceManager::getSound(const std::string& name)
+
+void ResourceManager::playSound(const std::string& name)
 {
-	return &m_soundBuffers.at(name);
+	// Enqueue and play
+	m_playingSounds.emplace_back(m_soundBuffers.at(name));
+	m_playingSounds.back().play();
 }
-/*void ResourceManager::playSound(const std::string& name)
+
+void ResourceManager::update()
 {
-	m_sounds.at(name).play();
-}*/
+	// Check for sounds that are finished playing and dequeue them
+	while (!m_playingSounds.empty() && m_playingSounds.front().getStatus() == sf::Sound::Status::Stopped)
+	{
+		m_playingSounds.front().stop();
+		m_playingSounds.front().resetBuffer();
+		m_playingSounds.pop_front();
+	}
+}

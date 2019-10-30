@@ -19,9 +19,6 @@ void CheckersGameState::enter()
 	m_background.setTexture(*m_pResources->getTexture("background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
 
-	m_moveSound.setBuffer(*m_pResources->getSound("sound_move"));
-	m_jumpSound.setBuffer(*m_pResources->getSound("sound_jump"));
-
 	// Create pieces
 	for (int r = 0; r < 8; ++r)
 	{
@@ -172,7 +169,8 @@ BaseState* CheckersGameState::event()
 			pCommand->execute();
 		}
 		m_commands.push(pCommand);
-		m_moveSound.play();
+		//m_moveSound.play();
+		m_pResources->playSound("sound_move");
 	}
 
 	if (!m_players.at(m_currentPlayer)->isTurn())
@@ -201,32 +199,8 @@ void CheckersGameState::render()
 	// Draw game board
 	for (auto& square : m_board.board)
 	{
-		/*if (&square == m_pSelectedSquare) { continue; }
-		bool drawLater = false;
-		for (CheckerSquare* valid : m_validMovesFromSelectedSquare)
-		{
-			if (&square == valid)
-			{
-				drawLater = true;
-				break;
-			}
-		}
-		if (!drawLater)
-		{
-			square.render(m_resources.getWindow(), false);
-		}*/
 		square.render(m_pResources->getWindow());
 	}
-
-	// Draw selected squares later to draw them on top
-	/*if (m_pSelectedSquare)
-	{
-		for (CheckerSquare* valid : m_validMovesFromSelectedSquare)
-		{
-			valid->render(m_resources.getWindow(), true);
-		}
-		m_pSelectedSquare->render(m_resources.getWindow(), true);
-	}*/
 
 	for (auto& square : m_board.capturedRedSquares)
 	{
@@ -237,12 +211,6 @@ void CheckersGameState::render()
 	{
 		square.render(m_pResources->getWindow());
 	}
-
-	// Draw pieces
-	//for (const auto& piece : m_pieces)
-	//{
-	//	piece.render(resources::pWindow);
-	//}
 
 	m_players[m_currentPlayer]->render(m_pResources->getWindow());
 
@@ -259,18 +227,6 @@ void CheckersGameState::exit()
 
 	delete m_players[0];
 	delete m_players[1];
-
-	while (m_moveSound.getStatus() == sf::Sound::Status::Playing)
-	{
-
-	}
-	m_moveSound.resetBuffer();
-
-	while (m_jumpSound.getStatus() == sf::Sound::Status::Playing)
-	{
-
-	}
-	m_jumpSound.resetBuffer();
 }
 
 bool CheckersGameState::isGameOver(CheckerColor& outWinningColor)
@@ -324,118 +280,3 @@ bool CheckersGameState::isGameOver(CheckerColor& outWinningColor)
 
 	return false;
 }
-
-/*CheckerSquare* CheckersGameState::getClickedSquare()
-{
-	int clickedSquare = -1;
-	for (int i = 0; i < m_board.board.size(); ++i)
-	{
-		if (m_board.board[i].contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*m_resources.getWindow()))))
-		{
-			clickedSquare = i;
-			break;
-		}
-	}
-	if (clickedSquare >= 0)
-	{
-		return &m_board.board[clickedSquare];
-	}
-
-	return nullptr;
-}
-
-bool CheckersGameState::capturePieceFromSquare(CheckerSquare& square)
-{
-	CheckerPiece* piece = square.getPiece();
-
-	if (piece)
-	{
-		switch (piece->getColor())
-		{
-		case kBlack:
-			for (int i = 0; i < m_board.capturedBlackSquares.size(); ++i)
-			{
-				if (m_board.capturedBlackSquares[i].isEmpty())
-				{
-					m_moveSound.play();
-					m_board.capturedBlackSquares[i].setPiece(piece);
-					break;
-				}
-			}
-			break;
-		case kRed:
-			for (int i = 0; i < m_board.capturedRedSquares.size(); ++i)
-			{
-				if (m_board.capturedRedSquares[i].isEmpty())
-				{
-					m_jumpSound.play();
-					m_board.capturedRedSquares[i].setPiece(piece);
-					break;
-				}
-			}
-			break;
-		}
-		square.setPiece(nullptr);
-		return true;
-	}
-
-	return false;
-}
-
-CheckerSquare* CheckersGameState::findJumpedSquare(CheckerSquare& from, CheckerSquare& to)
-{
-	// Check north-west
-	CheckerSquare* neighbor = to.getNeighbors().pNeighborNorthWest;
-	if (neighbor && neighbor->getNeighbors().pNeighborNorthWest == &from)
-	{
-		return neighbor;
-	}
-
-	// Check north-east
-	neighbor = to.getNeighbors().pNeighborNorthEast;
-	if (neighbor && neighbor->getNeighbors().pNeighborNorthEast == &from)
-	{
-		return neighbor;
-	}
-
-	// Check south-west
-	neighbor = to.getNeighbors().pNeighborSouthWest;
-	if (neighbor && neighbor->getNeighbors().pNeighborSouthWest == &from)
-	{
-		return neighbor;
-	}
-
-	// Check south-east
-	neighbor = to.getNeighbors().pNeighborSouthEast;
-	if (neighbor && neighbor->getNeighbors().pNeighborSouthEast == &from)
-	{
-		return neighbor;
-	}
-
-	// Something went wrong at this point
-	throw ("Error: Could not identify jumped square");
-
-	sf::Vector2i toCoord = to.getPositionOnBoard();
-	sf::Vector2i fromCoord = from.getPositionOnBoard();
-	sf::Vector2i diff = toCoord - fromCoord;
-	sf::Vector2i half = diff / 2;
-	sf::Vector2i jumpedCoord = fromCoord + half;
-	int index = jumpedCoord.y * 8 + jumpedCoord.x;
-	return &m_board.board.at(index);
-}
-
-Command* CheckersGameState::performRandomMovement(bool& didJump)
-{
-	// First, check if a jump is globally possible
-	std::vector<JumpInfo> jumps = findAllValidJumps(m_board, kRed);
-	if (!jumps.empty())
-	{
-		didJump = true;
-		return new JumpCommand(m_board, jumps[0]);
-	}
-
-	// No jump is possible, so pick a random movement
-	std::vector<MoveInfo> moves = findAllValidMoves(m_board, kRed);
-	didJump = false;
-	return new MoveCommand(m_board, moves[0]);
-}*/

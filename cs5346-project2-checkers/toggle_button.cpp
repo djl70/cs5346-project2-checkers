@@ -71,7 +71,6 @@ bool ToggleButton::update(const sf::Event& event, const sf::Vector2f& mousePosit
 				// Button is clicked when mouse is released while button is in pressed state
 				isButtonClicked = true;
 				toggleOn();
-				m_clickSound.play();
 			}
 		}
 		else

@@ -14,10 +14,11 @@ class Button
 {
 public:
 	Button();
+	~Button();
 
 	void setRect(const sf::FloatRect& rect);
 	void setTexture(ButtonState state, sf::Texture* texture);
-	void setClickSound(sf::SoundBuffer* sound);
+	//void setClickSound(sf::SoundBuffer* sound);
 	void setEnabled(bool enabled);
 
 	virtual bool update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow);
@@ -30,8 +31,8 @@ protected:
 	sf::Texture* m_hoveredTexture;
 	sf::Texture* m_pressedTexture;
 	sf::Sprite m_sprite;
-	sf::SoundBuffer* m_soundBuffer;
-	sf::Sound m_clickSound;
+	//sf::SoundBuffer* m_soundBuffer;
+	//sf::Sound m_clickSound;
 	bool m_enabled;
 
 	void changeState(ButtonState newState);
