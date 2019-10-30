@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 class Checkerboard;
-class Command;
+class FullMoveCommand;
 class ResourceManager;
 
 class Player
@@ -20,7 +20,7 @@ public:
 	bool isTurn() const;
 
 	virtual void event(const sf::Event& event) = 0;
-	virtual Command* update() = 0;
+	virtual FullMoveCommand* update() = 0;
 	virtual void render(sf::RenderWindow* pWindow) = 0;
 
 protected:

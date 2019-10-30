@@ -2,6 +2,8 @@
 
 #include "player.h"
 
+#include "full_move_command.h"
+
 class CheckerSquare;
 
 class HumanPlayer : public Player
@@ -10,7 +12,7 @@ public:
 	HumanPlayer(CheckerColor color);
 	void takeTurn() override;
 	void event(const sf::Event& event) override;
-	Command* update() override;
+	FullMoveCommand* update() override;
 	void render(sf::RenderWindow* pWindow) override;
 
 private:
@@ -19,8 +21,10 @@ private:
 	CheckerSquare* m_pSelectedSquare;
 	bool m_mustJump;
 	bool m_checkForAnotherJump;
+	bool m_doneBuildingMove;
+	FullMoveInfo m_fullMove;
 
-	Command* m_pCommand;
+	Checkerboard m_simulatedBoard;
 
 	std::vector<CheckerSquare*> getValidMovesForSquare(CheckerSquare& from);
 

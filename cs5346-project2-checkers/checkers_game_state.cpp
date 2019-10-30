@@ -148,10 +148,21 @@ BaseState* CheckersGameState::event()
 		m_players.at(m_currentPlayer)->event(event);
 	}
 
-	Command* pCommand = m_players.at(m_currentPlayer)->update();
+	FullMoveCommand* pCommand = m_players.at(m_currentPlayer)->update();
 	if (pCommand)
 	{
-		pCommand->execute();
+		if (m_currentPlayer == 1)
+		{
+			// TODO: Fix this so that it pauses between steps
+			do
+			{
+				sf::sleep(sf::milliseconds(250));
+			} while (!pCommand->executeStep());
+		}
+		else
+		{
+			pCommand->execute();
+		}
 		m_commands.push(pCommand);
 		m_moveSound.play();
 	}

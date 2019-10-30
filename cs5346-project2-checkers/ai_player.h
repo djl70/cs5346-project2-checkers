@@ -6,6 +6,8 @@
 #include "move_command.h"
 #include "full_move_command.h"
 
+#include "checkerboard.h"
+
 class AIPlayer : public Player
 {
 public:
@@ -13,16 +15,15 @@ public:
 	// AIPlayer(CheckerColor color, EvaluationFunction* eval);
 	void takeTurn() override;
 	void event(const sf::Event& event) override;
-	Command* update() override;
+	FullMoveCommand* update() override;
 	void render(sf::RenderWindow* pWindow) override;
 
 private:
 	bool m_mustJump;
 	bool m_checkForAnotherJump;
-	bool m_doneBuildingMove;
 	FullMoveInfo m_fullMove;
 
-	CheckerSquare* m_pJumpedTo;
+	Checkerboard m_simulatedBoard;
 
 	JumpInfo chooseBestJump(const std::vector<JumpInfo>& jumps);
 	MoveInfo chooseBestMove(const std::vector<MoveInfo>& moves);
