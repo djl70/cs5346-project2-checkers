@@ -6,7 +6,7 @@ std::vector<JumpInfo> findAllValidJumps(Checkerboard& board, CheckerColor player
 
 	for (auto& square : board.board)
 	{
-		std::vector<JumpInfo> squareJumps = findValidJumps(square, playerColor);
+		std::vector<JumpInfo> squareJumps = findValidJumps(board, playerColor, square.getPositionOnBoard());
 		for (auto& info : squareJumps)
 		{
 			jumps.push_back(info);
@@ -16,6 +16,164 @@ std::vector<JumpInfo> findAllValidJumps(Checkerboard& board, CheckerColor player
 	return jumps;
 }
 
+std::vector<JumpInfo> findValidJumps(Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start)
+{
+	std::vector<JumpInfo> jumps;
+
+	CheckerSquare& square = board.board[start.y * 8 + start.x];
+	CheckerPiece* piece = square.getPiece();
+	if (piece && piece->getColor() == playerColor)
+	{
+		JumpInfo* info = nullptr;
+		// Check northern neighbors
+		if (piece->getColor() == kBlack || piece->isKing())
+		{
+			// North-west
+			if (findJumpInDirection(board, playerColor, start, { -1, -1 }, info))
+			{
+				jumps.push_back(*info);
+				delete info;
+			}
+			// North-east
+			if (findJumpInDirection(board, playerColor, start, { 1, -1 }, info))
+			{
+				jumps.push_back(*info);
+				delete info;
+			}
+		}
+		// Check southern neighbors
+		if (piece->getColor() == kRed || piece->isKing())
+		{
+			// South-west
+			if (findJumpInDirection(board, playerColor, start, { -1, 1 }, info))
+			{
+				jumps.push_back(*info);
+				delete info;
+			}
+			// South-east
+			if (findJumpInDirection(board, playerColor, start, { 1, 1 }, info))
+			{
+				jumps.push_back(*info);
+				delete info;
+			}
+		}
+	}
+
+	return jumps;
+}
+
+bool findJumpInDirection(Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start, const sf::Vector2i& offset, JumpInfo*& outJump)
+{
+	CheckerSquare& from = board.board[start.y * 8 + start.x];
+	
+	sf::Vector2i jumpedIndex = start + offset;
+	if (jumpedIndex.x >= 0 && jumpedIndex.x < 8 && jumpedIndex.y >= 0 && jumpedIndex.y < 8)
+	{
+		CheckerSquare& jumped = board.board[jumpedIndex.y * 8 + jumpedIndex.x];
+		CheckerPiece* neighborPiece = jumped.getPiece();
+
+		// If there is an opponent's piece in the adjacent square, check if we can jump it
+		if (neighborPiece && neighborPiece->getColor() != playerColor)
+		{
+			sf::Vector2i toIndex = start + offset + offset;
+			if (toIndex.x >= 0 && toIndex.x < 8 && toIndex.y >= 0 && toIndex.y < 8)
+			{
+				CheckerSquare& to = board.board[toIndex.y * 8 + toIndex.x];
+
+				if (!to.getPiece())
+				{
+					outJump = new JumpInfo(from, to, jumped);
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+std::vector<MoveInfo> findAllValidMoves(Checkerboard& board, CheckerColor playerColor)
+{
+	std::vector<MoveInfo> moves;
+
+	for (auto& square : board.board)
+	{
+		std::vector<MoveInfo> squareMoves = findValidMoves(board, playerColor, square.getPositionOnBoard());
+		for (auto& info : squareMoves)
+		{
+			moves.push_back(info);
+		}
+	}
+
+	return moves;
+}
+
+std::vector<MoveInfo> findValidMoves(Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start)
+{
+	std::vector<MoveInfo> moves;
+
+	CheckerSquare& square = board.board[start.y * 8 + start.x];
+	CheckerPiece* piece = square.getPiece();
+	if (piece && piece->getColor() == playerColor)
+	{
+		MoveInfo* info = nullptr;
+		// Check northern neighbors
+		if (piece->getColor() == kBlack || piece->isKing())
+		{
+			// North-west
+			if (findMoveInDirection(board, playerColor, start, { -1, -1 }, info))
+			{
+				moves.push_back(*info);
+				delete info;
+			}
+			// North-east
+			if (findMoveInDirection(board, playerColor, start, { 1, -1 }, info))
+			{
+				moves.push_back(*info);
+				delete info;
+			}
+		}
+		// Check southern neighbors
+		if (piece->getColor() == kRed || piece->isKing())
+		{
+			// South-west
+			if (findMoveInDirection(board, playerColor, start, { -1, 1 }, info))
+			{
+				moves.push_back(*info);
+				delete info;
+			}
+			// South-east
+			if (findMoveInDirection(board, playerColor, start, { 1, 1 }, info))
+			{
+				moves.push_back(*info);
+				delete info;
+			}
+		}
+	}
+
+	return moves;
+}
+
+bool findMoveInDirection(Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start, const sf::Vector2i& offset, MoveInfo*& outMove)
+{
+	CheckerSquare& from = board.board[start.y * 8 + start.x];
+
+	sf::Vector2i toIndex = start + offset;
+	if (toIndex.x >= 0 && toIndex.x < 8 && toIndex.y >= 0 && toIndex.y < 8)
+	{
+		CheckerSquare& to = board.board[toIndex.y * 8 + toIndex.x];
+
+		if (!to.getPiece())
+		{
+			outMove = new MoveInfo(from, to);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*
 std::vector<JumpInfo> findValidJumps(CheckerSquare& square, CheckerColor playerColor)
 {
 	std::vector<JumpInfo> jumps;
@@ -141,6 +299,7 @@ CheckerSquare* findJumpSouthEast(CheckerSquare& from, CheckerColor playerColor)
 
 	return nullptr;
 }
+
 
 std::vector<MoveInfo> findAllValidMoves(Checkerboard& board, CheckerColor playerColor)
 {
@@ -270,4 +429,4 @@ CheckerSquare* findMoveSouthEast(CheckerSquare& from, CheckerColor playerColor)
 	}
 
 	return nullptr;
-}
+} */

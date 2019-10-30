@@ -12,6 +12,12 @@ CheckerPiece::CheckerPiece(CheckerColor color, const sf::Texture& manTexture, co
 	updateTexture();
 }
 
+void CheckerPiece::demote()
+{
+	m_rank = kMan;
+	updateTexture();
+}
+
 void CheckerPiece::promote()
 {
 	m_rank = kKing;

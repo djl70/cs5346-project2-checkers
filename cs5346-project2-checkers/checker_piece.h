@@ -19,6 +19,7 @@ class CheckerPiece
 public:
 	CheckerPiece(CheckerColor color, const sf::Texture& manTexture, const sf::Texture& kingTexture);
 
+	void demote();
 	void promote();
 	void setPosition(const sf::Vector2f& position);
 

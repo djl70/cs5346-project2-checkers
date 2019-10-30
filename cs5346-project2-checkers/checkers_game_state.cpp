@@ -4,7 +4,9 @@
 #include "game_over_state.h"
 #include "main_menu_state.h"
 
-#include "move_command.h"
+//#include "move_command.h"
+#include "ai_player.h"
+#include "human_player.h"
 
 CheckersGameState::CheckersGameState(ResourceManager& resources)
 	: m_resources{ resources }
@@ -50,11 +52,12 @@ void CheckersGameState::enter()
 	{
 		for (int c = 0; c < 8; ++c)
 		{
-			sf::Vector2f position{ config::boardTopLeft.x + config::kSquareWidth * c, config::boardTopLeft.y + config::kSquareWidth * r };
+			//sf::Vector2f position{ config::boardTopLeft.x + config::kSquareWidth * c, config::boardTopLeft.y + config::kSquareWidth * r };
 			if ((r + c) % 2 == 1)
 			{
 				CheckerSquare square(kBlackSquare);
-				square.setPosition(position);
+				//square.setPosition(position);
+				square.setPositionOnBoard({ c, r }, config::boardTopLeft);
 				m_board.board.push_back(square);
 				if (r < 3)
 				{
@@ -76,40 +79,9 @@ void CheckersGameState::enter()
 			else
 			{
 				CheckerSquare square(kRedSquare);
-				square.setPosition(position);
+				//square.setPosition(position);
+				square.setPositionOnBoard({ c, r }, config::boardTopLeft);
 				m_board.board.push_back(square);
-			}
-		}
-	}
-
-	// Set neighboring squares for black squares
-	for (int r = 0; r < 8; ++r)
-	{
-		for (int c = 0; c < 8; ++c)
-		{
-			if ((r + c) % 2 == 1)
-			{
-				CheckerSquare& square = m_board.board[r * 8 + c];
-
-				NeighboringSquares neighbors;
-				if (r > 0 && c > 0)
-				{
-					neighbors.pNeighborNorthWest = &m_board.board[(r - 1) * 8 + (c - 1)];
-				}
-				if (r > 0 && c < 7)
-				{
-					neighbors.pNeighborNorthEast = &m_board.board[(r - 1) * 8 + (c + 1)];
-				}
-				if (r < 7 && c > 0)
-				{
-					neighbors.pNeighborSouthWest = &m_board.board[(r + 1) * 8 + (c - 1)];
-				}
-				if (r < 7 && c < 7)
-				{
-					neighbors.pNeighborSouthEast = &m_board.board[(r + 1) * 8 + (c + 1)];
-				}
-
-				square.setNeighbors(neighbors);
 			}
 		}
 	}
@@ -119,24 +91,27 @@ void CheckersGameState::enter()
 	{
 		for (int c = 0; c < 3; ++c)
 		{
-			sf::Vector2f redPosition{ config::capturedRedTopLeft.x + config::kSquareWidth * c, config::capturedRedTopLeft.y + config::kSquareWidth * r };
+			//sf::Vector2f redPosition{ config::capturedRedTopLeft.x + config::kSquareWidth * c, config::capturedRedTopLeft.y + config::kSquareWidth * r };
 			CheckerSquare redSquare(kCapturedRed);
-			redSquare.setPosition(redPosition);
+			redSquare.setPositionOnBoard({ c, r }, config::capturedRedTopLeft);
 			m_board.capturedRedSquares.push_back(redSquare);
 
-			sf::Vector2f blackPosition{ config::capturedBlackTopLeft.x + config::kSquareWidth * c, config::capturedBlackTopLeft.y + config::kSquareWidth * r };
+			//sf::Vector2f blackPosition{ config::capturedBlackTopLeft.x + config::kSquareWidth * c, config::capturedBlackTopLeft.y + config::kSquareWidth * r };
 			CheckerSquare blackSquare(kCapturedBlack);
-			blackSquare.setPosition(blackPosition);
+			blackSquare.setPositionOnBoard({ c, r }, config::capturedBlackTopLeft);
 			m_board.capturedBlackSquares.push_back(blackSquare);
 		}
 	}
 
-	//m_selectionProgress = kNoCheckerSelected;
-	//m_selectedPiece = -1;
-	m_pSelectedSquare = nullptr;
-	m_validMoveIsJump = false;
-	m_jumpIsPossible = false;
-	// m_jumpAgain = false;
+	m_players[0] = new HumanPlayer(kBlack);
+	m_players[0]->setResources(&m_resources);
+	m_players[0]->setBoard(&m_board);
+	m_players[1] = new AIPlayer(kRed);
+	m_players[1]->setResources(&m_resources);
+	m_players[1]->setBoard(&m_board);
+
+	m_currentPlayer = 0;
+	m_players[m_currentPlayer]->takeTurn();
 }
 
 BaseState* CheckersGameState::event()
@@ -155,218 +130,38 @@ BaseState* CheckersGameState::event()
 				return new MainMenuState(m_resources);
 			}
 			break;
-		case sf::Event::MouseButtonPressed:
-			// For testing purposes, capture all 5 pieces around the right mouse click
-			if (event.mouseButton.button == sf::Mouse::Button::Right)
-			{
-				CheckerSquare* clickedSquare = getClickedSquare();
-				if (clickedSquare)
-				{
-					capturePieceFromSquare(*clickedSquare);
-					NeighboringSquares neighbors = clickedSquare->getNeighbors();
-					if (neighbors.pNeighborNorthEast)
-					{
-						capturePieceFromSquare(*neighbors.pNeighborNorthEast);
-					}
-					if (neighbors.pNeighborNorthWest)
-					{
-						capturePieceFromSquare(*neighbors.pNeighborNorthWest);
-					}
-					if (neighbors.pNeighborSouthEast)
-					{
-						capturePieceFromSquare(*neighbors.pNeighborSouthEast);
-					}
-					if (neighbors.pNeighborSouthWest)
-					{
-						capturePieceFromSquare(*neighbors.pNeighborSouthWest);
-					}
-				}
-			}
-			// For testing purposes, perform automatic movements on left mouse click
-			/*else if (event.mouseButton.button == sf::Mouse::Button::Left)
-			{
-				CheckerSquare* clickedSquare = getClickedSquare();
-				if (clickedSquare)
-				{
-					CheckerPiece* piece = clickedSquare->getPiece();
-					if (piece)
-					{
-						// Move to one of the neighbors, if possible
-						std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, piece->getColor());
-						if (!moves.empty())
-						{
-							Command* pCommand = new MoveCommand(m_board, moves[0]);
-							pCommand->execute();
-							m_commands.push(pCommand);
-
-							// Now, we'll have the other color move once
-							moves = findAllValidMoves(m_board, piece->getColor() == kRed ? kBlack : kRed);
-							if (!moves.empty())
-							{
-								pCommand = new MoveCommand(m_board, moves[0]);
-								pCommand->execute();
-								m_commands.push(pCommand);
-							}
-						}
-					}
-				}
-			}*/
-			// Player can only move black
-			// If no square is selected, highlight the clicked square and the potential moves
-			// If a square is selected, check if it would be a valid move from the selected square
-			// TODO: If a jump is possible, force it. On a jump, remove the jumped piece. After a jump, check for other possible jumps and force them.
-			else if (event.mouseButton.button == sf::Mouse::Button::Left)
-			{
-				bool clearSelectedSquare = true;
-				bool moved = false;
-				bool jumped = false;
-				CheckerSquare* clickedSquare = getClickedSquare();
-				if (clickedSquare)
-				{
-					// Determine if a jump is at all possible
-					m_jumpIsPossible = !findAllValidJumps(m_board, kBlack).empty();
-
-					CheckerPiece* piece = clickedSquare->getPiece();
-					// New selection
-					//if (!m_pSelectedSquare && piece && piece->getColor() == kBlack)
-					if (piece && piece->getColor() == kBlack)
-					{
-						// First, check if a jump is possible
-						std::vector<JumpInfo> jumps = findValidJumps(*clickedSquare, kBlack);
-						if (jumps.empty() && !m_jumpIsPossible)
-						{
-							// No jump possible; check moves
-							std::vector<MoveInfo> moves = findValidMoves(*clickedSquare, kBlack);
-							// if (!moves.empty())
-							// {
-							m_validMovesFromSelectedSquare.clear();
-							for (auto& info : moves)
-							{
-								m_validMovesFromSelectedSquare.push_back(&info.to);
-							}
-							m_pSelectedSquare = clickedSquare;
-							m_validMoveIsJump = false;
-							clearSelectedSquare = false;
-							// }
-						}
-						else
-						{
-							// A jump is possible, so force it
-							m_validMovesFromSelectedSquare.clear();
-							for (auto& info : jumps)
-							{
-								m_validMovesFromSelectedSquare.push_back(&info.to);
-							}
-							m_pSelectedSquare = clickedSquare;
-							m_validMoveIsJump = true;
-							clearSelectedSquare = false;
-						}
-					}
-					// Attempt to perform a move
-					else if (m_pSelectedSquare && !piece)
-					{
-						for (CheckerSquare* square : m_validMovesFromSelectedSquare)
-						{
-							if (square == clickedSquare)
-							{
-								if (m_validMoveIsJump)
-								{
-									m_jumpSound.play();
-
-									// Figure out which square is being jumped
-									CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *square);
-									Command* pCommand = new JumpCommand(m_board, { *m_pSelectedSquare, *square, *jumpedSquare });
-									pCommand->execute();
-									m_commands.push(pCommand);
-									m_pSelectedSquare = nullptr;
-									m_validMovesFromSelectedSquare.clear();
-									m_validMoveIsJump = false;
-									jumped = true;
-								}
-								else
-								{
-									m_moveSound.play();
-
-									Command* pCommand = new MoveCommand(m_board, { *m_pSelectedSquare, *square });
-									pCommand->execute();
-									m_commands.push(pCommand);
-									m_pSelectedSquare = nullptr;
-									m_validMovesFromSelectedSquare.clear();
-									m_validMoveIsJump = false;
-									moved = true;
-								}
-								break;
-							}
-						}
-					}
-				}
-
-				if (clearSelectedSquare)
-				{
-					m_validMovesFromSelectedSquare.clear();
-					m_pSelectedSquare = nullptr;
-				}
-
-				if (jumped)
-				{
-					// Check if another jump is possible; if not, continue to the opponent's turn
-					m_jumpIsPossible = !findAllValidJumps(m_board, kBlack).empty();
-					m_validMoveIsJump = m_jumpIsPossible;
-					moved = !m_jumpIsPossible;
-				}
-
-				// Opponent's turn
-				if (moved)
-				{
-					std::vector<MoveInfo> moves = findAllValidMoves(m_board, kRed);
-					if (!moves.empty())
-					{
-						bool didJump;
-						do
-						{
-							Command* pCommand = performRandomMovement(didJump);
-							pCommand->execute();
-							m_commands.push(pCommand);
-
-							if (didJump)
-							{
-								m_jumpSound.play();
-							}
-							else
-							{
-								m_moveSound.play();
-							}
-						} while (didJump && !findAllValidJumps(m_board, kRed).empty());
-
-						// Red wins if black cannot move
-						if (findAllValidMoves(m_board, kBlack).empty())
-						{
-							return new GameOverState(m_resources, kRed);
-						}
-					}
-					// Black wins if red cannot move
-					else
-					{
-						return new GameOverState(m_resources, kBlack);
-					}
-				}
-			}
-			// Undo the previous command when middle mouse button pressed
-			else if (event.mouseButton.button == sf::Mouse::Button::Middle)
-			{
-				if (!m_commands.empty())
-				{
-					Command* pCommand = m_commands.top();
-					m_commands.pop();
-					pCommand->undo();
-					delete pCommand;
-				}
-			}
-			break;
+		//case sf::Event::MouseButtonPressed:
+		//	// Undo the previous command when right mouse button pressed
+		//	if (event.mouseButton.button == sf::Mouse::Button::Right)
+		//	{
+		//		if (!m_commands.empty())
+		//		{
+		//			Command* pCommand = m_commands.top();
+		//			m_commands.pop();
+		//			pCommand->undo();
+		//			delete pCommand;
+		//		}
+		//	}
+		//	break;
 		}
+
+		m_players.at(m_currentPlayer)->event(event);
 	}
 
-	// TODO: Remove this because it is redundant
+	Command* pCommand = m_players.at(m_currentPlayer)->update();
+	if (pCommand)
+	{
+		pCommand->execute();
+		m_commands.push(pCommand);
+		m_moveSound.play();
+	}
+
+	if (!m_players.at(m_currentPlayer)->isTurn())
+	{
+		m_currentPlayer = (m_currentPlayer + 1) % 2;
+		m_players.at(m_currentPlayer)->takeTurn();
+	}
+
 	CheckerColor winningColor;
 	if (isGameOver(winningColor))
 	{
@@ -385,7 +180,7 @@ void CheckersGameState::render()
 	// Draw game board
 	for (auto& square : m_board.board)
 	{
-		if (&square == m_pSelectedSquare) { continue; }
+		/*if (&square == m_pSelectedSquare) { continue; }
 		bool drawLater = false;
 		for (CheckerSquare* valid : m_validMovesFromSelectedSquare)
 		{
@@ -398,27 +193,28 @@ void CheckersGameState::render()
 		if (!drawLater)
 		{
 			square.render(m_resources.getWindow(), false);
-		}
+		}*/
+		square.render(m_resources.getWindow());
 	}
 
 	// Draw selected squares later to draw them on top
-	if (m_pSelectedSquare)
+	/*if (m_pSelectedSquare)
 	{
 		for (CheckerSquare* valid : m_validMovesFromSelectedSquare)
 		{
 			valid->render(m_resources.getWindow(), true);
 		}
 		m_pSelectedSquare->render(m_resources.getWindow(), true);
-	}
+	}*/
 
 	for (auto& square : m_board.capturedRedSquares)
 	{
-		square.render(m_resources.getWindow(), false);
+		square.render(m_resources.getWindow());
 	}
 
 	for (auto& square : m_board.capturedBlackSquares)
 	{
-		square.render(m_resources.getWindow(), false);
+		square.render(m_resources.getWindow());
 	}
 
 	// Draw pieces
@@ -426,6 +222,8 @@ void CheckersGameState::render()
 	//{
 	//	piece.render(resources::pWindow);
 	//}
+
+	m_players[m_currentPlayer]->render(m_resources.getWindow());
 
 	m_resources.getWindow()->display();
 }
@@ -437,6 +235,9 @@ void CheckersGameState::exit()
 		delete m_commands.top();
 		m_commands.pop();
 	}
+
+	delete m_players[0];
+	delete m_players[1];
 
 	while (m_moveSound.getStatus() == sf::Sound::Status::Playing)
 	{
@@ -451,8 +252,9 @@ void CheckersGameState::exit()
 	m_jumpSound.resetBuffer();
 }
 
-bool CheckersGameState::isGameOver(CheckerColor& outWinningColor) const
+bool CheckersGameState::isGameOver(CheckerColor& outWinningColor)
 {
+	/*
 	// Check for black win
 	bool isBlackWin = true;
 	for (const auto& square : m_board.capturedRedSquares)
@@ -486,9 +288,23 @@ bool CheckersGameState::isGameOver(CheckerColor& outWinningColor) const
 	}
 
 	return false;
+	*/
+
+	if (findAllValidMoves(m_board, kRed).empty())
+	{
+		outWinningColor = kBlack;
+		return true;
+	}
+	else if (findAllValidMoves(m_board, kBlack).empty())
+	{
+		outWinningColor = kRed;
+		return true;
+	}
+
+	return false;
 }
 
-CheckerSquare* CheckersGameState::getClickedSquare()
+/*CheckerSquare* CheckersGameState::getClickedSquare()
 {
 	int clickedSquare = -1;
 	for (int i = 0; i < m_board.board.size(); ++i)
@@ -577,6 +393,14 @@ CheckerSquare* CheckersGameState::findJumpedSquare(CheckerSquare& from, CheckerS
 
 	// Something went wrong at this point
 	throw ("Error: Could not identify jumped square");
+
+	sf::Vector2i toCoord = to.getPositionOnBoard();
+	sf::Vector2i fromCoord = from.getPositionOnBoard();
+	sf::Vector2i diff = toCoord - fromCoord;
+	sf::Vector2i half = diff / 2;
+	sf::Vector2i jumpedCoord = fromCoord + half;
+	int index = jumpedCoord.y * 8 + jumpedCoord.x;
+	return &m_board.board.at(index);
 }
 
 Command* CheckersGameState::performRandomMovement(bool& didJump)
@@ -593,4 +417,4 @@ Command* CheckersGameState::performRandomMovement(bool& didJump)
 	std::vector<MoveInfo> moves = findAllValidMoves(m_board, kRed);
 	didJump = false;
 	return new MoveCommand(m_board, moves[0]);
-}
+}*/

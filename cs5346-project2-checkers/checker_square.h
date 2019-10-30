@@ -14,13 +14,13 @@ enum CheckerSquareType
 
 class CheckerSquare;
 
-struct NeighboringSquares
+/*struct NeighboringSquares
 {
 	CheckerSquare* pNeighborNorthWest = nullptr;
 	CheckerSquare* pNeighborNorthEast = nullptr;
 	CheckerSquare* pNeighborSouthWest = nullptr;
 	CheckerSquare* pNeighborSouthEast = nullptr;
-};
+};*/
 
 class CheckerSquare
 {
@@ -28,27 +28,34 @@ public:
 	CheckerSquare(CheckerSquareType type);
 
 	void setPromotionColor(CheckerColor color);
-	void setPosition(const sf::Vector2f& position);
+	void setPositionOnBoard(const sf::Vector2i& coords, const sf::Vector2f& referencePoint);
 	void setPiece(CheckerPiece* piece);
 
-	void setNeighbors(const NeighboringSquares& neighbors);
-	NeighboringSquares getNeighbors() const;
+	//void setNeighbors(const NeighboringSquares& neighbors);
+	//NeighboringSquares getNeighbors() const;
 
+	bool promotesColor(CheckerColor color) const;
+	sf::Vector2i getPositionOnBoard() const;
 	bool isEmpty() const;
 	CheckerPiece* getPiece();
 	bool contains(const sf::Vector2f& point) const;
 
-	void render(sf::RenderWindow* pWindow, bool highlight);// const;
+	void render(sf::RenderWindow* pWindow) const;
+	void renderHighlight(sf::RenderWindow* pWindow) const;
 
 private:
 	CheckerSquareType m_type;
 	sf::FloatRect m_rect;
+	sf::Vector2i m_positionOnBoard;
 	bool m_interactable;
 	CheckerPiece* m_piece;
 	bool m_isKingRow;
 	CheckerColor m_promoteColor;
 
-	NeighboringSquares m_neighbors;
+	//NeighboringSquares m_neighbors;
 
 	sf::RectangleShape m_shape;
+	sf::RectangleShape m_highlightShape;
+
+	void setPosition(const sf::Vector2f& position);
 };

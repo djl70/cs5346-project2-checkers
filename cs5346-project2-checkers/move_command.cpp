@@ -5,6 +5,7 @@
 MoveInfo::MoveInfo(CheckerSquare& from, CheckerSquare& to)
 	: from{ from }
 	, to{ to }
+	, promoted{ from.getPiece() && !from.getPiece()->isKing() && to.promotesColor(from.getPiece()->getColor()) }
 {
 
 }
@@ -41,4 +42,9 @@ void MoveCommand::undo()
 	CheckerPiece* fromPiece = m_info.to.getPiece();
 	m_info.from.setPiece(fromPiece);
 	m_info.to.setPiece(nullptr);
+
+	if (m_info.promoted)
+	{
+		fromPiece->demote();
+	}
 }

@@ -10,6 +10,7 @@ struct MoveInfo
 	MoveInfo(CheckerSquare& from, CheckerSquare& to);
 	CheckerSquare& from;
 	CheckerSquare& to;
+	bool promoted;
 };
 
 class MoveCommand : public Command

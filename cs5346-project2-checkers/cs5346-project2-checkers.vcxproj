@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ai_player.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="checkerboard.cpp" />
     <ClCompile Include="checkers_game_engine.cpp" />
@@ -139,14 +140,17 @@
     <ClCompile Include="checker_square.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="game_over_state.cpp" />
+    <ClCompile Include="human_player.cpp" />
     <ClCompile Include="jump_command.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_state.cpp" />
     <ClCompile Include="move_command.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="player_configuration_menu_state.cpp" />
     <ClCompile Include="resource_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ai_player.h" />
     <ClInclude Include="base_state.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="checkerboard.h" />
@@ -157,9 +161,11 @@
     <ClInclude Include="command.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="game_over_state.h" />
+    <ClInclude Include="human_player.h" />
     <ClInclude Include="jump_command.h" />
     <ClInclude Include="main_menu_state.h" />
     <ClInclude Include="move_command.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="player_configuration_menu_state.h" />
     <ClInclude Include="resource_manager.h" />
   </ItemGroup>

@@ -11,6 +11,7 @@ struct JumpInfo
 	CheckerSquare& from;
 	CheckerSquare& to;
 	CheckerSquare& jumped;
+	bool promoted;
 };
 
 class JumpCommand : public Command

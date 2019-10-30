@@ -22,6 +22,10 @@ CheckerSquare::CheckerSquare(CheckerSquareType type)
 		break;
 	}
 	m_shape.setFillColor(fillColor);
+
+	m_highlightShape.setFillColor(sf::Color::Transparent);
+	m_highlightShape.setOutlineColor(sf::Color::White);
+	m_highlightShape.setOutlineThickness(config::kSquareWidth * 0.05f);
 }
 
 void CheckerSquare::setPromotionColor(CheckerColor color)
@@ -30,11 +34,13 @@ void CheckerSquare::setPromotionColor(CheckerColor color)
 	m_isKingRow = true;
 }
 
-void CheckerSquare::setPosition(const sf::Vector2f& position)
+void CheckerSquare::setPositionOnBoard(const sf::Vector2i& coords, const sf::Vector2f& referencePoint)
 {
-	m_rect = { position.x, position.y, config::kSquareWidth, config::kSquareWidth };
-	m_shape.setPosition({ m_rect.left, m_rect.top });
-	m_shape.setSize({ m_rect.width, m_rect.height });
+	m_positionOnBoard = coords;
+	setPosition({
+		referencePoint.x + coords.x * config::kSquareWidth,
+		referencePoint.y + coords.y * config::kSquareWidth
+	});
 }
 
 void CheckerSquare::setPiece(CheckerPiece* piece)
@@ -50,7 +56,7 @@ void CheckerSquare::setPiece(CheckerPiece* piece)
 	}
 }
 
-void CheckerSquare::setNeighbors(const NeighboringSquares& neighbors)
+/*void CheckerSquare::setNeighbors(const NeighboringSquares& neighbors)
 {
 	m_neighbors = neighbors;
 }
@@ -58,6 +64,16 @@ void CheckerSquare::setNeighbors(const NeighboringSquares& neighbors)
 NeighboringSquares CheckerSquare::getNeighbors() const
 {
 	return m_neighbors;
+}*/
+
+bool CheckerSquare::promotesColor(CheckerColor color) const
+{
+	return m_isKingRow && m_promoteColor == color;
+}
+
+sf::Vector2i CheckerSquare::getPositionOnBoard() const
+{
+	return m_positionOnBoard;
 }
 
 bool CheckerSquare::isEmpty() const
@@ -75,20 +91,26 @@ bool CheckerSquare::contains(const sf::Vector2f& point) const
 	return m_interactable && m_rect.contains(point);
 }
 
-void CheckerSquare::render(sf::RenderWindow* pWindow, bool highlight)
+void CheckerSquare::render(sf::RenderWindow* pWindow) const
 {
-	if (highlight)
-	{
-		m_shape.setOutlineThickness(config::kSquareWidth * 0.05f);
-		m_shape.setOutlineColor(sf::Color::White);
-	}
-	else
-	{
-		m_shape.setOutlineThickness(0.0f);
-	}
 	pWindow->draw(m_shape);
 	if (m_piece)
 	{
 		m_piece->render(pWindow);
 	}
+}
+
+void CheckerSquare::renderHighlight(sf::RenderWindow* pWindow) const
+{
+	pWindow->draw(m_highlightShape);
+}
+
+void CheckerSquare::setPosition(const sf::Vector2f& position)
+{
+	m_rect = { position.x, position.y, config::kSquareWidth, config::kSquareWidth };
+	m_shape.setPosition({ m_rect.left, m_rect.top });
+	m_shape.setSize({ m_rect.width, m_rect.height });
+
+	m_highlightShape.setPosition(m_shape.getPosition());
+	m_highlightShape.setSize(m_shape.getSize());
 }

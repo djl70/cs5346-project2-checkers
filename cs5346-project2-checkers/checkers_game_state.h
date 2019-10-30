@@ -9,10 +9,12 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <array>
 #include <stack>
 #include <vector>
 
 class Command;
+class Player;
 
 class CheckersGameState : public BaseState
 {
@@ -39,18 +41,21 @@ private:
 	//std::vector<CheckerSquare> m_capturedRedSquares;
 	//std::vector<CheckerSquare> m_capturedBlackSquares;
 
-	CheckerSquare* m_pSelectedSquare;
-	std::vector<CheckerSquare*> m_validMovesFromSelectedSquare;
-	bool m_jumpIsPossible;
-	bool m_validMoveIsJump;
-	// bool m_jumpAgain;
+	int m_currentPlayer;
+	std::array<Player*, 2> m_players;
+
+	//CheckerSquare* m_pSelectedSquare;
+	//std::vector<CheckerSquare*> m_validMovesFromSelectedSquare;
+	//bool m_jumpIsPossible;
+	//bool m_validMoveIsJump;
+	//// bool m_jumpAgain;
 	std::stack<Command*> m_commands;
 
-	bool isGameOver(CheckerColor& outWinningColor) const;
-	CheckerSquare* getClickedSquare();
+	bool isGameOver(CheckerColor& outWinningColor);
+	/*CheckerSquare* getClickedSquare();
 	bool capturePieceFromSquare(CheckerSquare& square);
 	CheckerSquare* findJumpedSquare(CheckerSquare& from, CheckerSquare& to);
-	Command* performRandomMovement(bool& didJump);
+	Command* performRandomMovement(bool& didJump);*/
 
 	/*enum CheckerSelectionProgress
 	{

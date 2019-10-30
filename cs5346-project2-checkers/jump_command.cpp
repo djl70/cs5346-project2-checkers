@@ -6,6 +6,7 @@ JumpInfo::JumpInfo(CheckerSquare& from, CheckerSquare& to, CheckerSquare& jumped
 	: from{ from }
 	, to{ to }
 	, jumped{ jumped }
+	, promoted{ from.getPiece() && !from.getPiece()->isKing() && to.promotesColor(from.getPiece()->getColor()) }
 {
 
 }
@@ -72,4 +73,8 @@ void JumpCommand::undo()
 	CheckerPiece* jumpedPiece = m_capturedSquare->getPiece();
 	m_info.jumped.setPiece(jumpedPiece);
 	m_capturedSquare->setPiece(nullptr);
+	if (m_info.promoted)
+	{
+		fromPiece->demote();
+	}
 }
