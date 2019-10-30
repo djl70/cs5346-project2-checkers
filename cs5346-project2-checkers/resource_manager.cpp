@@ -26,13 +26,13 @@ sf::RenderWindow* ResourceManager::getWindow()
 	return m_pWindow;
 }
 
-const sf::Texture& ResourceManager::getTexture(const std::string& name) const
+sf::Texture* ResourceManager::getTexture(const std::string& name)
 {
-	return m_textures.at(name);
+	return &m_textures.at(name);
 }
-const sf::SoundBuffer& ResourceManager::getSound(const std::string& name) const
+sf::SoundBuffer* ResourceManager::getSound(const std::string& name)
 {
-	return m_soundBuffers.at(name);
+	return &m_soundBuffers.at(name);
 }
 /*void ResourceManager::playSound(const std::string& name)
 {

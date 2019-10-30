@@ -10,7 +10,7 @@
 class GameOverState : public BaseState
 {
 public:
-	GameOverState(ResourceManager& resources, CheckerColor winningColor);
+	GameOverState(ResourceManager* pResources, CheckerColor winningColor);
 
 	void enter() override;
 	BaseState* event() override;
@@ -18,7 +18,7 @@ public:
 	void exit() override;
 
 private:
-	ResourceManager& m_resources;
+	ResourceManager* m_pResources;
 	CheckerPiece m_piece;
 	sf::Sprite m_background;
 	sf::Sprite m_winnerText;

@@ -37,6 +37,12 @@
     <Filter Include="Source Files\Players">
       <UniqueIdentifier>{86b2b9c0-a786-44c2-b670-54c1d97cd5d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Buttons">
+      <UniqueIdentifier>{dd32a3c6-a39c-429b-84d4-60bc4e02830d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Buttons">
+      <UniqueIdentifier>{ec1243a4-4279-4f1f-ad8a-c1562daf10d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -52,9 +58,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="checker_square.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main_menu_state.cpp">
@@ -93,6 +96,15 @@
     <ClCompile Include="full_move_command.cpp">
       <Filter>Source Files\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="button.cpp">
+      <Filter>Source Files\Buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="toggle_button.cpp">
+      <Filter>Source Files\Buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="toggle_button_group.cpp">
+      <Filter>Source Files\Buttons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h">
@@ -108,9 +120,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="checker_square.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main_menu_state.h">
@@ -151,6 +160,15 @@
     </ClInclude>
     <ClInclude Include="full_move_command.h">
       <Filter>Header Files\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="button.h">
+      <Filter>Header Files\Buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="toggle_button.h">
+      <Filter>Header Files\Buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="toggle_button_group.h">
+      <Filter>Header Files\Buttons</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

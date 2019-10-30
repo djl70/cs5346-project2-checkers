@@ -2,13 +2,13 @@
 
 #include "base_state.h"
 #include "resource_manager.h"
+#include "toggle_button_group.h"
 
-//class Player;
 
 class PlayerConfigurationMenuState : public BaseState
 {
 public:
-	PlayerConfigurationMenuState(ResourceManager& resources, unsigned int aiPlayerCount);
+	PlayerConfigurationMenuState(ResourceManager* pResources, unsigned int aiPlayerCount);
 
 	void enter() override;
 	BaseState* event() override;
@@ -16,8 +16,12 @@ public:
 	void exit() override;
 
 private:
-	ResourceManager& m_resources;
+	ResourceManager* m_pResources;
 	unsigned int m_aiPlayerCount;
-	//Player* m_pBlackPlayer;
-	//Player* m_pRedPlayer;
+	sf::Sprite m_background;
+	sf::Sprite m_title;
+	ToggleButtonGroup m_algorithmButtons;
+	ToggleButtonGroup m_heuristicButtons;
+	Button m_startGameButton;
+	Button m_mainMenuButton;
 };

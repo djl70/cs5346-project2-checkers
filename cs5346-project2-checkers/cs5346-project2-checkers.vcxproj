@@ -149,6 +149,8 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player_configuration_menu_state.cpp" />
     <ClCompile Include="resource_manager.cpp" />
+    <ClCompile Include="toggle_button.cpp" />
+    <ClCompile Include="toggle_button_group.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ai_player.h" />
@@ -170,6 +172,8 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="player_configuration_menu_state.h" />
     <ClInclude Include="resource_manager.h" />
+    <ClInclude Include="toggle_button.h" />
+    <ClInclude Include="toggle_button_group.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

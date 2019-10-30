@@ -12,8 +12,8 @@ public:
 	bool setup(sf::RenderWindow* pWindow);
 
 	sf::RenderWindow* getWindow();
-	const sf::Texture& getTexture(const std::string& name) const;
-	const sf::SoundBuffer& getSound(const std::string& name) const;
+	sf::Texture* getTexture(const std::string& name);
+	sf::SoundBuffer* getSound(const std::string& name);
 	// void playSound(const std::string& name);
 
 private:

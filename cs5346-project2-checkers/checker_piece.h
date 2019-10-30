@@ -17,7 +17,7 @@ enum CheckerRank
 class CheckerPiece
 {
 public:
-	CheckerPiece(CheckerColor color, const sf::Texture& manTexture, const sf::Texture& kingTexture);
+	CheckerPiece(CheckerColor color, sf::Texture* manTexture, sf::Texture* kingTexture);
 
 	void demote();
 	void promote();
@@ -33,8 +33,8 @@ private:
 	CheckerColor m_color;
 	CheckerRank m_rank;
 	sf::Vector2f m_position;
-	const sf::Texture& m_manTexture;
-	const sf::Texture& m_kingTexture;
+	sf::Texture* m_manTexture;
+	sf::Texture* m_kingTexture;
 	sf::Sprite m_sprite;
 
 	void updateTexture();

@@ -2,18 +2,34 @@
 
 #include "checkers_game_state.h"
 #include "config.h"
+#include "player_configuration_menu_state.h"
 
-MainMenuState::MainMenuState(ResourceManager& resources)
-	: m_resources{ resources }
-	, m_singlePlayerButton{ config::singlePlayerButtonRect, m_resources.getTexture("button_singleplayer"), m_resources.getTexture("button_singleplayer_hover"), m_resources.getTexture("button_singleplayer_press"), m_resources.getSound("sound_move") }
-	, m_multiPlayerButton{ config::multiPlayerButtonRect, m_resources.getTexture("button_multiplayer"), m_resources.getTexture("button_multiplayer_hover"), m_resources.getTexture("button_multiplayer_press"), m_resources.getSound("sound_move") }
-	, m_autoPlayButton{ config::autoPlayButtonRect, m_resources.getTexture("button_autoplay"), m_resources.getTexture("button_autoplay_hover"), m_resources.getTexture("button_autoplay_press"), m_resources.getSound("sound_move") }
+MainMenuState::MainMenuState(ResourceManager* resources)
+	: m_pResources{ resources }
 {
+	m_multiPlayerButton.setRect(config::multiPlayerButtonRect);
+	m_multiPlayerButton.setTexture(kDefault, m_pResources->getTexture("button_multiplayer"));
+	m_multiPlayerButton.setTexture(kHovered, m_pResources->getTexture("button_multiplayer_hover"));
+	m_multiPlayerButton.setTexture(kPressed, m_pResources->getTexture("button_multiplayer_press"));
+	m_multiPlayerButton.setClickSound(m_pResources->getSound("sound_move"));
+
+	m_singlePlayerButton.setRect(config::singlePlayerButtonRect);
+	m_singlePlayerButton.setTexture(kDefault, m_pResources->getTexture("button_singleplayer"));
+	m_singlePlayerButton.setTexture(kHovered, m_pResources->getTexture("button_singleplayer_hover"));
+	m_singlePlayerButton.setTexture(kPressed, m_pResources->getTexture("button_singleplayer_press"));
+	m_singlePlayerButton.setClickSound(m_pResources->getSound("sound_move"));
+
+	m_autoPlayButton.setRect(config::autoPlayButtonRect);
+	m_autoPlayButton.setTexture(kDefault, m_pResources->getTexture("button_autoplay"));
+	m_autoPlayButton.setTexture(kHovered, m_pResources->getTexture("button_autoplay_hover"));
+	m_autoPlayButton.setTexture(kPressed, m_pResources->getTexture("button_autoplay_press"));
+	m_autoPlayButton.setClickSound(m_pResources->getSound("sound_move"));
+
 	m_title.setPosition({ config::titleRect.left, config::titleRect.top });
-	m_title.setTexture(m_resources.getTexture("title"));
+	m_title.setTexture(*m_pResources->getTexture("title"));
 	m_title.setScale({ config::kScaling, config::kScaling });
 
-	m_background.setTexture(m_resources.getTexture("plain_background"));
+	m_background.setTexture(*m_pResources->getTexture("plain_background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
 
 	//m_buttonClick.setBuffer(resources::sounds["sound_move"]);
@@ -26,32 +42,37 @@ void MainMenuState::enter()
 
 BaseState* MainMenuState::event()
 {
-	sf::Vector2f mousePositionInWindow = static_cast<sf::Vector2f>(sf::Mouse::getPosition(*m_resources.getWindow()));
+	sf::Vector2f mousePositionInWindow = static_cast<sf::Vector2f>(sf::Mouse::getPosition(*m_pResources->getWindow()));
 
 	sf::Event event;
-	while (m_resources.getWindow()->pollEvent(event))
+	while (m_pResources->getWindow()->pollEvent(event))
 	{
 		switch (event.type)
 		{
 		case sf::Event::Closed:
-			m_resources.getWindow()->close();
+			m_pResources->getWindow()->close();
 			break;
+		}
+
+		if (m_multiPlayerButton.update(event, mousePositionInWindow))
+		{
+			//m_buttonClick.play();
+			return new CheckersGameState{ m_pResources };
+			//return new PlayerConfigurationMenuState{ m_resources, 0 };
 		}
 
 		if (m_singlePlayerButton.update(event, mousePositionInWindow))
 		{
 			//m_buttonClick.play();
-			return new CheckersGameState(m_resources);
+			//return new CheckersGameState(m_resources);
+			return new PlayerConfigurationMenuState{ m_pResources, 1 };
 		}
-		else if (m_multiPlayerButton.update(event, mousePositionInWindow))
+		
+		if (m_autoPlayButton.update(event, mousePositionInWindow))
 		{
 			//m_buttonClick.play();
-			return new CheckersGameState(m_resources);
-		}
-		else if (m_autoPlayButton.update(event, mousePositionInWindow))
-		{
-			//m_buttonClick.play();
-			return new CheckersGameState(m_resources);
+			//return new CheckersGameState(m_resources);
+			return new PlayerConfigurationMenuState{ m_pResources, 2 };
 		}
 	}
 
@@ -60,17 +81,17 @@ BaseState* MainMenuState::event()
 
 void MainMenuState::render()
 {
-	m_resources.getWindow()->clear(sf::Color::White);
+	m_pResources->getWindow()->clear(sf::Color::White);
 
-	m_resources.getWindow()->draw(m_background);
+	m_pResources->getWindow()->draw(m_background);
 
 	// Draw title and buttons
-	m_resources.getWindow()->draw(m_title);
-	m_singlePlayerButton.render(m_resources.getWindow());
-	m_multiPlayerButton.render(m_resources.getWindow());
-	m_autoPlayButton.render(m_resources.getWindow());
+	m_pResources->getWindow()->draw(m_title);
+	m_multiPlayerButton.render(m_pResources->getWindow());
+	m_singlePlayerButton.render(m_pResources->getWindow());
+	m_autoPlayButton.render(m_pResources->getWindow());
 
-	m_resources.getWindow()->display();
+	m_pResources->getWindow()->display();
 }
 
 void MainMenuState::exit()

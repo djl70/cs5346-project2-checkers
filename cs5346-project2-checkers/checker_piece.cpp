@@ -2,7 +2,7 @@
 
 #include "config.h"
 
-CheckerPiece::CheckerPiece(CheckerColor color, const sf::Texture& manTexture, const sf::Texture& kingTexture)
+CheckerPiece::CheckerPiece(CheckerColor color, sf::Texture* manTexture, sf::Texture* kingTexture)
 	: m_color{ color }
 	, m_rank{ kMan }
 	, m_manTexture{ manTexture }
@@ -67,10 +67,10 @@ void CheckerPiece::updateTexture()
 	switch (m_rank)
 	{
 	case kMan:
-		m_sprite.setTexture(m_manTexture);
+		m_sprite.setTexture(*m_manTexture);
 		break;
 	case kKing:
-		m_sprite.setTexture(m_kingTexture);
+		m_sprite.setTexture(*m_kingTexture);
 		break;
 	}
 }

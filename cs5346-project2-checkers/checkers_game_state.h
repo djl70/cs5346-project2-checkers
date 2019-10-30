@@ -19,7 +19,7 @@ class Player;
 class CheckersGameState : public BaseState
 {
 public:
-	CheckersGameState(ResourceManager& resources);
+	CheckersGameState(ResourceManager* pResources);
 
 	void enter() override;
 	BaseState* event() override;
@@ -27,7 +27,7 @@ public:
 	void exit() override;
 
 private:
-	ResourceManager& m_resources;
+	ResourceManager* m_pResources;
 	sf::Sound m_moveSound;
 	sf::Sound m_jumpSound;
 	sf::Sprite m_background;

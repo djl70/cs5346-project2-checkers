@@ -3,31 +3,36 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
+enum ButtonState
+{
+	kDefault,
+	kHovered,
+	kPressed
+};
+
 class Button
 {
 public:
-	Button(const sf::FloatRect& rect, const sf::Texture& normal, const sf::Texture& hover, const sf::Texture& press, const sf::SoundBuffer& clickSound);
+	Button();
 
-	bool update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow);
+	void setRect(const sf::FloatRect& rect);
+	void setTexture(ButtonState state, sf::Texture* texture);
+	void setClickSound(sf::SoundBuffer* sound);
+	void setEnabled(bool enabled);
 
-	void render(sf::RenderWindow* pWindow) const;
+	virtual bool update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow);
+	virtual void render(sf::RenderWindow* pWindow) const;
 
-private:
-	enum ButtonState
-	{
-		kDefault,
-		kHovered,
-		kPressed
-	};
-
+protected:
 	ButtonState m_state;
 	sf::FloatRect m_rect;
-	const sf::Texture& m_kDefaultTexture;
-	const sf::Texture& m_kHoveredTexture;
-	const sf::Texture& m_kPressedTexture;
+	sf::Texture* m_defaultTexture;
+	sf::Texture* m_hoveredTexture;
+	sf::Texture* m_pressedTexture;
 	sf::Sprite m_sprite;
-	const sf::SoundBuffer& m_soundBuffer;
+	sf::SoundBuffer* m_soundBuffer;
 	sf::Sound m_clickSound;
+	bool m_enabled;
 
 	void changeState(ButtonState newState);
 };

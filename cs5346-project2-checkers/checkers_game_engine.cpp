@@ -15,7 +15,7 @@ CheckersGameEngine::CheckersGameEngine()
 	m_resources.setup(&m_window);
 
 	// m_pState = new CheckersGameState;
-	m_pState = new MainMenuState(m_resources);
+	m_pState = new MainMenuState{ &m_resources };
 	m_pState->enter();
 }
 
@@ -27,6 +27,9 @@ CheckersGameEngine::~CheckersGameEngine()
 		delete m_pState;
 		m_pState = nullptr;
 	}
+
+	m_resources.getSound("sound_move")->~SoundBuffer();
+	m_resources.getSound("sound_jump")->~SoundBuffer();
 }
 
 void CheckersGameEngine::run()

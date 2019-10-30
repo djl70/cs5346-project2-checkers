@@ -9,7 +9,7 @@
 class MainMenuState : public BaseState
 {
 public:
-	MainMenuState(ResourceManager& resources);
+	MainMenuState(ResourceManager* pResources);
 
 	void enter() override;
 	BaseState* event() override;
@@ -17,10 +17,10 @@ public:
 	void exit() override;
 
 private:
-	ResourceManager& m_resources;
+	ResourceManager* m_pResources;
 	sf::Sprite m_background;
 	sf::Sprite m_title;
-	Button m_singlePlayerButton;
 	Button m_multiPlayerButton;
+	Button m_singlePlayerButton;
 	Button m_autoPlayButton;
 };

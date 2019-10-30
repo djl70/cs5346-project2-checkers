@@ -8,19 +8,19 @@
 #include "ai_player.h"
 #include "human_player.h"
 
-CheckersGameState::CheckersGameState(ResourceManager& resources)
-	: m_resources{ resources }
+CheckersGameState::CheckersGameState(ResourceManager* pResources)
+	: m_pResources{ pResources }
 {
 
 }
 
 void CheckersGameState::enter()
 {
-	m_background.setTexture(m_resources.getTexture("background"));
+	m_background.setTexture(*m_pResources->getTexture("background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
 
-	m_moveSound.setBuffer(m_resources.getSound("sound_move"));
-	m_jumpSound.setBuffer(m_resources.getSound("sound_jump"));
+	m_moveSound.setBuffer(*m_pResources->getSound("sound_move"));
+	m_jumpSound.setBuffer(*m_pResources->getSound("sound_jump"));
 
 	// Create pieces
 	for (int r = 0; r < 8; ++r)
@@ -32,13 +32,13 @@ void CheckersGameState::enter()
 			{
 				if (r < 3)
 				{
-					CheckerPiece piece(kRed, m_resources.getTexture("red_man"), m_resources.getTexture("red_king"));
+					CheckerPiece piece{ kRed, m_pResources->getTexture("red_man"), m_pResources->getTexture("red_king") };
 					piece.setPosition(position);
 					m_pieces.push_back(piece);
 				}
 				else if (r > 4)
 				{
-					CheckerPiece piece(kBlack, m_resources.getTexture("black_man"), m_resources.getTexture("black_king"));
+					CheckerPiece piece{ kBlack, m_pResources->getTexture("black_man"), m_pResources->getTexture("black_king") };
 					piece.setPosition(position);
 					m_pieces.push_back(piece);
 				}
@@ -55,7 +55,7 @@ void CheckersGameState::enter()
 			//sf::Vector2f position{ config::boardTopLeft.x + config::kSquareWidth * c, config::boardTopLeft.y + config::kSquareWidth * r };
 			if ((r + c) % 2 == 1)
 			{
-				CheckerSquare square(kBlackSquare);
+				CheckerSquare square{ kBlackSquare };
 				//square.setPosition(position);
 				square.setPositionOnBoard({ c, r }, config::boardTopLeft);
 				m_board.board.push_back(square);
@@ -78,7 +78,7 @@ void CheckersGameState::enter()
 			}
 			else
 			{
-				CheckerSquare square(kRedSquare);
+				CheckerSquare square{ kRedSquare };
 				//square.setPosition(position);
 				square.setPositionOnBoard({ c, r }, config::boardTopLeft);
 				m_board.board.push_back(square);
@@ -92,22 +92,22 @@ void CheckersGameState::enter()
 		for (int c = 0; c < 3; ++c)
 		{
 			//sf::Vector2f redPosition{ config::capturedRedTopLeft.x + config::kSquareWidth * c, config::capturedRedTopLeft.y + config::kSquareWidth * r };
-			CheckerSquare redSquare(kCapturedRed);
+			CheckerSquare redSquare{ kCapturedRed };
 			redSquare.setPositionOnBoard({ c, r }, config::capturedRedTopLeft);
 			m_board.capturedRedSquares.push_back(redSquare);
 
 			//sf::Vector2f blackPosition{ config::capturedBlackTopLeft.x + config::kSquareWidth * c, config::capturedBlackTopLeft.y + config::kSquareWidth * r };
-			CheckerSquare blackSquare(kCapturedBlack);
+			CheckerSquare blackSquare{ kCapturedBlack };
 			blackSquare.setPositionOnBoard({ c, r }, config::capturedBlackTopLeft);
 			m_board.capturedBlackSquares.push_back(blackSquare);
 		}
 	}
 
-	m_players[0] = new HumanPlayer(kBlack);
-	m_players[0]->setResources(&m_resources);
+	m_players[0] = new HumanPlayer{ kBlack };
+	m_players[0]->setResources(m_pResources);
 	m_players[0]->setBoard(&m_board);
-	m_players[1] = new AIPlayer(kRed);
-	m_players[1]->setResources(&m_resources);
+	m_players[1] = new AIPlayer{ kRed };
+	m_players[1]->setResources(m_pResources);
 	m_players[1]->setBoard(&m_board);
 
 	m_currentPlayer = 0;
@@ -117,17 +117,17 @@ void CheckersGameState::enter()
 BaseState* CheckersGameState::event()
 {
 	sf::Event event;
-	while (m_resources.getWindow()->pollEvent(event))
+	while (m_pResources->getWindow()->pollEvent(event))
 	{
 		switch (event.type)
 		{
 		case sf::Event::Closed:
-			m_resources.getWindow()->close();
+			m_pResources->getWindow()->close();
 			break;
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Key::Escape)
 			{
-				return new MainMenuState(m_resources);
+				return new MainMenuState{ m_pResources };
 			}
 			break;
 		case sf::Event::MouseButtonPressed:
@@ -186,7 +186,7 @@ BaseState* CheckersGameState::event()
 	CheckerColor winningColor;
 	if (isGameOver(winningColor))
 	{
-		return new GameOverState(m_resources, winningColor);
+		return new GameOverState{ m_pResources, winningColor };
 	}
 
 	return nullptr;
@@ -194,9 +194,9 @@ BaseState* CheckersGameState::event()
 
 void CheckersGameState::render()
 {
-	m_resources.getWindow()->clear(sf::Color::White);
+	m_pResources->getWindow()->clear(sf::Color::White);
 
-	m_resources.getWindow()->draw(m_background);
+	m_pResources->getWindow()->draw(m_background);
 
 	// Draw game board
 	for (auto& square : m_board.board)
@@ -215,7 +215,7 @@ void CheckersGameState::render()
 		{
 			square.render(m_resources.getWindow(), false);
 		}*/
-		square.render(m_resources.getWindow());
+		square.render(m_pResources->getWindow());
 	}
 
 	// Draw selected squares later to draw them on top
@@ -230,12 +230,12 @@ void CheckersGameState::render()
 
 	for (auto& square : m_board.capturedRedSquares)
 	{
-		square.render(m_resources.getWindow());
+		square.render(m_pResources->getWindow());
 	}
 
 	for (auto& square : m_board.capturedBlackSquares)
 	{
-		square.render(m_resources.getWindow());
+		square.render(m_pResources->getWindow());
 	}
 
 	// Draw pieces
@@ -244,9 +244,9 @@ void CheckersGameState::render()
 	//	piece.render(resources::pWindow);
 	//}
 
-	m_players[m_currentPlayer]->render(m_resources.getWindow());
+	m_players[m_currentPlayer]->render(m_pResources->getWindow());
 
-	m_resources.getWindow()->display();
+	m_pResources->getWindow()->display();
 }
 
 void CheckersGameState::exit()
