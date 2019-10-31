@@ -165,6 +165,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="full_move_command.h" />
     <ClInclude Include="game_over_state.h" />
+    <ClInclude Include="heuristic.h" />
     <ClInclude Include="human_player.h" />
     <ClInclude Include="jump_command.h" />
     <ClInclude Include="main_menu_state.h" />

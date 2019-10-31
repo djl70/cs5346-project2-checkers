@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 
-class Checkerboard;
+struct Checkerboard;
 class FullMoveCommand;
 class ResourceManager;
 

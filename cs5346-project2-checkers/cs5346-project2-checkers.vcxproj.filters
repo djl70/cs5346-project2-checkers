@@ -43,6 +43,9 @@
     <Filter Include="Source Files\Buttons">
       <UniqueIdentifier>{ec1243a4-4279-4f1f-ad8a-c1562daf10d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Evaluation Functions">
+      <UniqueIdentifier>{3b71c74c-d303-463c-a5c4-91b7bf55c2fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="toggle_button_group.h">
       <Filter>Header Files\Buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="heuristic.h">
+      <Filter>Header Files\Evaluation Functions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

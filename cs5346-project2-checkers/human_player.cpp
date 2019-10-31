@@ -167,6 +167,8 @@ FullMoveCommand* HumanPlayer::update()
 
 void HumanPlayer::render(sf::RenderWindow* pWindow)
 {
+	// TODO: Fix issue where a square is sometimes rendered on top of the piece during a multi-jump
+
 	// Draw highlighted squares
 	if (m_pSelectedSquare)
 	{
