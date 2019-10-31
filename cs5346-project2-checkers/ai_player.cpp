@@ -2,6 +2,7 @@
 
 #include "checkerboard.h"
 #include "full_move_command.h"
+#include "resource_manager.h"
 
 AIPlayer::AIPlayer(CheckerColor color)
 	: Player{ color, true }
@@ -114,8 +115,26 @@ FullMoveCommand* AIPlayer::update()
 
 void AIPlayer::render(sf::RenderWindow* pWindow)
 {
-	// Nothing special to render for now
-	// Maybe consider rendering the piece being moved
+	// Draw game board
+	for (auto& square : m_pBoard->board)
+	{
+		square.render(pWindow);
+	}
+
+	for (auto& square : m_pBoard->capturedRedSquares)
+	{
+		square.render(pWindow);
+	}
+
+	for (auto& square : m_pBoard->capturedBlackSquares)
+	{
+		square.render(pWindow);
+	}
+
+	for (auto& piece : m_pBoard->pieces)
+	{
+		piece.render(pWindow);
+	}
 }
 
 //JumpInfo AIPlayer::chooseBestJump(const std::vector<JumpInfo>& jumps)

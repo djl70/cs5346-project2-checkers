@@ -236,27 +236,28 @@ void CheckersGameState::render()
 
 	m_pResources->getWindow()->draw(m_background);
 
-	// Draw game board
-	for (auto& square : m_board.board)
-	{
-		square.render(m_pResources->getWindow());
-	}
+	//// Draw game board
+	//for (auto& square : m_board.board)
+	//{
+	//	square.render(m_pResources->getWindow());
+	//}
 
-	for (auto& square : m_board.capturedRedSquares)
-	{
-		square.render(m_pResources->getWindow());
-	}
+	//for (auto& square : m_board.capturedRedSquares)
+	//{
+	//	square.render(m_pResources->getWindow());
+	//}
 
-	for (auto& square : m_board.capturedBlackSquares)
-	{
-		square.render(m_pResources->getWindow());
-	}
+	//for (auto& square : m_board.capturedBlackSquares)
+	//{
+	//	square.render(m_pResources->getWindow());
+	//}
 
-	for (auto& piece : m_board.pieces)
-	{
-		piece.render(m_pResources->getWindow());
-	}
+	//for (auto& piece : m_board.pieces)
+	//{
+	//	piece.render(m_pResources->getWindow());
+	//}
 
+	// Give the player the the responsibility of drawing the game board
 	m_players[m_currentPlayer]->render(m_pResources->getWindow());
 
 	m_pResources->getWindow()->display();

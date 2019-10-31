@@ -167,16 +167,35 @@ FullMoveCommand* HumanPlayer::update()
 
 void HumanPlayer::render(sf::RenderWindow* pWindow)
 {
-	// TODO: Fix issue where a square is sometimes rendered on top of the piece during a multi-jump
+	// Draw simulated game board so that it updates as the turn progresses
+	for (auto& square : m_simulatedBoard.board)
+	{
+		square.render(pWindow);
+	}
 
-	// Draw highlighted squares
+	for (auto& square : m_simulatedBoard.capturedRedSquares)
+	{
+		square.render(pWindow);
+	}
+
+	for (auto& square : m_simulatedBoard.capturedBlackSquares)
+	{
+		square.render(pWindow);
+	}
+
+	for (auto& piece : m_simulatedBoard.pieces)
+	{
+		piece.render(pWindow);
+	}
+
+	// Draw highlighted squares last
 	if (m_pSelectedSquare)
 	{
 		for (const CheckerSquare* valid : m_validMovesFromSelectedSquare)
 		{
-			valid->renderHighlight(m_pResources->getWindow());
+			valid->renderHighlight(pWindow);
 		}
-		m_pSelectedSquare->renderHighlight(m_pResources->getWindow());
+		m_pSelectedSquare->renderHighlight(pWindow);
 	}
 }
 
