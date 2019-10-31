@@ -15,6 +15,7 @@ enum CheckerSquareType
 class CheckerSquare
 {
 public:
+	// TODO: Allow this to be set after instantiation
 	CheckerSquare(CheckerSquareType type);
 
 	void setPromotionColor(CheckerColor color);

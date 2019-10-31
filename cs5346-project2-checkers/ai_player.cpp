@@ -6,7 +6,9 @@
 
 AIPlayer::AIPlayer(CheckerColor color)
 	: Player{ color, true }
-	//, m_mustJump{ false }
+	, m_doneStepping{ false }
+	, m_stepDelay{ sf::milliseconds(500) }
+	, m_stepCount{ 0 }
 {
 
 }
@@ -23,8 +25,37 @@ void AIPlayer::takeTurn()
 	//m_fullMove.to.clear();
 	//m_fullMove.promoted = false;
 
+	// Clear the previous move if necessary
+	if (m_pCommand)
+	{
+		delete m_pCommand;
+		m_pCommand = nullptr;
+	}
+
 	// Update the simulated board
-	//m_simulatedBoard = *m_pBoard;
+	m_simulatedBoard = *m_pBoard;
+
+	// Determine which move to take
+	// TODO: Allow the best move to be chosen with a custom function, and run this in a separate thread since it will likely be time consuming and we don't want it to block input
+	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(*m_pBoard, m_color);
+	if (!possibleMoves.empty())
+	{
+		m_commandInfo = possibleMoves.at(0);
+		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
+		m_doneStepping = false;
+		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));
+		m_pToSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.to.at(0)));
+	}
+	else
+	{
+		m_doneStepping = true;
+		m_pFromSquare = nullptr;
+		m_pToSquare = nullptr;
+	}
+
+	m_turnClock.restart();
+	m_moveStepTime = sf::Time::Zero;
+	m_stepCount = 0;
 
 	// Call the base function to actually start our turn
 	Player::takeTurn();
@@ -39,101 +70,63 @@ FullMoveCommand* AIPlayer::update()
 {
 	FullMoveCommand* pCommand = nullptr;
 
-	/*
-	while (m_isTurn)
+	if (m_doneStepping)
 	{
-		if (m_checkForAnotherJump)
+		delete m_pCommand;
+		m_pCommand = nullptr;
+		pCommand = new FullMoveCommand{ *m_pBoard, m_commandInfo };
+		m_isTurn = false;
+	}
+	else
+	{
+		m_moveStepTime += m_turnClock.restart();
+		while (m_moveStepTime > m_stepDelay)
 		{
-			m_checkForAnotherJump = false;
-
-			if (m_fullMove.promoted || findValidJumps(m_simulatedBoard, m_color, m_fullMove.to.back()).empty())
+			m_moveStepTime -= m_stepDelay;
+			m_doneStepping = m_pCommand->executeStep();
+			++m_stepCount;
+			if (!m_doneStepping)
 			{
-				m_isTurn = false;
-				break;
+				m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.to.at(m_stepCount - 1)));
+				m_pToSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.to.at(m_stepCount)));
 			}
-		}
-
-		if (m_mustJump)
-		{
-			if (m_fullMove.to.empty())
-			{
-				// This is our first jump in a possible series of jumps, so look at all possible jumps and pick the best one
-				std::vector<JumpInfo> jumps = findAllValidJumps(m_simulatedBoard, m_color);
-
-				// Determine the best jump
-				JumpInfo bestJump = chooseBestJump(jumps);
-
-				m_fullMove.from = bestJump.from;
-				m_fullMove.jumped.push_back(bestJump.jumped);
-				m_fullMove.to.push_back(bestJump.to);
-				m_fullMove.promoted = bestJump.promoted;
-
-				m_simulatedBoard = simulateJump(m_simulatedBoard, bestJump);
-			}
-			else
-			{
-				// This is a subsequent jump, so only look at possible jumps for the same piece and pick the best one
-				std::vector<JumpInfo> jumps = findValidJumps(m_simulatedBoard, m_color, m_fullMove.to.back());
-
-				// Determine the best jump
-				JumpInfo bestJump = chooseBestJump(jumps);
-
-				m_fullMove.jumped.push_back(bestJump.jumped);
-				m_fullMove.to.push_back(bestJump.to);
-				m_fullMove.promoted = bestJump.promoted;
-
-				m_simulatedBoard = simulateJump(m_simulatedBoard, bestJump);
-			}
-
-			m_checkForAnotherJump = true;
-		}
-		else
-		{
-			std::vector<MoveInfo> moves = findAllValidMoves(m_simulatedBoard, m_color);
-
-			// Determine the best move
-			MoveInfo bestMove = chooseBestMove(moves);
-
-			m_fullMove.from = bestMove.from;
-			m_fullMove.to.push_back(bestMove.to);
-			m_fullMove.promoted = bestMove.promoted;
-
-			m_isTurn = false;
 		}
 	}
-	*/
 
-	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(*m_pBoard, m_color);
-	if (!possibleMoves.empty())
-	{
-		pCommand = new FullMoveCommand(*m_pBoard, possibleMoves[0]);
-	}
-
-	m_isTurn = false;
 	return pCommand;
 }
 
 void AIPlayer::render(sf::RenderWindow* pWindow)
 {
-	// Draw game board
-	for (auto& square : m_pBoard->board)
+	// Draw simulated game board so that it updates as the turn progresses
+	for (auto& square : m_simulatedBoard.board)
 	{
 		square.render(pWindow);
 	}
 
-	for (auto& square : m_pBoard->capturedRedSquares)
+	for (auto& square : m_simulatedBoard.capturedRedSquares)
 	{
 		square.render(pWindow);
 	}
 
-	for (auto& square : m_pBoard->capturedBlackSquares)
+	for (auto& square : m_simulatedBoard.capturedBlackSquares)
 	{
 		square.render(pWindow);
 	}
 
-	for (auto& piece : m_pBoard->pieces)
+	for (auto& piece : m_simulatedBoard.pieces)
 	{
 		piece.render(pWindow);
+	}
+
+	// Draw highlighted squares last
+	if (m_pFromSquare)
+	{
+		m_pFromSquare->renderHighlight(pWindow);
+	}
+	if (m_pToSquare)
+	{
+		m_pToSquare->renderHighlight(pWindow);
 	}
 }
 

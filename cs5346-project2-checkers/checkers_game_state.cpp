@@ -196,20 +196,7 @@ BaseState* CheckersGameState::event()
 	FullMoveCommand* pCommand = m_players.at(m_currentPlayer)->update();
 	if (pCommand)
 	{
-		if (m_players.at(m_currentPlayer)->isBot())
-		{
-			// TODO: Fix this so that it pauses between steps
-			//do
-			//{
-			//	sf::sleep(sf::milliseconds(500));
-			//} while (!pCommand->executeStep());
-			sf::sleep(sf::milliseconds(500));
-			pCommand->execute();
-		}
-		else
-		{
-			pCommand->execute();
-		}
+		pCommand->execute();
 		m_commands.push(pCommand);
 
 		if (pCommand->didPromote())

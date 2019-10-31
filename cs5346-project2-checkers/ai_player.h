@@ -4,9 +4,11 @@
 
 //#include "jump_command.h"
 //#include "move_command.h"
-//#include "full_move_command.h"
+#include "full_move_command.h"
 
-//#include "checkerboard.h"
+#include "checkerboard.h"
+
+#include <SFML/System.hpp>
 
 class FullMoveCommand;
 
@@ -21,6 +23,20 @@ public:
 	void render(sf::RenderWindow* pWindow) override;
 
 private:
+	sf::Clock m_turnClock;
+	sf::Time m_moveStepTime;
+	bool m_doneStepping;
+	int m_stepCount;
+
+	const CheckerSquare* m_pFromSquare;
+	const CheckerSquare* m_pToSquare;
+
+	FullMoveInfo m_commandInfo;
+	FullMoveCommand* m_pCommand;
+	checkerboard::Checkerboard m_simulatedBoard;
+
+	const sf::Time m_stepDelay;
+
 	//bool m_mustJump;
 	//bool m_checkForAnotherJump;
 	//FullMoveInfo m_fullMove;
