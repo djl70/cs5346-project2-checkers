@@ -12,16 +12,6 @@ enum CheckerSquareType
 	kCapturedRed
 };
 
-class CheckerSquare;
-
-/*struct NeighboringSquares
-{
-	CheckerSquare* pNeighborNorthWest = nullptr;
-	CheckerSquare* pNeighborNorthEast = nullptr;
-	CheckerSquare* pNeighborSouthWest = nullptr;
-	CheckerSquare* pNeighborSouthEast = nullptr;
-};*/
-
 class CheckerSquare
 {
 public:
@@ -29,15 +19,16 @@ public:
 
 	void setPromotionColor(CheckerColor color);
 	void setPositionOnBoard(const sf::Vector2i& coords, const sf::Vector2f& referencePoint);
-	void setPiece(CheckerPiece* piece);
+	void setPieceIndex(int pieceIndex);
 
 	//void setNeighbors(const NeighboringSquares& neighbors);
 	//NeighboringSquares getNeighbors() const;
 
 	bool promotesColor(CheckerColor color) const;
 	sf::Vector2i getPositionOnBoard() const;
+	sf::Vector2f getPositionInWindow() const;
 	bool isEmpty() const;
-	CheckerPiece* getPiece();
+	int getPieceIndex() const;
 	bool contains(const sf::Vector2f& point) const;
 
 	void render(sf::RenderWindow* pWindow) const;
@@ -48,7 +39,7 @@ private:
 	sf::FloatRect m_rect;
 	sf::Vector2i m_positionOnBoard;
 	bool m_interactable;
-	CheckerPiece* m_piece;
+	int m_piece;
 	bool m_isKingRow;
 	CheckerColor m_promoteColor;
 

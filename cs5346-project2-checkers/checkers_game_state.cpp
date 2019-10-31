@@ -25,20 +25,20 @@ void CheckersGameState::enter()
 	{
 		for (int c = 0; c < 8; ++c)
 		{
-			sf::Vector2f position{ config::boardTopLeft.x + config::kSquareWidth * c, config::boardTopLeft.y + config::kSquareWidth * r };
+			//sf::Vector2f position{ config::boardTopLeft.x + config::kSquareWidth * c, config::boardTopLeft.y + config::kSquareWidth * r };
 			if ((r + c) % 2 == 1)
 			{
 				if (r < 3)
 				{
 					CheckerPiece piece{ kRed, m_pResources->getTexture("red_man"), m_pResources->getTexture("red_king") };
-					piece.setPosition(position);
-					m_pieces.push_back(piece);
+					//piece.setPosition(position);
+					m_board.pieces.push_back(piece);
 				}
 				else if (r > 4)
 				{
 					CheckerPiece piece{ kBlack, m_pResources->getTexture("black_man"), m_pResources->getTexture("black_king") };
-					piece.setPosition(position);
-					m_pieces.push_back(piece);
+					//piece.setPosition(position);
+					m_board.pieces.push_back(piece);
 				}
 			}
 		}
@@ -63,7 +63,8 @@ void CheckersGameState::enter()
 					{
 						m_board.board.back().setPromotionColor(kBlack);
 					}
-					m_board.board.back().setPiece(&m_pieces[p++]);
+					checkerboard::placePieceAt(m_board, p++, m_board.board.size() - 1);
+					//m_board.board.back().setPieceIndex(p++);
 				}
 				else if (r > 4)
 				{
@@ -71,7 +72,8 @@ void CheckersGameState::enter()
 					{
 						m_board.board.back().setPromotionColor(kRed);
 					}
-					m_board.board.back().setPiece(&m_pieces[p++]);
+					checkerboard::placePieceAt(m_board, p++, m_board.board.size() - 1);
+					//m_board.board.back().setPieceIndex(p++);
 				}
 			}
 			else
@@ -186,10 +188,12 @@ BaseState* CheckersGameState::event()
 		if (m_players.at(m_currentPlayer)->isBot())
 		{
 			// TODO: Fix this so that it pauses between steps
-			do
-			{
-				sf::sleep(sf::milliseconds(250));
-			} while (!pCommand->executeStep());
+			//do
+			//{
+			//	sf::sleep(sf::milliseconds(500));
+			//} while (!pCommand->executeStep());
+			sf::sleep(sf::milliseconds(500));
+			pCommand->execute();
 		}
 		else
 		{
@@ -215,8 +219,6 @@ BaseState* CheckersGameState::event()
 		m_players.at(m_currentPlayer)->takeTurn();
 	}
 
-	// TODO: Only check if no moves are available for the current player (since we just switched players by this point)
-	// Also, check if either captured area is full of pieces
 	CheckerColor winningColor;
 	if (isGameOver(winningColor))
 	{
@@ -250,6 +252,11 @@ void CheckersGameState::render()
 		square.render(m_pResources->getWindow());
 	}
 
+	for (auto& piece : m_board.pieces)
+	{
+		piece.render(m_pResources->getWindow());
+	}
+
 	m_players[m_currentPlayer]->render(m_pResources->getWindow());
 
 	m_pResources->getWindow()->display();
@@ -272,50 +279,12 @@ void CheckersGameState::exit()
 
 bool CheckersGameState::isGameOver(CheckerColor& outWinningColor)
 {
-	/*
-	// Check for black win
-	bool isBlackWin = true;
-	for (const auto& square : m_board.capturedRedSquares)
-	{
-		if (square.isEmpty())
-		{
-			isBlackWin = false;
-			break;
-		}
-	}
-	if (isBlackWin)
-	{
-		outWinningColor = kBlack;
-		return true;
-	}
+	// Game is over when the current player has no moves available
 
-	// Check for red win
-	bool isRedWin = true;
-	for (const auto& square : m_board.capturedBlackSquares)
+	CheckerColor playerColor = m_players.at(m_currentPlayer)->getColor();
+	if (findAllValidFullMoves(m_board, playerColor).empty())
 	{
-		if (square.isEmpty())
-		{
-			isRedWin = false;
-			break;
-		}
-	}
-	if (isRedWin)
-	{
-		outWinningColor = kRed;
-		return true;
-	}
-
-	return false;
-	*/
-
-	if (findAllValidMoves(m_board, kRed).empty())
-	{
-		outWinningColor = kBlack;
-		return true;
-	}
-	else if (findAllValidMoves(m_board, kBlack).empty())
-	{
-		outWinningColor = kRed;
+		outWinningColor = playerColor == kBlack ? kRed : kBlack;
 		return true;
 	}
 

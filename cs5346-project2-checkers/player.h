@@ -1,10 +1,9 @@
 #pragma once
 
-#include "checker_piece.h"
+#include "checkerboard.h"
 
 #include <SFML/Graphics.hpp>
 
-struct Checkerboard;
 class FullMoveCommand;
 class ResourceManager;
 
@@ -13,11 +12,12 @@ class Player
 public:
 	Player(CheckerColor color, bool isBot);
 
-	void setBoard(Checkerboard* pBoard);
+	void setBoard(checkerboard::Checkerboard* pBoard);
 	void setResources(ResourceManager* pResources);
 
 	bool isBot() const;
 	bool isTurn() const;
+	CheckerColor getColor() const;
 
 	virtual void takeTurn();
 	virtual void event(const sf::Event& event) = 0;
@@ -28,6 +28,6 @@ protected:
 	CheckerColor m_color;
 	bool m_isBot;
 	bool m_isTurn;
-	Checkerboard* m_pBoard;
+	checkerboard::Checkerboard* m_pBoard;
 	ResourceManager* m_pResources;
 };

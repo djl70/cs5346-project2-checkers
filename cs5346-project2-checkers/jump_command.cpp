@@ -2,85 +2,78 @@
 
 #include "checkerboard.h"
 
-JumpInfo::JumpInfo(CheckerSquare& from, CheckerSquare& to, CheckerSquare& jumped)
-	: from{ from.getPositionOnBoard() }
-	, to{ to.getPositionOnBoard() }
-	, jumped{ jumped.getPositionOnBoard() }
-	, promoted{ from.getPiece() && !from.getPiece()->isKing() && to.promotesColor(from.getPiece()->getColor()) }
+JumpInfo::JumpInfo(const checkerboard::Checkerboard& board, const sf::Vector2i& from, const sf::Vector2i& to, const sf::Vector2i& jumped)
+	: from{ from }
+	, to{ to }
+	, jumped{ jumped }
 {
+	const CheckerSquare& fromSquare = board.board.at(checkerboard::index(from));
+	const CheckerPiece* fromPiece = fromSquare.isEmpty() ? nullptr : &board.pieces.at(fromSquare.getPieceIndex());
+	const CheckerSquare& toSquare = board.board.at(checkerboard::index(to));
 
+	promoted = fromPiece && !fromPiece->isKing() && toSquare.promotesColor(fromPiece->getColor());
 }
 
-JumpCommand::JumpCommand(Checkerboard& board, const JumpInfo& info)
+
+JumpCommand::JumpCommand(checkerboard::Checkerboard& board, const JumpInfo& info)
 	: m_board{ board }
 	, m_info{ info }
-	, m_capturedSquare{ nullptr }
+	, m_capturedSquare{ -1 }
 {
 
 }
 
 void JumpCommand::execute()
 {
-	CheckerSquare& fromSquare = m_board.board.at(m_info.from.y * 8 + m_info.from.x);
-	CheckerSquare& jumpedSquare = m_board.board.at(m_info.jumped.y * 8 + m_info.jumped.x);
-	CheckerSquare& toSquare = m_board.board.at(m_info.to.y * 8 + m_info.to.x);
+	const CheckerSquare& fromSquare = m_board.board.at(checkerboard::index(m_info.from));
+	const CheckerSquare& jumpedSquare = m_board.board.at(checkerboard::index(m_info.jumped));
+	const CheckerSquare& toSquare = m_board.board.at(checkerboard::index(m_info.to));
 
-	CheckerPiece* fromPiece = fromSquare.getPiece();
-	if (fromPiece)
-	{
-		CheckerPiece* toPiece = toSquare.getPiece();
-		if (toPiece)
-		{
-			throw ("Error: Jumped piece onto occupied square");
-		}
-		toSquare.setPiece(fromPiece);
-		fromSquare.setPiece(nullptr);
+	const CheckerPiece* fromPiece = fromSquare.isEmpty() ? nullptr : &m_board.pieces.at(fromSquare.getPieceIndex());
+	if (!fromPiece) { throw ("Error: No piece to jump with"); }
+	if (!toSquare.isEmpty()) { throw ("Error: Jumped piece onto occupied square"); }
 
-		CheckerPiece* jumpedPiece = jumpedSquare.getPiece();
-		if (!jumpedPiece)
-		{
-			throw ("Error: No piece to jump over");
-		}
-		else if (jumpedPiece->getColor() == fromPiece->getColor())
-		{
-			throw ("Error: Cannot jump over same-colored piece");
-		}
+	checkerboard::movePieceFromTo(m_board, fromSquare.getPieceIndex(), checkerboard::index(m_info.from), checkerboard::index(m_info.to));
+
+	const CheckerPiece* jumpedPiece = jumpedSquare.isEmpty() ? nullptr : &m_board.pieces.at(jumpedSquare.getPieceIndex());
+	if (!jumpedPiece) { throw ("Error: No piece to jump over"); }
+	if (jumpedPiece->getColor() == fromPiece->getColor()) { throw ("Error: Cannot jump over same-colored piece"); }
 		
-		std::vector<CheckerSquare>& capturedArea = jumpedPiece->getColor() == kRed ? m_board.capturedRedSquares : m_board.capturedBlackSquares;
-		for (auto& square : capturedArea)
-		{
-			if (square.isEmpty())
-			{
-				square.setPiece(jumpedPiece);
-				jumpedSquare.setPiece(nullptr);
-				m_capturedSquare = &square;
-				break;
-			}
-		}
-		if (!m_capturedSquare)
-		{
-			throw ("Error: No more space in the captured area");
-		}
-	}
-	else
+	/*std::vector<CheckerSquare>& capturedArea = jumpedPiece->getColor() == kRed ? m_board.capturedRedSquares : m_board.capturedBlackSquares;
+	for (auto& square : capturedArea)
 	{
-		throw ("Error: No piece to jump with");
+		if (square.isEmpty())
+		{
+			square.setPiece(jumpedPiece);
+			jumpedSquare.setPiece(nullptr);
+			m_capturedSquare = &square;
+			break;
+		}
 	}
+	if (!m_capturedSquare)
+	{
+		throw ("Error: No more space in the captured area");
+	}*/
+
+	m_capturedSquare = checkerboard::capturePieceFrom(m_board, jumpedSquare.getPieceIndex(), checkerboard::index(m_info.jumped));
+	if (m_capturedSquare == -1) { throw ("Error: No more space in the captured area"); }
 }
 
 void JumpCommand::undo()
 {
-	CheckerSquare& fromSquare = m_board.board.at(m_info.from.y * 8 + m_info.from.x);
-	CheckerSquare& jumpedSquare = m_board.board.at(m_info.jumped.y * 8 + m_info.jumped.x);
-	CheckerSquare& toSquare = m_board.board.at(m_info.to.y * 8 + m_info.to.x);
+	const CheckerSquare& fromSquare = m_board.board.at(checkerboard::index(m_info.from));
+	const CheckerSquare& jumpedSquare = m_board.board.at(checkerboard::index(m_info.jumped));
+	const CheckerSquare& toSquare = m_board.board.at(checkerboard::index(m_info.to));
 
 	// We will assume that <from> had a piece, <to> did not, and <jumped> had its piece moved to <m_capturedSquare>
-	CheckerPiece* fromPiece = toSquare.getPiece();
-	fromSquare.setPiece(fromPiece);
-	toSquare.setPiece(nullptr);
-	CheckerPiece* jumpedPiece = m_capturedSquare->getPiece();
-	jumpedSquare.setPiece(jumpedPiece);
-	m_capturedSquare->setPiece(nullptr);
+	CheckerPiece* fromPiece = toSquare.isEmpty() ? nullptr : &m_board.pieces.at(toSquare.getPieceIndex());
+	//fromSquare.setPiece(fromPiece);
+	//toSquare.setPiece(nullptr);
+	checkerboard::movePieceFromTo(m_board, toSquare.getPieceIndex(), checkerboard::index(m_info.to), checkerboard::index(m_info.from));
+	//CheckerPiece* jumpedPiece = m_capturedSquare->getPiece();
+	//jumpedSquare.setPiece(jumpedPiece);
+	//m_capturedSquare->setPiece(nullptr);
+	checkerboard::releasePieceTo(m_board, fromPiece->getColor() == kBlack ? kRed : kBlack, m_capturedSquare, checkerboard::index(m_info.jumped));
 	if (m_info.promoted)
 	{
 		fromPiece->demote();

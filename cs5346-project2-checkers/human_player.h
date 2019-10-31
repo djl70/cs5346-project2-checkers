@@ -18,17 +18,17 @@ public:
 
 private:
 	//bool m_isJumpPossible;
-	std::vector<CheckerSquare*> m_validMovesFromSelectedSquare;
-	CheckerSquare* m_pSelectedSquare;
+	std::vector<const CheckerSquare*> m_validMovesFromSelectedSquare;
+	const CheckerSquare* m_pSelectedSquare;
 	bool m_mustJump;
 	bool m_checkForAnotherJump;
 	bool m_doneBuildingMove;
 	FullMoveInfo m_fullMove;
 
-	Checkerboard m_simulatedBoard;
+	checkerboard::Checkerboard m_simulatedBoard;
 
-	std::vector<CheckerSquare*> getValidMovesForSquare(CheckerSquare& from);
+	std::vector<const CheckerSquare*> getValidMovesForSquare(const CheckerSquare& from);
 
-	CheckerSquare* getClickedSquare();
-	CheckerSquare* findJumpedSquare(CheckerSquare& from, CheckerSquare& to);
+	const CheckerSquare* getClickedSquare();
+	const CheckerSquare* findJumpedSquare(const CheckerSquare& from, const CheckerSquare& to);
 };

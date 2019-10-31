@@ -33,8 +33,8 @@ private:
 	sf::Color m_blackPieceColor;
 	sf::Color m_redPieceColor;
 	sf::RectangleShape m_rect;
-	std::vector<CheckerPiece> m_pieces;
-	Checkerboard m_board;
+	//std::vector<CheckerPiece> m_pieces;
+	checkerboard::Checkerboard m_board;
 
 	int m_currentPlayer;
 	std::array<Player*, 2> m_players;

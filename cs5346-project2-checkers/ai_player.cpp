@@ -1,14 +1,11 @@
 #include "ai_player.h"
 
-// #include "checker_square.h"
 #include "checkerboard.h"
-// #include "resource_manager.h"
-
 #include "full_move_command.h"
 
 AIPlayer::AIPlayer(CheckerColor color)
 	: Player{ color, true }
-	, m_mustJump{ false }
+	//, m_mustJump{ false }
 {
 
 }
@@ -16,17 +13,17 @@ AIPlayer::AIPlayer(CheckerColor color)
 void AIPlayer::takeTurn()
 {
 	// Determine what we can do: a single move, or as many jumps as possible for a single piece
-	m_mustJump = !findAllValidJumps(*m_pBoard, m_color).empty();
-	m_checkForAnotherJump = false;
+	//m_mustJump = !findAllValidJumps(*m_pBoard, m_color).empty();
+	//m_checkForAnotherJump = false;
 
 	// Reset the move
 	//m_fullMove.from = nullptr;
-	m_fullMove.jumped.clear();
-	m_fullMove.to.clear();
-	m_fullMove.promoted = false;
+	//m_fullMove.jumped.clear();
+	//m_fullMove.to.clear();
+	//m_fullMove.promoted = false;
 
 	// Update the simulated board
-	m_simulatedBoard = *m_pBoard;
+	//m_simulatedBoard = *m_pBoard;
 
 	// Call the base function to actually start our turn
 	Player::takeTurn();
@@ -41,6 +38,7 @@ FullMoveCommand* AIPlayer::update()
 {
 	FullMoveCommand* pCommand = nullptr;
 
+	/*
 	while (m_isTurn)
 	{
 		if (m_checkForAnotherJump)
@@ -102,8 +100,15 @@ FullMoveCommand* AIPlayer::update()
 			m_isTurn = false;
 		}
 	}
+	*/
 
-	pCommand = new FullMoveCommand(*m_pBoard, m_fullMove);
+	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(*m_pBoard, m_color);
+	if (!possibleMoves.empty())
+	{
+		pCommand = new FullMoveCommand(*m_pBoard, possibleMoves[0]);
+	}
+
+	m_isTurn = false;
 	return pCommand;
 }
 
@@ -113,12 +118,12 @@ void AIPlayer::render(sf::RenderWindow* pWindow)
 	// Maybe consider rendering the piece being moved
 }
 
-JumpInfo AIPlayer::chooseBestJump(const std::vector<JumpInfo>& jumps)
-{
-	return jumps[0];
-}
-
-MoveInfo AIPlayer::chooseBestMove(const std::vector<MoveInfo>& moves)
-{
-	return moves[0];
-}
+//JumpInfo AIPlayer::chooseBestJump(const std::vector<JumpInfo>& jumps)
+//{
+//	return jumps[0];
+//}
+//
+//MoveInfo AIPlayer::chooseBestMove(const std::vector<MoveInfo>& moves)
+//{
+//	return moves[0];
+//}

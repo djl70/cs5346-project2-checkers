@@ -14,7 +14,7 @@ HumanPlayer::HumanPlayer(CheckerColor color)
 void HumanPlayer::takeTurn()
 {
 	// Determine what we can do: a single move, or as many jumps as possible for a single piece
-	m_mustJump = !findAllValidJumps(*m_pBoard, m_color).empty();
+	m_mustJump = !checkerboard::findAllValidJumps(*m_pBoard, m_color).empty();
 	m_checkForAnotherJump = false;
 	m_doneBuildingMove = false;
 
@@ -50,7 +50,7 @@ void HumanPlayer::event(const sf::Event& event)
 		// 2. One or more jumps made and more jumps possible
 		//   - Automatically select the piece that was already moved in the jump and highlight the possible move-to squares
 
-		CheckerSquare* clickedSquare = getClickedSquare();
+		const CheckerSquare* clickedSquare = getClickedSquare();
 		if (!clickedSquare)
 		{
 			return;
@@ -59,19 +59,19 @@ void HumanPlayer::event(const sf::Event& event)
 		if (m_mustJump && !m_fullMove.to.empty())
 		{
 			// Check if the clicked square is one of the valid moves
-			for (CheckerSquare* forcedSquare : m_validMovesFromSelectedSquare)
+			for (const CheckerSquare* forcedSquare : m_validMovesFromSelectedSquare)
 			{
 				if (forcedSquare == clickedSquare)
 				{
 					// We did click a valid square to jump to, so do it
-					CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *forcedSquare);
-					JumpInfo info{ *m_pSelectedSquare, *forcedSquare, *jumpedSquare };
+					const CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *forcedSquare);
+					JumpInfo info{ *m_pBoard, m_pSelectedSquare->getPositionOnBoard(), forcedSquare->getPositionOnBoard(), jumpedSquare->getPositionOnBoard() };
 
 					m_fullMove.to.push_back(info.to);
 					m_fullMove.jumped.push_back(info.jumped);
 					m_fullMove.promoted = info.promoted;
 
-					m_simulatedBoard = simulateJump(m_simulatedBoard, info);
+					m_simulatedBoard = checkerboard::simulateJump(m_simulatedBoard, info);
 					m_checkForAnotherJump = true;
 
 					break;
@@ -80,7 +80,7 @@ void HumanPlayer::event(const sf::Event& event)
 		}
 		else
 		{
-			CheckerPiece* piece = clickedSquare->getPiece();
+			const CheckerPiece* piece = clickedSquare->isEmpty() ? nullptr : &m_pBoard->pieces.at(clickedSquare->getPieceIndex());
 			if (piece && piece->getColor() == m_color)
 			{
 				// Perform a new selection
@@ -90,15 +90,15 @@ void HumanPlayer::event(const sf::Event& event)
 			else if (m_pSelectedSquare && !piece)
 			{
 				// Try to move/jump
-				for (CheckerSquare* square : m_validMovesFromSelectedSquare)
+				for (const CheckerSquare* square : m_validMovesFromSelectedSquare)
 				{
 					if (square == clickedSquare)
 					{
 						// The square we clicked is one of the possible destinations, so perform the move/jump
 						if (m_mustJump)
 						{
-							CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *square);
-							JumpInfo info{ *m_pSelectedSquare, *square, *jumpedSquare };
+							const CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *square);
+							JumpInfo info{ *m_pBoard, m_pSelectedSquare->getPositionOnBoard(), square->getPositionOnBoard(), jumpedSquare->getPositionOnBoard() };
 
 							// This is the first jump
 							m_fullMove.from = info.from;
@@ -112,7 +112,7 @@ void HumanPlayer::event(const sf::Event& event)
 						else
 						{
 							// We are just performing a simple move
-							MoveInfo info{ *m_pSelectedSquare, *square };
+							MoveInfo info{ *m_pBoard, m_pSelectedSquare->getPositionOnBoard(), square->getPositionOnBoard() };
 
 							m_fullMove.from = info.from;
 							m_fullMove.jumped.clear();
@@ -172,7 +172,7 @@ void HumanPlayer::render(sf::RenderWindow* pWindow)
 	// Draw highlighted squares
 	if (m_pSelectedSquare)
 	{
-		for (CheckerSquare* valid : m_validMovesFromSelectedSquare)
+		for (const CheckerSquare* valid : m_validMovesFromSelectedSquare)
 		{
 			valid->renderHighlight(m_pResources->getWindow());
 		}
@@ -180,31 +180,31 @@ void HumanPlayer::render(sf::RenderWindow* pWindow)
 	}
 }
 
-std::vector<CheckerSquare*> HumanPlayer::getValidMovesForSquare(CheckerSquare& from)
+std::vector<const CheckerSquare*> HumanPlayer::getValidMovesForSquare(const CheckerSquare& from)
 {
-	std::vector<CheckerSquare*> destinations;
+	std::vector<const CheckerSquare*> destinations;
 
 	if (m_mustJump)
 	{
-		std::vector<JumpInfo> jumps = findValidJumps(m_simulatedBoard, m_color, from.getPositionOnBoard());
+		std::vector<JumpInfo> jumps = checkerboard::findValidJumps(m_simulatedBoard, m_color, from.getPositionOnBoard());
 		for (auto& info : jumps)
 		{
-			destinations.push_back(&m_simulatedBoard.board.at(info.to.y * 8 + info.to.x));
+			destinations.push_back(&m_simulatedBoard.board.at(checkerboard::index(info.to)));
 		}
 	}
 	else
 	{
-		std::vector<MoveInfo> moves = findValidMoves(m_simulatedBoard, m_color, from.getPositionOnBoard());
+		std::vector<MoveInfo> moves = checkerboard::findValidMoves(m_simulatedBoard, m_color, from.getPositionOnBoard());
 		for (auto& info : moves)
 		{
-			destinations.push_back(&m_simulatedBoard.board.at(info.to.y * 8 + info.to.x));
+			destinations.push_back(&m_simulatedBoard.board.at(checkerboard::index(info.to)));
 		}
 	}
 
 	return destinations;
 }
 
-CheckerSquare* HumanPlayer::getClickedSquare()
+const CheckerSquare* HumanPlayer::getClickedSquare()
 {
 	for (int i = 0; i < m_simulatedBoard.board.size(); ++i)
 	{
@@ -218,13 +218,12 @@ CheckerSquare* HumanPlayer::getClickedSquare()
 	return nullptr;
 }
 
-CheckerSquare* HumanPlayer::findJumpedSquare(CheckerSquare& from, CheckerSquare& to)
+const CheckerSquare* HumanPlayer::findJumpedSquare(const CheckerSquare& from, const CheckerSquare& to)
 {
 	sf::Vector2i toCoord = to.getPositionOnBoard();
 	sf::Vector2i fromCoord = from.getPositionOnBoard();
 	sf::Vector2i diff = toCoord - fromCoord;
 	sf::Vector2i half = diff / 2;
 	sf::Vector2i jumpedCoord = fromCoord + half;
-	int index = jumpedCoord.y * 8 + jumpedCoord.x;
-	return &m_simulatedBoard.board.at(index);
+	return &m_simulatedBoard.board.at(checkerboard::index(jumpedCoord));
 }

@@ -2,15 +2,18 @@
 
 #include "checkerboard.h"
 
-MoveInfo::MoveInfo(CheckerSquare& from, CheckerSquare& to)
-	: from{ from.getPositionOnBoard() }
-	, to{ to.getPositionOnBoard() }
-	, promoted{ from.getPiece() && !from.getPiece()->isKing() && to.promotesColor(from.getPiece()->getColor()) }
+MoveInfo::MoveInfo(const checkerboard::Checkerboard& board, const sf::Vector2i& from, const sf::Vector2i& to)
+	: from{ from }
+	, to{ to }
 {
+	const CheckerSquare& fromSquare = board.board.at(checkerboard::index(from));
+	const CheckerPiece* fromPiece = fromSquare.isEmpty() ? nullptr : &board.pieces.at(fromSquare.getPieceIndex());
+	const CheckerSquare& toSquare = board.board.at(checkerboard::index(to));
 
+	promoted = fromPiece && !fromPiece->isKing() && toSquare.promotesColor(fromPiece->getColor());
 }
 
-MoveCommand::MoveCommand(Checkerboard& board, const MoveInfo& info)
+MoveCommand::MoveCommand(checkerboard::Checkerboard& board, const MoveInfo& info)
 	: m_board{ board }
 	, m_info{ info }
 {
@@ -19,35 +22,23 @@ MoveCommand::MoveCommand(Checkerboard& board, const MoveInfo& info)
 
 void MoveCommand::execute()
 {
-	CheckerSquare& fromSquare = m_board.board.at(m_info.from.y * 8 + m_info.from.x);
-	CheckerSquare& toSquare = m_board.board.at(m_info.to.y * 8 + m_info.to.x);
+	const CheckerSquare& fromSquare = m_board.board.at(checkerboard::index(m_info.from));
+	const CheckerSquare& toSquare = m_board.board.at(checkerboard::index(m_info.to));
 
-	CheckerPiece* fromPiece = fromSquare.getPiece();
-	if (fromPiece)
-	{
-		CheckerPiece* toPiece = toSquare.getPiece();
-		if (toPiece)
-		{
-			throw ("Error: Moved piece onto occupied square");
-		}
-		toSquare.setPiece(fromPiece);
-		fromSquare.setPiece(nullptr);
-	}
-	else
-	{
-		throw ("Error: No piece to move with");
-	}
+	const CheckerPiece* fromPiece = fromSquare.isEmpty() ? nullptr : &m_board.pieces.at(fromSquare.getPieceIndex());
+	if (!fromPiece) { throw ("Error: No piece to move with"); }
+	if (!toSquare.isEmpty()) { throw ("Error: Moved piece onto occupied square"); }
+
+	checkerboard::movePieceFromTo(m_board, fromSquare.getPieceIndex(), checkerboard::index(m_info.from), checkerboard::index(m_info.to));
 }
 
 void MoveCommand::undo()
 {
-	CheckerSquare& fromSquare = m_board.board.at(m_info.from.y * 8 + m_info.from.x);
-	CheckerSquare& toSquare = m_board.board.at(m_info.to.y * 8 + m_info.to.x);
+	const CheckerSquare& fromSquare = m_board.board.at(checkerboard::index(m_info.from));
+	const CheckerSquare& toSquare = m_board.board.at(checkerboard::index(m_info.to));
 
-	// We will assume that <from> had a piece and that <to> did not
-	CheckerPiece* fromPiece = toSquare.getPiece();
-	fromSquare.setPiece(fromPiece);
-	toSquare.setPiece(nullptr);
+	CheckerPiece* fromPiece = fromSquare.isEmpty() ? nullptr : &m_board.pieces.at(toSquare.getPieceIndex());
+	checkerboard::movePieceFromTo(m_board, toSquare.getPieceIndex(), checkerboard::index(m_info.to), checkerboard::index(m_info.from));
 
 	if (m_info.promoted)
 	{

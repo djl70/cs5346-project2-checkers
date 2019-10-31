@@ -1,15 +1,18 @@
 #pragma once
 
+//#include "checkerboard.h"
 #include "command.h"
 
 #include <SFML/Graphics.hpp>
 
-class CheckerSquare;
-class Checkerboard;
+namespace checkerboard
+{
+	struct Checkerboard;
+}
 
 struct MoveInfo
 {
-	MoveInfo(CheckerSquare& from, CheckerSquare& to);
+	MoveInfo(const checkerboard::Checkerboard& board, const sf::Vector2i& from, const sf::Vector2i& to);
 	sf::Vector2i from;
 	sf::Vector2i to;
 	bool promoted;
@@ -18,12 +21,12 @@ struct MoveInfo
 class MoveCommand : public Command
 {
 public:
-	MoveCommand(Checkerboard& board, const MoveInfo& info);
+	MoveCommand(checkerboard::Checkerboard& board, const MoveInfo& info);
 
 	void execute() override;
 	void undo() override;
 
 private:
-	Checkerboard& m_board;
+	checkerboard::Checkerboard& m_board;
 	MoveInfo m_info;
 };

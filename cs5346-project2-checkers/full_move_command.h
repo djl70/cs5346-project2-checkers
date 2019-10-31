@@ -1,12 +1,14 @@
 #pragma once
 
+//#include "checkerboard.h"
 #include "command.h"
 
 #include <SFML/Graphics.hpp>
 
-#include <vector>
-
-struct Checkerboard;
+namespace checkerboard
+{
+	struct Checkerboard;
+}
 
 struct FullMoveInfo
 {
@@ -19,7 +21,7 @@ struct FullMoveInfo
 class FullMoveCommand : public Command
 {
 public:
-	FullMoveCommand(Checkerboard& board, const FullMoveInfo& info);
+	FullMoveCommand(checkerboard::Checkerboard& board, const FullMoveInfo& info);
 
 	bool executeStep();
 	bool undoStep();
@@ -31,9 +33,11 @@ public:
 	bool didPromote() const;
 
 private:
-	Checkerboard& m_board;
+	checkerboard::Checkerboard& m_board;
 	FullMoveInfo m_info;
 
 	int m_firstCapturedIndex;
 	int m_partialExecutionStep;
 };
+
+bool equal(const FullMoveInfo& lhs, const FullMoveInfo& rhs);

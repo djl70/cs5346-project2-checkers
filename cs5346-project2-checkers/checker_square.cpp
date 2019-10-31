@@ -5,7 +5,7 @@
 CheckerSquare::CheckerSquare(CheckerSquareType type)
 	: m_type{ type }
 	, m_interactable{ type == kBlackSquare }
-	, m_piece{ nullptr }
+	, m_piece{ -1 }
 	, m_isKingRow{ false }
 {
 	sf::Color fillColor;
@@ -43,17 +43,9 @@ void CheckerSquare::setPositionOnBoard(const sf::Vector2i& coords, const sf::Vec
 	});
 }
 
-void CheckerSquare::setPiece(CheckerPiece* piece)
+void CheckerSquare::setPieceIndex(int pieceIndex)
 {
-	m_piece = piece;
-	if (m_piece)
-	{
-		m_piece->setPosition({ m_rect.left, m_rect.top });
-		if (m_isKingRow && m_promoteColor == m_piece->getColor())
-		{
-			m_piece->promote();
-		}
-	}
+	m_piece = pieceIndex;
 }
 
 /*void CheckerSquare::setNeighbors(const NeighboringSquares& neighbors)
@@ -76,12 +68,17 @@ sf::Vector2i CheckerSquare::getPositionOnBoard() const
 	return m_positionOnBoard;
 }
 
-bool CheckerSquare::isEmpty() const
+sf::Vector2f CheckerSquare::getPositionInWindow() const
 {
-	return m_piece == nullptr;
+	return { m_rect.left, m_rect.top };
 }
 
-CheckerPiece* CheckerSquare::getPiece()
+bool CheckerSquare::isEmpty() const
+{
+	return m_piece == -1;
+}
+
+int CheckerSquare::getPieceIndex() const
 {
 	return m_piece;
 }
@@ -94,10 +91,10 @@ bool CheckerSquare::contains(const sf::Vector2f& point) const
 void CheckerSquare::render(sf::RenderWindow* pWindow) const
 {
 	pWindow->draw(m_shape);
-	if (m_piece)
-	{
-		m_piece->render(pWindow);
-	}
+	//if (m_piece)
+	//{
+	//	m_piece->render(pWindow);
+	//}
 }
 
 void CheckerSquare::renderHighlight(sf::RenderWindow* pWindow) const

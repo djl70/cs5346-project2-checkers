@@ -1,7 +1,5 @@
 #include "player.h"
 
-#include "checkerboard.h"
-
 Player::Player(CheckerColor color, bool isBot)
 	: m_color{ color }
 	, m_isBot{ isBot }
@@ -10,7 +8,7 @@ Player::Player(CheckerColor color, bool isBot)
 
 }
 
-void Player::setBoard(Checkerboard* pBoard)
+void Player::setBoard(checkerboard::Checkerboard* pBoard)
 {
 	m_pBoard = pBoard;
 }
@@ -28,6 +26,11 @@ bool Player::isBot() const
 bool Player::isTurn() const
 {
 	return m_isTurn;
+}
+
+CheckerColor Player::getColor() const
+{
+	return m_color;
 }
 
 void Player::takeTurn()
