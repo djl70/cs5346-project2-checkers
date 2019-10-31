@@ -65,7 +65,7 @@ void HumanPlayer::event(const sf::Event& event)
 				{
 					// We did click a valid square to jump to, so do it
 					const CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *forcedSquare);
-					JumpInfo info{ *m_pBoard, m_pSelectedSquare->getPositionOnBoard(), forcedSquare->getPositionOnBoard(), jumpedSquare->getPositionOnBoard() };
+					JumpInfo info{ m_simulatedBoard, m_pSelectedSquare->getPositionOnBoard(), forcedSquare->getPositionOnBoard(), jumpedSquare->getPositionOnBoard() };
 
 					m_fullMove.to.push_back(info.to);
 					m_fullMove.jumped.push_back(info.jumped);
@@ -98,7 +98,7 @@ void HumanPlayer::event(const sf::Event& event)
 						if (m_mustJump)
 						{
 							const CheckerSquare* jumpedSquare = findJumpedSquare(*m_pSelectedSquare, *square);
-							JumpInfo info{ *m_pBoard, m_pSelectedSquare->getPositionOnBoard(), square->getPositionOnBoard(), jumpedSquare->getPositionOnBoard() };
+							JumpInfo info{ m_simulatedBoard, m_pSelectedSquare->getPositionOnBoard(), square->getPositionOnBoard(), jumpedSquare->getPositionOnBoard() };
 
 							// This is the first jump
 							m_fullMove.from = info.from;
@@ -112,7 +112,7 @@ void HumanPlayer::event(const sf::Event& event)
 						else
 						{
 							// We are just performing a simple move
-							MoveInfo info{ *m_pBoard, m_pSelectedSquare->getPositionOnBoard(), square->getPositionOnBoard() };
+							MoveInfo info{ m_simulatedBoard, m_pSelectedSquare->getPositionOnBoard(), square->getPositionOnBoard() };
 
 							m_fullMove.from = info.from;
 							m_fullMove.jumped.clear();

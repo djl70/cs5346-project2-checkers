@@ -13,8 +13,8 @@ namespace config
 	const float kCapturedAreaOffsetFromEdge = 200.0f * kScaling;
 	
 	const sf::Vector2f boardTopLeft{ config::kScreenWidth * 0.5f - (config::kSquareWidth * 4.0f), config::kScreenHeight * 0.5f - (config::kSquareWidth * 4.0f) };
-	const sf::Vector2f capturedRedTopLeft{ kCapturedAreaOffsetFromEdge, config::kScreenHeight * 0.5f - (config::kSquareWidth * 2.0f) };
-	const sf::Vector2f capturedBlackTopLeft{ kScreenWidth - config::kSquareWidth * 3.0f - kCapturedAreaOffsetFromEdge, config::kScreenHeight * 0.5f - (config::kSquareWidth * 2.0f) };
+	const sf::Vector2f capturedBlackTopLeft{ kCapturedAreaOffsetFromEdge, config::kScreenHeight * 0.5f - (config::kSquareWidth * 2.0f) };
+	const sf::Vector2f capturedRedTopLeft{ kScreenWidth - config::kSquareWidth * 3.0f - kCapturedAreaOffsetFromEdge, config::kScreenHeight * 0.5f - (config::kSquareWidth * 2.0f) };
 	
 	const sf::Color blackSquareColor{ 143, 67, 15, 200 };
 	const sf::Color redSquareColor{ 242, 174, 126, 200 };

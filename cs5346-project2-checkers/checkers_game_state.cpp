@@ -169,9 +169,9 @@ BaseState* CheckersGameState::event()
 						m_currentPlayer = (m_currentPlayer + 1) % 2;
 						m_players.at(m_currentPlayer)->takeTurn();
 					}
-					else if (numBots == 1)
+					else if (numBots == 1 && !m_players.at(m_currentPlayer)->isBot())
 					{
-						// Undo the last 2 moves
+						// Undo the last 2 moves, but only if it's the human player's turn
 						Command* pCommand = m_commands.top();
 						m_commands.pop();
 						pCommand->undo();
