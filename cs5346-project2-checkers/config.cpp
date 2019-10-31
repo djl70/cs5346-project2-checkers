@@ -18,6 +18,9 @@ namespace config
 	
 	const sf::Color blackSquareColor{ 143, 67, 15, 200 };
 	const sf::Color redSquareColor{ 242, 174, 126, 200 };
+
+	const sf::Vector2f redTurnIndicatorTopLeft{ capturedRedTopLeft.x + kSquareWidth, capturedRedTopLeft.y - kSquareWidth * 1.5f };
+	const sf::Vector2f blackTurnIndicatorTopLeft{ capturedBlackTopLeft.x + kSquareWidth, capturedBlackTopLeft.y - kSquareWidth * 1.5f };
 	
 	const sf::Vector2f titleSize{ 600.0f * kScaling, 100.0f * kScaling };
 	const sf::FloatRect titleRect{ kScreenWidth * 0.5f - (titleSize.x * 0.5f), kScreenHeight * 0.25f - (titleSize.y * 0.5f), titleSize.x, titleSize.y };

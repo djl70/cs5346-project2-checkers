@@ -11,8 +11,19 @@
 CheckersGameState::CheckersGameState(ResourceManager* pResources, Player* firstPlayer, Player* secondPlayer)
 	: m_pResources{ pResources }
 	, m_players{ firstPlayer, secondPlayer }
+	, m_turnIndicators{
+		CheckerPiece{ firstPlayer->getColor(), pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_man" : "red_man"), pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_king" : "red_king") },
+		CheckerPiece{ secondPlayer->getColor(), pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_man" : "red_man"), pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_king" : "red_king") }
+	}
+	, m_turnIndicatorSquares{ CheckerSquare{ kCapturedBlack }, CheckerSquare{ kCapturedBlack } }
 {
-
+	for (int i = 0; i < m_players.size(); ++i)
+	{
+		CheckerColor color = m_turnIndicators.at(i).getColor();
+		const sf::Vector2f& point = color == kBlack ? config::blackTurnIndicatorTopLeft : config::redTurnIndicatorTopLeft;
+		m_turnIndicators.at(i).setPosition(point);
+		m_turnIndicatorSquares.at(i).setPositionOnBoard({ 0, 0 }, point);
+	}
 }
 
 void CheckersGameState::enter()
@@ -230,11 +241,25 @@ BaseState* CheckersGameState::event()
 
 void CheckersGameState::render()
 {
-	// TODO: Above the captured areas, draw the respective piece (kinged) and highlight its square when it's that player's turn.
-
 	m_pResources->getWindow()->clear(sf::Color::White);
 
 	m_pResources->getWindow()->draw(m_background);
+
+	// Draw turn indicators
+	for (int i = 0; i < m_players.size(); ++i)
+	{
+		m_turnIndicatorSquares.at(i).render(m_pResources->getWindow());
+		if (m_currentPlayer == i)
+		{
+			m_turnIndicators.at(i).promote();
+			m_turnIndicatorSquares.at(i).renderHighlight(m_pResources->getWindow());
+		}
+		else
+		{
+			m_turnIndicators.at(i).demote();
+		}
+		m_turnIndicators.at(i).render(m_pResources->getWindow());
+	}
 
 	//// Draw game board
 	//for (auto& square : m_board.board)

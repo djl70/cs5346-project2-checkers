@@ -18,6 +18,8 @@ namespace config
 	extern const sf::Color redSquareColor;
 	extern const sf::Vector2f capturedRedTopLeft;
 	extern const sf::Vector2f capturedBlackTopLeft;
+	extern const sf::Vector2f redTurnIndicatorTopLeft;
+	extern const sf::Vector2f blackTurnIndicatorTopLeft;
 	extern const sf::Vector2f titleSize;
 	extern const sf::Vector2f menuButtonSize;
 	extern const sf::FloatRect titleRect;

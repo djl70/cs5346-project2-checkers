@@ -38,6 +38,8 @@ private:
 
 	int m_currentPlayer;
 	std::array<Player*, 2> m_players;
+	std::array<CheckerPiece, 2> m_turnIndicators;
+	std::array<CheckerSquare, 2> m_turnIndicatorSquares;
 
 	std::stack<Command*> m_commands;
 
