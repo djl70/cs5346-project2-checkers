@@ -108,7 +108,7 @@ namespace checkerboard
 	{
 		std::vector<JumpInfo> jumps;
 
-		const CheckerSquare& square = board.board[start.y * 8 + start.x];
+		const CheckerSquare& square = board.board.at(checkerboard::index(start));
 		const CheckerPiece* piece = square.isEmpty() ? nullptr : &board.pieces.at(square.getPieceIndex());
 		if (piece && piece->getColor() == playerColor)
 		{
@@ -152,12 +152,12 @@ namespace checkerboard
 
 	bool findJumpInDirection(const Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start, const sf::Vector2i& offset, JumpInfo*& outJump)
 	{
-		const CheckerSquare& from = board.board[checkerboard::index(start)];
+		const CheckerSquare& from = board.board.at(checkerboard::index(start));
 
 		sf::Vector2i jumpedIndex = start + offset;
 		if (jumpedIndex.x >= 0 && jumpedIndex.x < 8 && jumpedIndex.y >= 0 && jumpedIndex.y < 8)
 		{
-			const CheckerSquare& jumped = board.board[checkerboard::index(jumpedIndex)];
+			const CheckerSquare& jumped = board.board.at(checkerboard::index(jumpedIndex));
 			const CheckerPiece* neighborPiece = jumped.isEmpty() ? nullptr : &board.pieces.at(jumped.getPieceIndex());
 
 			// If there is an opponent's piece in the adjacent square, check if we can jump it
@@ -166,7 +166,7 @@ namespace checkerboard
 				sf::Vector2i toIndex = start + offset + offset;
 				if (toIndex.x >= 0 && toIndex.x < 8 && toIndex.y >= 0 && toIndex.y < 8)
 				{
-					const CheckerSquare& to = board.board[checkerboard::index(toIndex)];
+					const CheckerSquare& to = board.board.at(checkerboard::index(toIndex));
 
 					if (to.isEmpty())
 					{
@@ -200,7 +200,7 @@ namespace checkerboard
 	{
 		std::vector<MoveInfo> moves;
 
-		const CheckerSquare& square = board.board[start.y * 8 + start.x];
+		const CheckerSquare& square = board.board.at(checkerboard::index(start));
 		const CheckerPiece* piece = square.isEmpty() ? nullptr : &board.pieces.at(square.getPieceIndex());
 		if (piece && piece->getColor() == playerColor)
 		{
@@ -244,12 +244,12 @@ namespace checkerboard
 
 	bool findMoveInDirection(const Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start, const sf::Vector2i& offset, MoveInfo*& outMove)
 	{
-		const CheckerSquare& from = board.board[checkerboard::index(start)];
+		const CheckerSquare& from = board.board.at(checkerboard::index(start));
 
 		sf::Vector2i toIndex = start + offset;
 		if (toIndex.x >= 0 && toIndex.x < 8 && toIndex.y >= 0 && toIndex.y < 8)
 		{
-			const CheckerSquare& to = board.board[checkerboard::index(toIndex)];
+			const CheckerSquare& to = board.board.at(checkerboard::index(toIndex));
 
 			if (to.isEmpty())
 			{
@@ -301,7 +301,7 @@ namespace checkerboard
 	{
 		std::vector<FullMoveInfo> fullMoves;
 
-		const CheckerSquare& square = board.board[start.y * 8 + start.x];
+		const CheckerSquare& square = board.board.at(checkerboard::index(start));
 		const CheckerPiece* piece = square.isEmpty() ? nullptr : &board.pieces.at(square.getPieceIndex());
 		if (piece && piece->getColor() == playerColor)
 		{
@@ -349,7 +349,7 @@ namespace checkerboard
 	std::vector<FullMoveInfo> findFullMovesInDirection(const Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start, const sf::Vector2i& offset)
 	{
 		std::vector<FullMoveInfo> fullMoves;
-		const CheckerSquare& from = board.board[start.y * 8 + start.x];
+		const CheckerSquare& from = board.board.at(checkerboard::index(start));
 
 		// Try jumping
 		JumpInfo* jumpInfo = nullptr;
@@ -375,7 +375,7 @@ namespace checkerboard
 				std::vector<FullMoveInfo> offsetMoves;
 				sf::Vector2i newStart = start + offset + offset;
 				sf::Vector2i avoidDirection{ -offset.x, -offset.y };
-				const CheckerSquare& newStartSquare = simulated.board.at(newStart.y * 8 + newStart.x);
+				const CheckerSquare& newStartSquare = simulated.board.at(checkerboard::index(newStart));
 				const CheckerPiece* piece = newStartSquare.isEmpty() ? nullptr : &simulated.pieces.at(newStartSquare.getPieceIndex());
 
 				sf::Vector2i newOffset;
@@ -461,7 +461,7 @@ namespace checkerboard
 	std::vector<FullMoveInfo> findFullMovesInDirectionRecursive(const Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start, const sf::Vector2i& offset, const FullMoveInfo& currentMove)
 	{
 		std::vector<FullMoveInfo> fullMoves;
-		const CheckerSquare& from = board.board[start.y * 8 + start.x];
+		const CheckerSquare& from = board.board.at(checkerboard::index(start));
 
 		// Try jumping
 		JumpInfo* jumpInfo = nullptr;
@@ -486,7 +486,7 @@ namespace checkerboard
 				std::vector<FullMoveInfo> offsetMoves;
 				sf::Vector2i newStart = start + offset + offset;
 				sf::Vector2i avoidDirection{ -offset.x, -offset.y };
-				const CheckerSquare& newStartSquare = simulated.board.at(newStart.y * 8 + newStart.x);
+				const CheckerSquare& newStartSquare = simulated.board.at(checkerboard::index(newStart));
 				const CheckerPiece* piece = newStartSquare.isEmpty() ? nullptr : &simulated.pieces.at(newStartSquare.getPieceIndex());
 
 				sf::Vector2i newOffset;

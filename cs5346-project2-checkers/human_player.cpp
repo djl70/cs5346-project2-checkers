@@ -151,7 +151,7 @@ FullMoveCommand* HumanPlayer::update()
 			// We must jump, and we have already performed a jump previously
 			// In this case, we want to make sure the selected piece is the one that was already moved
 			sf::Vector2i forcedIndex = m_fullMove.to.back();
-			m_pSelectedSquare = &m_simulatedBoard.board.at(forcedIndex.y * 8 + forcedIndex.x);
+			m_pSelectedSquare = &m_simulatedBoard.board.at(checkerboard::index(forcedIndex));
 			m_validMovesFromSelectedSquare = getValidMovesForSquare(*m_pSelectedSquare);
 		}
 	}
