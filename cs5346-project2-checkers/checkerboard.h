@@ -15,6 +15,9 @@ struct Checkerboard
 	std::vector<CheckerSquare> capturedBlackSquares;
 };
 
+Checkerboard simulateMove(const Checkerboard& board, const MoveInfo& info);
+Checkerboard simulateJump(const Checkerboard& board, const JumpInfo& info);
+
 std::vector<JumpInfo> findAllValidJumps(Checkerboard& board, CheckerColor playerColor);
 std::vector<JumpInfo> findValidJumps(Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start);
 bool findJumpInDirection(Checkerboard& board, CheckerColor playerColor, const sf::Vector2i& start, const sf::Vector2i& offset, JumpInfo*& outJump);

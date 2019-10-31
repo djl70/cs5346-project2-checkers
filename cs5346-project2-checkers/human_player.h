@@ -2,6 +2,7 @@
 
 #include "player.h"
 
+#include "checkerboard.h"
 #include "full_move_command.h"
 
 class CheckerSquare;

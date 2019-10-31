@@ -2,11 +2,11 @@
 
 #include "command.h"
 
-#include "checkerboard.h"
-
 #include <SFML/Graphics.hpp>
 
 #include <vector>
+
+struct Checkerboard;
 
 struct FullMoveInfo
 {
@@ -37,6 +37,3 @@ private:
 	int m_firstCapturedIndex;
 	int m_partialExecutionStep;
 };
-
-Checkerboard simulateMove(const Checkerboard& board, const MoveInfo& info);
-Checkerboard simulateJump(const Checkerboard& board, const JumpInfo& info);

@@ -141,23 +141,3 @@ bool FullMoveCommand::didPromote() const
 {
 	return m_info.promoted;
 }
-
-Checkerboard simulateMove(const Checkerboard& board, const MoveInfo& info)
-{
-	Checkerboard simulated{ board };
-
-	MoveCommand command{ simulated, info };
-	command.execute();
-
-	return simulated;
-}
-
-Checkerboard simulateJump(const Checkerboard& board, const JumpInfo& info)
-{
-	Checkerboard simulated{ board };
-
-	JumpCommand command{ simulated, info };
-	command.execute();
-
-	return simulated;
-}
