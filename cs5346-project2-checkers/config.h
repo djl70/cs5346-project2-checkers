@@ -24,7 +24,12 @@ namespace config
 	extern const sf::FloatRect multiPlayerButtonRect;
 	extern const sf::FloatRect singlePlayerButtonRect;
 	extern const sf::FloatRect autoPlayButtonRect;
+	extern const sf::FloatRect startButtonRect;
 	extern const sf::FloatRect menuButtonRect;
+	extern const sf::Vector2f leftAlgorithmButtonGroupPosition;
+	extern const sf::Vector2f leftHeuristicButtonGroupPosition;
+	extern const sf::Vector2f rightAlgorithmButtonGroupPosition;
+	extern const sf::Vector2f rightHeuristicButtonGroupPosition;
 
 	extern const std::unordered_map<std::string, std::string> textureFiles;
 	extern const std::unordered_map<std::string, std::string> soundFiles;

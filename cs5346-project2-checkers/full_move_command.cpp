@@ -132,6 +132,16 @@ void FullMoveCommand::undo()
 	}
 }
 
+bool FullMoveCommand::isJump() const
+{
+	return !m_info.jumped.empty();
+}
+
+bool FullMoveCommand::didPromote() const
+{
+	return m_info.promoted;
+}
+
 Checkerboard simulateMove(const Checkerboard& board, const MoveInfo& info)
 {
 	Checkerboard simulated{ board };

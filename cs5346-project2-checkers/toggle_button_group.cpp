@@ -12,13 +12,25 @@ void ToggleButtonGroup::addButton(const ToggleButton& button)
 	if (m_buttons.size() == 1)
 	{
 		// This was the first button, so toggle it on
-		m_buttons.at(0).toggleOn();
+		m_buttons.back().toggleOn();
+	}
+	else
+	{
+		m_buttons.back().toggleOff();
 	}
 }
 
 int ToggleButtonGroup::getActiveButtonIndex() const
 {
 	return m_activeButton;
+}
+
+void ToggleButtonGroup::setEnabled(bool enabled)
+{
+	for (auto& button : m_buttons)
+	{
+		button.setEnabled(enabled);
+	}
 }
 
 bool ToggleButtonGroup::update(const sf::Event& event, const sf::Vector2f& mousePositionInWindow)

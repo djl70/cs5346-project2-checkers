@@ -7,7 +7,7 @@
 #include "full_move_command.h"
 
 AIPlayer::AIPlayer(CheckerColor color)
-	: Player(color)
+	: Player{ color, true }
 	, m_mustJump{ false }
 {
 

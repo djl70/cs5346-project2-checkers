@@ -5,7 +5,7 @@
 #include "resource_manager.h"
 
 HumanPlayer::HumanPlayer(CheckerColor color)
-	: Player(color)
+	: Player{ color, false }
 	, m_mustJump{ false }
 {
 

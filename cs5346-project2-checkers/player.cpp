@@ -2,9 +2,10 @@
 
 #include "checkerboard.h"
 
-Player::Player(CheckerColor color)
-	: m_isTurn{ false }
-	, m_color{ color }
+Player::Player(CheckerColor color, bool isBot)
+	: m_color{ color }
+	, m_isBot{ isBot }
+	, m_isTurn{ false }
 {
 
 }
@@ -19,12 +20,17 @@ void Player::setResources(ResourceManager* pResources)
 	m_pResources = pResources;
 }
 
-void Player::takeTurn()
+bool Player::isBot() const
 {
-	m_isTurn = true;
+	return m_isBot;
 }
 
 bool Player::isTurn() const
 {
 	return m_isTurn;
+}
+
+void Player::takeTurn()
+{
+	m_isTurn = true;
 }

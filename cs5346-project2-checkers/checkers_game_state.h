@@ -19,7 +19,7 @@ class Player;
 class CheckersGameState : public BaseState
 {
 public:
-	CheckersGameState(ResourceManager* pResources);
+	CheckersGameState(ResourceManager* pResources, Player* firstPlayer, Player* secondPlayer);
 
 	void enter() override;
 	BaseState* event() override;

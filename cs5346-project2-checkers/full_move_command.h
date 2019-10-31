@@ -27,6 +27,9 @@ public:
 	void execute() override;
 	void undo() override;
 
+	bool isJump() const;
+	bool didPromote() const;
+
 private:
 	Checkerboard& m_board;
 	FullMoveInfo m_info;

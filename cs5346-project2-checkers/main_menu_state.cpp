@@ -56,8 +56,7 @@ BaseState* MainMenuState::event()
 		if (m_multiPlayerButton.update(event, mousePositionInWindow))
 		{
 			m_pResources->playSound("sound_move");
-			return new CheckersGameState{ m_pResources };
-			//return new PlayerConfigurationMenuState{ m_resources, 0 };
+			return new PlayerConfigurationMenuState{ m_pResources, 0 };
 		}
 
 		if (m_singlePlayerButton.update(event, mousePositionInWindow))

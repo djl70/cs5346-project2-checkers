@@ -8,8 +8,9 @@
 #include "ai_player.h"
 #include "human_player.h"
 
-CheckersGameState::CheckersGameState(ResourceManager* pResources)
+CheckersGameState::CheckersGameState(ResourceManager* pResources, Player* firstPlayer, Player* secondPlayer)
 	: m_pResources{ pResources }
+	, m_players{ firstPlayer, secondPlayer }
 {
 
 }
@@ -100,12 +101,13 @@ void CheckersGameState::enter()
 		}
 	}
 
-	m_players[0] = new HumanPlayer{ kBlack };
-	m_players[0]->setResources(m_pResources);
-	m_players[0]->setBoard(&m_board);
-	m_players[1] = new AIPlayer{ kRed };
-	m_players[1]->setResources(m_pResources);
-	m_players[1]->setBoard(&m_board);
+	//m_players[0] = new HumanPlayer{ kBlack, false };
+	//m_players[1] = new AIPlayer{ kRed, true };
+	for (auto& player : m_players)
+	{
+		player->setResources(m_pResources);
+		player->setBoard(&m_board);
+	}
 
 	m_currentPlayer = 0;
 	m_players[m_currentPlayer]->takeTurn();
@@ -131,20 +133,45 @@ BaseState* CheckersGameState::event()
 			// Undo the previous command when right mouse button pressed
 			if (event.mouseButton.button == sf::Mouse::Button::Right)
 			{
-				// Undo past 2 moves and have player take turn again (temporary fix for P1 vs COM)
 				if (!m_commands.empty())
 				{
-					Command* pCommand = m_commands.top();
-					m_commands.pop();
-					pCommand->undo();
-					delete pCommand;
+					// If both players are AIs, don't undo anything
+					// If both players are humans, undo only one move
+					// If one player is human and the other is an AI, undo two moves
+					int numBots = 0;
+					for (const auto& player : m_players)
+					{
+						numBots += player->isBot();
+					}
 
-					pCommand = m_commands.top();
-					m_commands.pop();
-					pCommand->undo();
-					delete pCommand;
+					if (numBots == 0)
+					{
+						// Undo the last move
+						Command* pCommand = m_commands.top();
+						m_commands.pop();
+						pCommand->undo();
+						delete pCommand;
 
-					m_players.at(m_currentPlayer)->takeTurn();
+						// Switch players
+						m_currentPlayer = (m_currentPlayer + 1) % 2;
+						m_players.at(m_currentPlayer)->takeTurn();
+					}
+					else if (numBots == 1)
+					{
+						// Undo the last 2 moves
+						Command* pCommand = m_commands.top();
+						m_commands.pop();
+						pCommand->undo();
+						delete pCommand;
+
+						pCommand = m_commands.top();
+						m_commands.pop();
+						pCommand->undo();
+						delete pCommand;
+
+						// Re-take the current player's turn
+						m_players.at(m_currentPlayer)->takeTurn();
+					}
 				}
 			}
 			break;
@@ -156,7 +183,7 @@ BaseState* CheckersGameState::event()
 	FullMoveCommand* pCommand = m_players.at(m_currentPlayer)->update();
 	if (pCommand)
 	{
-		if (m_currentPlayer == 1)
+		if (m_players.at(m_currentPlayer)->isBot())
 		{
 			// TODO: Fix this so that it pauses between steps
 			do
@@ -169,8 +196,17 @@ BaseState* CheckersGameState::event()
 			pCommand->execute();
 		}
 		m_commands.push(pCommand);
-		//m_moveSound.play();
-		m_pResources->playSound("sound_move");
+
+		if (pCommand->didPromote())
+		{
+			m_pResources->playSound("sound_jump");
+		}
+		else
+		{
+			m_pResources->playSound("sound_move");
+		}
+
+		// TODO: End the player's turn here, because we're only dealing with full moves now. Don't let the player decide when their turn is over.
 	}
 
 	if (!m_players.at(m_currentPlayer)->isTurn())
@@ -192,6 +228,8 @@ BaseState* CheckersGameState::event()
 
 void CheckersGameState::render()
 {
+	// TODO: Above the captured areas, draw the respective piece (kinged) and highlight its square when it's that player's turn.
+
 	m_pResources->getWindow()->clear(sf::Color::White);
 
 	m_pResources->getWindow()->draw(m_background);
@@ -225,8 +263,11 @@ void CheckersGameState::exit()
 		m_commands.pop();
 	}
 
-	delete m_players[0];
-	delete m_players[1];
+	for (auto& player : m_players)
+	{
+		delete player;
+		player = nullptr;
+	}
 }
 
 bool CheckersGameState::isGameOver(CheckerColor& outWinningColor)

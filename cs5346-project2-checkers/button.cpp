@@ -67,6 +67,11 @@ void Button::setTexture(ButtonState state, sf::Texture* texture)
 
 void Button::setEnabled(bool enabled)
 {
+	if (enabled == m_enabled)
+	{
+		return;
+	}
+
 	m_enabled = enabled;
 	m_sprite.setColor({ 255, 255, 255, m_enabled ? (sf::Uint8)255 : (sf::Uint8)128 });
 	changeState(kDefault);

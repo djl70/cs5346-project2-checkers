@@ -20,8 +20,10 @@ private:
 	unsigned int m_aiPlayerCount;
 	sf::Sprite m_background;
 	sf::Sprite m_title;
-	ToggleButtonGroup m_algorithmButtons;
-	ToggleButtonGroup m_heuristicButtons;
+	ToggleButtonGroup m_leftAlgorithmButtons;
+	ToggleButtonGroup m_leftHeuristicButtons;
+	ToggleButtonGroup m_rightAlgorithmButtons;
+	ToggleButtonGroup m_rightHeuristicButtons;
 	Button m_startGameButton;
 	Button m_mainMenuButton;
 };
