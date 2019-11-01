@@ -4,13 +4,23 @@
 #include "full_move_command.h"
 #include "resource_manager.h"
 
-AIPlayer::AIPlayer(CheckerColor color)
+AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 	: Player{ color, true }
+	, m_pAlgorithm{ pAlgorithm }
 	, m_doneStepping{ false }
 	, m_stepDelay{ sf::milliseconds(500) }
 	, m_stepCount{ 0 }
 {
 
+}
+
+AIPlayer::~AIPlayer()
+{
+	if (m_pAlgorithm)
+	{
+		delete m_pAlgorithm;
+		m_pAlgorithm = nullptr;
+	}
 }
 
 void AIPlayer::takeTurn()
@@ -37,10 +47,11 @@ void AIPlayer::takeTurn()
 
 	// Determine which move to take
 	// TODO: Allow the best move to be chosen with a custom function, and run this in a separate thread since it will likely be time consuming and we don't want it to block input
-	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(*m_pBoard, m_color);
+	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(m_simulatedBoard, m_color);
 	if (!possibleMoves.empty())
 	{
-		m_commandInfo = possibleMoves.at(0);
+		//m_commandInfo = possibleMoves.at(0);
+		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, m_color, 4);
 		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
 		m_doneStepping = false;
 		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));

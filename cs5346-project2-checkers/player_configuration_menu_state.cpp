@@ -7,6 +7,10 @@
 #include "ai_player.h"
 #include "human_player.h"
 
+#include "heuristic_1.h"
+#include "sum_bits_heuristic.h"
+#include "minimax_search_algorithm.h"
+
 PlayerConfigurationMenuState::PlayerConfigurationMenuState(ResourceManager* pResources, unsigned int aiPlayerCount)
 	: m_pResources{ pResources }
 	, m_aiPlayerCount{ aiPlayerCount }
@@ -139,11 +143,11 @@ BaseState* PlayerConfigurationMenuState::event()
 			m_pResources->playSound("sound_move");
 			if (m_aiPlayerCount == 1)
 			{
-				return new CheckersGameState{ m_pResources, new HumanPlayer{ kBlack }, new AIPlayer{ kRed } };
+				return new CheckersGameState{ m_pResources, new HumanPlayer{ kBlack }, new AIPlayer{ kRed, new MinimaxSearchAlgorithm{ new SumBitsHeuristic } } };
 			}
 			else if (m_aiPlayerCount == 2)
 			{
-				return new CheckersGameState{ m_pResources, new AIPlayer{ kBlack }, new AIPlayer{ kRed } };
+				return new CheckersGameState{ m_pResources, new AIPlayer{ kBlack, new MinimaxSearchAlgorithm{ new Heuristic_1 } }, new AIPlayer{ kRed , new MinimaxSearchAlgorithm{ new Heuristic_1 } } };
 			}
 		}
 

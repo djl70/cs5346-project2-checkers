@@ -43,8 +43,11 @@
     <Filter Include="Source Files\Buttons">
       <UniqueIdentifier>{ec1243a4-4279-4f1f-ad8a-c1562daf10d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Evaluation Functions">
+    <Filter Include="Header Files\Heuristics">
       <UniqueIdentifier>{3b71c74c-d303-463c-a5c4-91b7bf55c2fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Heuristics">
+      <UniqueIdentifier>{ef224d70-c509-4637-89fe-71c9927283e5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +110,18 @@
     </ClCompile>
     <ClCompile Include="toggle_button_group.cpp">
       <Filter>Source Files\Buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="sum_bits_heuristic.cpp">
+      <Filter>Source Files\Heuristics</Filter>
+    </ClCompile>
+    <ClCompile Include="search_algorithm.cpp">
+      <Filter>Source Files\Heuristics</Filter>
+    </ClCompile>
+    <ClCompile Include="minimax_search_algorithm.cpp">
+      <Filter>Source Files\Heuristics</Filter>
+    </ClCompile>
+    <ClCompile Include="heuristic_1.cpp">
+      <Filter>Source Files\Heuristics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -174,7 +189,19 @@
       <Filter>Header Files\Buttons</Filter>
     </ClInclude>
     <ClInclude Include="heuristic.h">
-      <Filter>Header Files\Evaluation Functions</Filter>
+      <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="sum_bits_heuristic.h">
+      <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="search_algorithm.h">
+      <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="minimax_search_algorithm.h">
+      <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="heuristic_1.h">
+      <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

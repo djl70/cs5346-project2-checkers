@@ -7,6 +7,8 @@
 
 namespace config
 {
+	extern const int kNumMovesWithoutCaptureOrKingingNeededToDraw;
+	extern const int kBoardStateFrequencyNeededToDraw;
 	extern const unsigned int kFps;
 	extern const float kScaling; // Controls the scaling of everything. For values other than 1, the graphics will likely be blurry.
 	extern const float kScreenWidth;

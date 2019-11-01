@@ -68,6 +68,37 @@ namespace checkerboard
 		return pieceIndex;
 	}
 
+	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board, int currentPlayer)
+	{
+		std::bitset<kBitsToEncodeBoardState> bits;
+		
+		// The player bit will be the least significant bit
+		bits.set(0, currentPlayer == 1);
+
+		// Next, we'll iterate through all the black squares and record their states
+		for (int r = 0; r < 8; ++r)
+		{
+			for (int c = 0; c < 8; ++c)
+			{
+				if ((r + c) % 2 == 1)
+				{
+					int i = index({ c, r });
+
+					bool hasPiece = !board.board.at(i).isEmpty();
+					bits.set(i, hasPiece);
+					if (hasPiece)
+					{
+						const CheckerPiece& piece = board.pieces.at(board.board.at(i).getPieceIndex());
+						bits.set(i + 1, piece.getColor() == kBlack);
+						bits.set(i + 2, piece.isKing());
+					}
+				}
+			}
+		}
+
+		return bits;
+	}
+
 	Checkerboard simulateMove(const Checkerboard& board, const MoveInfo& info)
 	{
 		Checkerboard simulated{ board };

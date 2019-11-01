@@ -10,7 +10,9 @@
 #include <SFML/Graphics.hpp>
 
 #include <array>
+#include <bitset>
 #include <stack>
+#include <unordered_map>
 #include <vector>
 
 class Command;
@@ -33,8 +35,9 @@ private:
 	sf::Color m_blackPieceColor;
 	sf::Color m_redPieceColor;
 	sf::RectangleShape m_rect;
-	//std::vector<CheckerPiece> m_pieces;
 	checkerboard::Checkerboard m_board;
+	int m_numMovesSinceCaptureOrKinging;
+	std::unordered_map<std::bitset<checkerboard::kBitsToEncodeBoardState>, int> m_boardStateFrequency;
 
 	int m_currentPlayer;
 	std::array<Player*, 2> m_players;

@@ -141,14 +141,18 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="full_move_command.cpp" />
     <ClCompile Include="game_over_state.cpp" />
+    <ClCompile Include="heuristic_1.cpp" />
     <ClCompile Include="human_player.cpp" />
     <ClCompile Include="jump_command.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_state.cpp" />
+    <ClCompile Include="minimax_search_algorithm.cpp" />
     <ClCompile Include="move_command.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="player_configuration_menu_state.cpp" />
     <ClCompile Include="resource_manager.cpp" />
+    <ClCompile Include="search_algorithm.cpp" />
+    <ClCompile Include="sum_bits_heuristic.cpp" />
     <ClCompile Include="toggle_button.cpp" />
     <ClCompile Include="toggle_button_group.cpp" />
   </ItemGroup>
@@ -166,13 +170,17 @@
     <ClInclude Include="full_move_command.h" />
     <ClInclude Include="game_over_state.h" />
     <ClInclude Include="heuristic.h" />
+    <ClInclude Include="heuristic_1.h" />
     <ClInclude Include="human_player.h" />
     <ClInclude Include="jump_command.h" />
     <ClInclude Include="main_menu_state.h" />
+    <ClInclude Include="minimax_search_algorithm.h" />
     <ClInclude Include="move_command.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="player_configuration_menu_state.h" />
     <ClInclude Include="resource_manager.h" />
+    <ClInclude Include="search_algorithm.h" />
+    <ClInclude Include="sum_bits_heuristic.h" />
     <ClInclude Include="toggle_button.h" />
     <ClInclude Include="toggle_button_group.h" />
   </ItemGroup>

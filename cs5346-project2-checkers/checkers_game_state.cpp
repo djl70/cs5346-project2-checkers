@@ -124,6 +124,7 @@ void CheckersGameState::enter()
 
 	m_currentPlayer = 0;
 	m_players[m_currentPlayer]->takeTurn();
+	m_numMovesSinceCaptureOrKinging = 0;
 }
 
 BaseState* CheckersGameState::event()
@@ -159,6 +160,9 @@ BaseState* CheckersGameState::event()
 
 					if (numBots == 0)
 					{
+						// Since we are undoing, we want to decrement the number of times we have encountered the current board state
+						--m_boardStateFrequency.at(checkerboard::encode(m_board, m_currentPlayer));
+						
 						// Undo the last move
 						Command* pCommand = m_commands.top();
 						m_commands.pop();
@@ -171,11 +175,16 @@ BaseState* CheckersGameState::event()
 					}
 					else if (numBots == 1 && !m_players.at(m_currentPlayer)->isBot())
 					{
+						// Since we are undoing twice, we want to decrement the number of times we have encountered both the current and previous board states
+						--m_boardStateFrequency.at(checkerboard::encode(m_board, m_currentPlayer));
+
 						// Undo the last 2 moves, but only if it's the human player's turn
 						Command* pCommand = m_commands.top();
 						m_commands.pop();
 						pCommand->undo();
 						delete pCommand;
+
+						--m_boardStateFrequency.at(checkerboard::encode(m_board, (m_currentPlayer + 1) % 2));
 
 						pCommand = m_commands.top();
 						m_commands.pop();
@@ -208,14 +217,30 @@ BaseState* CheckersGameState::event()
 			m_pResources->playSound("sound_move");
 		}
 
-		// TODO: End the player's turn here, because we're only dealing with full moves now. Don't let the player decide when their turn is over.
-	}
+		// Reset the moves counter to 0 if we jumped or kinged a piece
+		if (pCommand->isJump() || pCommand->didPromote())
+		{
+			m_numMovesSinceCaptureOrKinging = 0;
+		}
+		else
+		{
+			++m_numMovesSinceCaptureOrKinging;
+		}
 
-	if (!m_players.at(m_currentPlayer)->isTurn())
-	{
+		// End the player's turn here, because we're only dealing with full moves now. Don't let the player decide when their turn is over.
 		m_currentPlayer = (m_currentPlayer + 1) % 2;
+
+		// Increment the number of times we've encountered the current board state
+		++m_boardStateFrequency[checkerboard::encode(m_board, m_currentPlayer)];
+
 		m_players.at(m_currentPlayer)->takeTurn();
 	}
+
+	//if (!m_players.at(m_currentPlayer)->isTurn())
+	//{
+	//	m_currentPlayer = (m_currentPlayer + 1) % 2;
+	//	m_players.at(m_currentPlayer)->takeTurn();
+	//}
 
 	CheckerColor winningColor;
 	if (isGameOver(winningColor))
@@ -293,13 +318,31 @@ void CheckersGameState::exit()
 bool CheckersGameState::isGameOver(CheckerColor& outWinningColor)
 {
 	// Game is over when the current player has no moves available
+	bool isGameOver = false;
 
 	CheckerColor playerColor = m_players.at(m_currentPlayer)->getColor();
 	if (findAllValidFullMoves(m_board, playerColor).empty())
 	{
 		outWinningColor = playerColor == kBlack ? kRed : kBlack;
-		return true;
+		isGameOver = true;
+	}
+	else if (m_numMovesSinceCaptureOrKinging >= config::kNumMovesWithoutCaptureOrKingingNeededToDraw)
+	{
+		outWinningColor = kBlack;
+		isGameOver = true;
+	}
+	else
+	{
+		for (const auto& pair : m_boardStateFrequency)
+		{
+			if (pair.second >= config::kBoardStateFrequencyNeededToDraw)
+			{
+				outWinningColor = kBlack;
+				isGameOver = true;
+				break;
+			}
+		}
 	}
 
-	return false;
+	return isGameOver;
 }

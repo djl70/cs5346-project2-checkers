@@ -2,11 +2,9 @@
 
 #include "player.h"
 
-//#include "jump_command.h"
-//#include "move_command.h"
-#include "full_move_command.h"
-
 #include "checkerboard.h"
+#include "full_move_command.h"
+#include "search_algorithm.h"
 
 #include <SFML/System.hpp>
 
@@ -15,7 +13,8 @@ class FullMoveCommand;
 class AIPlayer : public Player
 {
 public:
-	AIPlayer(CheckerColor color);
+	AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm);
+	~AIPlayer();
 	// AIPlayer(CheckerColor color, EvaluationFunction* eval);
 	void takeTurn() override;
 	void event(const sf::Event& event) override;
@@ -23,6 +22,7 @@ public:
 	void render(sf::RenderWindow* pWindow) override;
 
 private:
+	SearchAlgorithm* m_pAlgorithm;
 	sf::Clock m_turnClock;
 	sf::Time m_moveStepTime;
 	bool m_doneStepping;

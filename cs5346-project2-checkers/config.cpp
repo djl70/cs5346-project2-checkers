@@ -2,6 +2,9 @@
 
 namespace config
 {
+	const int kNumMovesWithoutCaptureOrKingingNeededToDraw = 50;
+	const int kBoardStateFrequencyNeededToDraw = 3;
+
 	const unsigned int kFps = 60;
 	const float kScaling = 1.0f; // Controls the scaling of everything. For values other than 1, the graphics will likely be blurry.
 	

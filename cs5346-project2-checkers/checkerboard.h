@@ -6,12 +6,15 @@
 #include "move_command.h"
 #include "full_move_command.h"
 
+#include <bitset>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
 
 namespace checkerboard
 {
+	const unsigned int kBitsToEncodeBoardState = 97; // 1 bit for player, 32 bits for occupied (yes/no), 32 bits for piece color (red/black), 32 bits for piece rank (man/king)
+
 	struct Checkerboard
 	{
 		std::vector<CheckerSquare> board;
@@ -25,6 +28,8 @@ namespace checkerboard
 	void movePieceFromTo(Checkerboard& board, int pieceIndex, int fromIndex, int toIndex);
 	int capturePieceFrom(Checkerboard& board, int pieceIndex, int fromIndex);
 	int releasePieceTo(Checkerboard& board, CheckerColor color, int fromCapturedIndex, int toIndex);
+
+	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board, int currentPlayer);
 
 	Checkerboard simulateMove(const Checkerboard& board, const MoveInfo& info);
 	Checkerboard simulateJump(const Checkerboard& board, const JumpInfo& info);
