@@ -1,6 +1,6 @@
 #include "heuristic_1.h"
 
-int Heuristic_1::value(const checkerboard::Checkerboard& board, int currentPlayer) const
+int Heuristic_1::value(const checkerboard::Checkerboard& board) const
 {
 	// Value breakdown:
 	// +1 for each friendly neighboring piece around the current piece
@@ -9,7 +9,7 @@ int Heuristic_1::value(const checkerboard::Checkerboard& board, int currentPlaye
 	// +10 for each piece on an edge (+20 if on the row closest to the player)
 	// Determine for opponent, too, and get difference
 
-	CheckerColor playerColor = currentPlayer == 0 ? kBlack : kRed;
+	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
 
 	int myValue = 0;
 	int otherValue = 0;
@@ -26,7 +26,7 @@ int Heuristic_1::value(const checkerboard::Checkerboard& board, int currentPlaye
 				}
 
 				const CheckerPiece& piece = board.pieces.at(square.getPieceIndex());
-				int squareOwner = piece.getColor() == playerColor ? currentPlayer : (currentPlayer + 1) % 2;
+				int squareOwner = piece.getColor() == playerColor ? board.currentPlayer : checkerboard::nextPlayer(board.currentPlayer);
 				CheckerColor squareOwnerColor = squareOwner == 0 ? kBlack : kRed;
 				int* value = squareOwnerColor == playerColor ? &myValue : &otherValue;
 

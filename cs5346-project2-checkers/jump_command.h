@@ -31,4 +31,6 @@ private:
 	checkerboard::Checkerboard& m_board;
 	JumpInfo m_info;
 	int m_capturedSquare;
+
+	int m_numTurnsSinceCaptureOrKinging;
 };

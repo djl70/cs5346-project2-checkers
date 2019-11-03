@@ -36,10 +36,10 @@ private:
 	sf::Color m_redPieceColor;
 	sf::RectangleShape m_rect;
 	checkerboard::Checkerboard m_board;
-	int m_numMovesSinceCaptureOrKinging;
-	std::unordered_map<std::bitset<checkerboard::kBitsToEncodeBoardState>, int> m_boardStateFrequency;
+	//int m_numMovesSinceCaptureOrKinging;
+	//std::unordered_map<std::bitset<checkerboard::kBitsToEncodeBoardState>, int> m_boardStateFrequency;
 
-	int m_currentPlayer;
+	//int m_currentPlayer;
 	std::array<Player*, 2> m_players;
 	std::array<CheckerPiece, 2> m_turnIndicators;
 	std::array<CheckerSquare, 2> m_turnIndicatorSquares;

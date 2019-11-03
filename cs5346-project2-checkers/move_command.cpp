@@ -30,10 +30,26 @@ void MoveCommand::execute()
 	if (!toSquare.isEmpty()) { throw ("Error: Moved piece onto occupied square"); }
 
 	checkerboard::movePieceFromTo(m_board, fromSquare.getPieceIndex(), checkerboard::index(m_info.from), checkerboard::index(m_info.to));
+
+	// Update board state
+	++m_board.turnNumber;
+	if (m_info.promoted)
+	{
+		m_board.numTurnsSinceCaptureOrKinging = 0;
+	}
+	else
+	{
+		++m_board.numTurnsSinceCaptureOrKinging;
+	}
+	m_board.currentPlayer = checkerboard::nextPlayer(m_board.currentPlayer);
+
+	++m_board.boardStateFrequency[checkerboard::encode(m_board)];
 }
 
 void MoveCommand::undo()
 {
+	--m_board.boardStateFrequency[checkerboard::encode(m_board)];
+
 	const CheckerSquare& fromSquare = m_board.board.at(checkerboard::index(m_info.from));
 	const CheckerSquare& toSquare = m_board.board.at(checkerboard::index(m_info.to));
 
@@ -44,4 +60,9 @@ void MoveCommand::undo()
 	{
 		fromPiece->demote();
 	}
+
+	// Update board state
+	--m_board.turnNumber;
+	m_board.numTurnsSinceCaptureOrKinging = m_numTurnsSinceCaptureOrKinging;
+	m_board.currentPlayer = checkerboard::nextPlayer(m_board.currentPlayer);
 }

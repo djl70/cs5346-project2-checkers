@@ -6,6 +6,7 @@ FullMoveCommand::FullMoveCommand(checkerboard::Checkerboard& board, const FullMo
 	: m_board{ board }
 	, m_info{ info }
 	, m_partialExecutionStep{ -1 }
+	, m_numTurnsSinceCaptureOrKinging{ board.numTurnsSinceCaptureOrKinging }
 {
 
 }
@@ -147,15 +148,37 @@ void FullMoveCommand::execute()
 	{
 
 	}
+
+	// Update board state
+	++m_board.turnNumber;
+	if (!isJump() && !didPromote())
+	{
+		++m_board.numTurnsSinceCaptureOrKinging;
+	}
+	else
+	{
+		m_board.numTurnsSinceCaptureOrKinging = 0;
+	}
+	m_board.currentPlayer = checkerboard::nextPlayer(m_board.currentPlayer);
+
+	++m_board.boardStateFrequency[checkerboard::encode(m_board)];
 }
 
 void FullMoveCommand::undo()
 {
+	--m_board.boardStateFrequency[checkerboard::encode(m_board)];
+
 	// Undo all steps
 	while (!undoStep())
 	{
 
 	}
+
+	// Update board state
+	--m_board.turnNumber;
+	m_board.numTurnsSinceCaptureOrKinging = m_numTurnsSinceCaptureOrKinging;
+	m_board.currentPlayer = checkerboard::nextPlayer(m_board.currentPlayer);
+
 }
 
 bool FullMoveCommand::isJump() const

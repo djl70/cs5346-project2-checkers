@@ -34,6 +34,7 @@ namespace config
 	extern const sf::Vector2f leftHeuristicButtonGroupPosition;
 	extern const sf::Vector2f rightAlgorithmButtonGroupPosition;
 	extern const sf::Vector2f rightHeuristicButtonGroupPosition;
+	extern const int kMaxSearchDepth;
 
 	extern const std::unordered_map<std::string, std::string> textureFiles;
 	extern const std::unordered_map<std::string, std::string> soundFiles;

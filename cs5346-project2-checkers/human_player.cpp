@@ -35,6 +35,11 @@ void HumanPlayer::startTurn()
 	//Player::startTurn();
 }
 
+void HumanPlayer::stop()
+{
+	// Nothing to do here
+}
+
 void HumanPlayer::event(const sf::Event& event)
 {
 	// Do nothing while we're waiting to check for more jumps

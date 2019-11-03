@@ -38,6 +38,7 @@ private:
 
 	int m_firstCapturedIndex;
 	int m_partialExecutionStep;
+	int m_numTurnsSinceCaptureOrKinging;
 };
 
 bool equal(const FullMoveInfo& lhs, const FullMoveInfo& rhs);

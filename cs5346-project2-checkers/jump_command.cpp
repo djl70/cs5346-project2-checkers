@@ -19,6 +19,7 @@ JumpCommand::JumpCommand(checkerboard::Checkerboard& board, const JumpInfo& info
 	: m_board{ board }
 	, m_info{ info }
 	, m_capturedSquare{ -1 }
+	, m_numTurnsSinceCaptureOrKinging{ board.numTurnsSinceCaptureOrKinging }
 {
 
 }
@@ -57,10 +58,19 @@ void JumpCommand::execute()
 
 	m_capturedSquare = checkerboard::capturePieceFrom(m_board, jumpedSquare.getPieceIndex(), checkerboard::index(m_info.jumped));
 	if (m_capturedSquare == -1) { throw ("Error: No more space in the captured area"); }
+
+	// Update board state
+	++m_board.turnNumber;
+	m_board.numTurnsSinceCaptureOrKinging = 0;
+	m_board.currentPlayer = checkerboard::nextPlayer(m_board.currentPlayer);
+
+	++m_board.boardStateFrequency[checkerboard::encode(m_board)];
 }
 
 void JumpCommand::undo()
 {
+	--m_board.boardStateFrequency[checkerboard::encode(m_board)];
+
 	const CheckerSquare& fromSquare = m_board.board.at(checkerboard::index(m_info.from));
 	const CheckerSquare& jumpedSquare = m_board.board.at(checkerboard::index(m_info.jumped));
 	const CheckerSquare& toSquare = m_board.board.at(checkerboard::index(m_info.to));
@@ -78,4 +88,9 @@ void JumpCommand::undo()
 	{
 		fromPiece->demote();
 	}
+
+	// Update board state
+	--m_board.turnNumber;
+	m_board.numTurnsSinceCaptureOrKinging = m_numTurnsSinceCaptureOrKinging;
+	m_board.currentPlayer = checkerboard::nextPlayer(m_board.currentPlayer);
 }

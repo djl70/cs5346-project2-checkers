@@ -68,12 +68,18 @@ namespace checkerboard
 		return pieceIndex;
 	}
 
-	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board, int currentPlayer)
+	int nextPlayer(int currentPlayer)
+	{
+		// Player is either 0 or 1, so we turn 0 -> 1 or 1 -> 0
+		return 1 - currentPlayer;
+	}
+
+	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board)
 	{
 		std::bitset<kBitsToEncodeBoardState> bits;
 		
 		// The player bit will be the least significant bit
-		bits.set(0, currentPlayer == 1);
+		bits.set(0, board.currentPlayer == 1);
 
 		// Next, we'll iterate through all the black squares and record their states
 		for (int r = 0; r < 8; ++r)

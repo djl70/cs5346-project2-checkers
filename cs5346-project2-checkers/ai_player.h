@@ -19,6 +19,7 @@ public:
 	~AIPlayer();
 	// AIPlayer(CheckerColor color, EvaluationFunction* eval);
 	void startTurn() override;
+	void stop() override;
 	void event(const sf::Event& event) override;
 	FullMoveCommand* update() override;
 	void render(sf::RenderWindow* pWindow) override;

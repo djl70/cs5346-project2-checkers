@@ -20,6 +20,7 @@ public:
 	CheckerColor getColor() const;
 
 	virtual void startTurn() = 0;
+	virtual void stop() = 0;
 	//virtual void endTurn();
 	virtual void event(const sf::Event& event) = 0;
 	virtual FullMoveCommand* update() = 0;

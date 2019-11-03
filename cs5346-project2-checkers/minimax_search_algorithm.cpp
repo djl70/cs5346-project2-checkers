@@ -67,7 +67,7 @@ bool MinimaxSearchAlgorithm::deepEnough(const checkerboard::Checkerboard& positi
 int MinimaxSearchAlgorithm::value(const checkerboard::Checkerboard& position, CheckerColor player) const
 {
 	// Assume player 0 is black and player 1 is red
-	return m_pHeuristic->value(position, player == kBlack ? 0 : 1);
+	return m_pHeuristic->value(position);
 }
 
 std::vector<FullMoveInfo> MinimaxSearchAlgorithm::moveGen(const checkerboard::Checkerboard& position, CheckerColor player) const

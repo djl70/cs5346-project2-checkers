@@ -4,6 +4,8 @@
 #include "full_move_command.h"
 #include "resource_manager.h"
 
+#include "config.h"
+
 AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 	: Player{ color, true }
 	, m_pAlgorithm{ pAlgorithm }
@@ -17,11 +19,7 @@ AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 
 AIPlayer::~AIPlayer()
 {
-	if (m_moveSelectionThread.joinable())
-	{
-		m_moveSelectionThread.join();
-		m_moveSelectionThread.detach();
-	}
+	stop();
 
 	if (m_pAlgorithm)
 	{
@@ -65,6 +63,15 @@ void AIPlayer::startTurn()
 
 	// Call the base function to actually start our turn
 	//Player::startTurn();
+}
+
+void AIPlayer::stop()
+{
+	// Join the move selection thread here
+	if (m_moveSelectionThread.joinable())
+	{
+		m_moveSelectionThread.join();
+	}
 }
 
 void AIPlayer::event(const sf::Event& event)
@@ -147,7 +154,7 @@ void AIPlayer::selectMove()
 	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(m_simulatedBoard, m_color);
 	if (!possibleMoves.empty())
 	{
-		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, m_color, 4);
+		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, m_color, config::kMaxSearchDepth);
 		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
 		m_doneStepping = false;
 		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));

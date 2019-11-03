@@ -29,4 +29,6 @@ public:
 private:
 	checkerboard::Checkerboard& m_board;
 	MoveInfo m_info;
+
+	int m_numTurnsSinceCaptureOrKinging;
 };

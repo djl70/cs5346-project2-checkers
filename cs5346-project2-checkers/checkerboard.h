@@ -7,6 +7,7 @@
 #include "full_move_command.h"
 
 #include <bitset>
+#include <unordered_map>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
@@ -21,6 +22,10 @@ namespace checkerboard
 		std::vector<CheckerSquare> capturedRedSquares;
 		std::vector<CheckerSquare> capturedBlackSquares;
 		std::vector<CheckerPiece> pieces;
+		int turnNumber = 0;
+		int currentPlayer = 0;
+		int numTurnsSinceCaptureOrKinging = 0;
+		std::unordered_map<std::bitset<checkerboard::kBitsToEncodeBoardState>, int> boardStateFrequency;
 	};
 
 	int index(const sf::Vector2i& coord);
@@ -29,7 +34,9 @@ namespace checkerboard
 	int capturePieceFrom(Checkerboard& board, int pieceIndex, int fromIndex);
 	int releasePieceTo(Checkerboard& board, CheckerColor color, int fromCapturedIndex, int toIndex);
 
-	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board, int currentPlayer);
+	int nextPlayer(int currentPlayer);
+
+	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board);
 
 	Checkerboard simulateMove(const Checkerboard& board, const MoveInfo& info);
 	Checkerboard simulateJump(const Checkerboard& board, const JumpInfo& info);
