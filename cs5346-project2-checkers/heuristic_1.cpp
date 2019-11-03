@@ -4,8 +4,9 @@ int Heuristic_1::value(const checkerboard::Checkerboard& board, int currentPlaye
 {
 	// Value breakdown:
 	// +1 for each friendly neighboring piece around the current piece
-	// +1 for each man
-	// +2 for each king
+	// +50 for each man
+	// +100 for each king
+	// +10 for each piece on an edge (+20 if on the row closest to the player)
 	// Determine for opponent, too, and get difference
 
 	CheckerColor playerColor = currentPlayer == 0 ? kBlack : kRed;
@@ -25,15 +26,17 @@ int Heuristic_1::value(const checkerboard::Checkerboard& board, int currentPlaye
 				}
 
 				const CheckerPiece& piece = board.pieces.at(square.getPieceIndex());
-				int* value = piece.getColor() == playerColor ? &myValue : &otherValue;
+				int squareOwner = piece.getColor() == playerColor ? currentPlayer : (currentPlayer + 1) % 2;
+				CheckerColor squareOwnerColor = squareOwner == 0 ? kBlack : kRed;
+				int* value = squareOwnerColor == playerColor ? &myValue : &otherValue;
 
 				if (piece.isKing())
 				{
-					*value += 2;
+					*value += 100;
 				}
 				else
 				{
-					*value += 1;
+					*value += 50;
 				}
 
 				// Check neighboring squares
@@ -74,6 +77,20 @@ int Heuristic_1::value(const checkerboard::Checkerboard& board, int currentPlaye
 					if (!neighbor->isEmpty() && board.pieces.at(neighbor->getPieceIndex()).getColor() == piece.getColor())
 					{
 						*value += 1;
+					}
+				}
+
+				// Check if on an edge
+				if (r == 0 || r == 7 || c == 0 || c == 7)
+				{
+					// Check if on the row closest to the player
+					if ((r == 0 && squareOwnerColor == kRed) || (r == 7 && squareOwnerColor == kBlack))
+					{
+						*value += 20;
+					}
+					else
+					{
+						*value += 10;
 					}
 				}
 			}

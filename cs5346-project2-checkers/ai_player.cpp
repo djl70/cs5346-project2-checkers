@@ -7,6 +7,7 @@
 AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 	: Player{ color, true }
 	, m_pAlgorithm{ pAlgorithm }
+	, m_doneBuildingMove{ false }
 	, m_doneStepping{ false }
 	, m_stepDelay{ sf::milliseconds(500) }
 	, m_stepCount{ 0 }
@@ -16,6 +17,12 @@ AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 
 AIPlayer::~AIPlayer()
 {
+	if (m_moveSelectionThread.joinable())
+	{
+		m_moveSelectionThread.join();
+		m_moveSelectionThread.detach();
+	}
+
 	if (m_pAlgorithm)
 	{
 		delete m_pAlgorithm;
@@ -23,7 +30,7 @@ AIPlayer::~AIPlayer()
 	}
 }
 
-void AIPlayer::takeTurn()
+void AIPlayer::startTurn()
 {
 	// Determine what we can do: a single move, or as many jumps as possible for a single piece
 	//m_mustJump = !findAllValidJumps(*m_pBoard, m_color).empty();
@@ -42,34 +49,22 @@ void AIPlayer::takeTurn()
 		m_pCommand = nullptr;
 	}
 
+	m_doneBuildingMove = false;
+
 	// Update the simulated board
 	m_simulatedBoard = *m_pBoard;
+	m_pFromSquare = nullptr;
+	m_pToSquare = nullptr;
 
-	// Determine which move to take
-	// TODO: Allow the best move to be chosen with a custom function, and run this in a separate thread since it will likely be time consuming and we don't want it to block input
-	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(m_simulatedBoard, m_color);
-	if (!possibleMoves.empty())
+	// Select moves in a separate thread so it doesn't block input
+	if (m_moveSelectionThread.joinable())
 	{
-		//m_commandInfo = possibleMoves.at(0);
-		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, m_color, 4);
-		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
-		m_doneStepping = false;
-		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));
-		m_pToSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.to.at(0)));
+		m_moveSelectionThread.join();
 	}
-	else
-	{
-		m_doneStepping = true;
-		m_pFromSquare = nullptr;
-		m_pToSquare = nullptr;
-	}
-
-	m_turnClock.restart();
-	m_moveStepTime = sf::Time::Zero;
-	m_stepCount = 0;
+	m_moveSelectionThread = std::thread{ &AIPlayer::selectMove, this };
 
 	// Call the base function to actually start our turn
-	Player::takeTurn();
+	//Player::startTurn();
 }
 
 void AIPlayer::event(const sf::Event& event)
@@ -81,14 +76,14 @@ FullMoveCommand* AIPlayer::update()
 {
 	FullMoveCommand* pCommand = nullptr;
 
-	if (m_doneStepping)
+	// Wait until we have chosen which move to take
+	if (!m_doneBuildingMove)
 	{
-		delete m_pCommand;
-		m_pCommand = nullptr;
-		pCommand = new FullMoveCommand{ *m_pBoard, m_commandInfo };
-		m_isTurn = false;
+		return nullptr;
 	}
-	else
+
+	// Wait until we have finished animating our move
+	if (!m_doneStepping)
 	{
 		m_moveStepTime += m_turnClock.restart();
 		while (m_moveStepTime > m_stepDelay)
@@ -102,6 +97,12 @@ FullMoveCommand* AIPlayer::update()
 				m_pToSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.to.at(m_stepCount)));
 			}
 		}
+	}
+	else
+	{
+		delete m_pCommand;
+		m_pCommand = nullptr;
+		pCommand = new FullMoveCommand{ *m_pBoard, m_commandInfo };
 	}
 
 	return pCommand;
@@ -139,6 +140,29 @@ void AIPlayer::render(sf::RenderWindow* pWindow)
 	{
 		m_pToSquare->renderHighlight(pWindow);
 	}
+}
+
+void AIPlayer::selectMove()
+{
+	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(m_simulatedBoard, m_color);
+	if (!possibleMoves.empty())
+	{
+		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, m_color, 4);
+		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
+		m_doneStepping = false;
+		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));
+		m_pToSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.to.at(0)));
+	}
+	else
+	{
+		m_doneStepping = true;
+	}
+
+	m_turnClock.restart();
+	m_moveStepTime = sf::Time::Zero;
+	m_stepCount = 0;
+
+	m_doneBuildingMove = true;
 }
 
 //JumpInfo AIPlayer::chooseBestJump(const std::vector<JumpInfo>& jumps)

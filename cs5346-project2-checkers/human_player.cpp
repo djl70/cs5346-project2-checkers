@@ -11,7 +11,7 @@ HumanPlayer::HumanPlayer(CheckerColor color)
 
 }
 
-void HumanPlayer::takeTurn()
+void HumanPlayer::startTurn()
 {
 	// Determine what we can do: a single move, or as many jumps as possible for a single piece
 	m_mustJump = !checkerboard::findAllValidJumps(*m_pBoard, m_color).empty();
@@ -32,7 +32,7 @@ void HumanPlayer::takeTurn()
 	m_validMovesFromSelectedSquare.clear();
 
 	// Call the base function to actually start our turn
-	Player::takeTurn();
+	//Player::startTurn();
 }
 
 void HumanPlayer::event(const sf::Event& event)
@@ -159,7 +159,7 @@ FullMoveCommand* HumanPlayer::update()
 	if (m_doneBuildingMove)
 	{
 		pCommand = new FullMoveCommand(*m_pBoard, m_fullMove);
-		m_isTurn = false;
+		//m_isTurn = false;
 	}
 
 	return pCommand;

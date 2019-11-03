@@ -13,7 +13,7 @@ MinimaxSearchAlgorithm::MinimaxSearchAlgorithm(Heuristic* pHeuristic)
 FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, CheckerColor currentPlayer, int maxDepth)
 {
 	m_maxDepth = maxDepth;
-	ResultStructure bestResult = minimaxAB(initialState, 0, currentPlayer, std::numeric_limits<int>::max(), std::numeric_limits<int>::min());
+	ResultStructure bestResult = minimaxAB(initialState, 0, currentPlayer, std::numeric_limits<int>::max(), -std::numeric_limits<int>::max());
 	return bestResult.path.front();
 }
 

@@ -16,10 +16,11 @@ public:
 	void setResources(ResourceManager* pResources);
 
 	bool isBot() const;
-	bool isTurn() const;
+	//bool isTurn() const;
 	CheckerColor getColor() const;
 
-	virtual void takeTurn();
+	virtual void startTurn() = 0;
+	//virtual void endTurn();
 	virtual void event(const sf::Event& event) = 0;
 	virtual FullMoveCommand* update() = 0;
 	virtual void render(sf::RenderWindow* pWindow) = 0;
@@ -27,7 +28,7 @@ public:
 protected:
 	CheckerColor m_color;
 	bool m_isBot;
-	bool m_isTurn;
+	//bool m_isTurn;
 	checkerboard::Checkerboard* m_pBoard;
 	ResourceManager* m_pResources;
 };

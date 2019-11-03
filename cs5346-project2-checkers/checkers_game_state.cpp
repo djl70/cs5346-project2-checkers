@@ -123,7 +123,7 @@ void CheckersGameState::enter()
 	}
 
 	m_currentPlayer = 0;
-	m_players[m_currentPlayer]->takeTurn();
+	m_players[m_currentPlayer]->startTurn();
 	m_numMovesSinceCaptureOrKinging = 0;
 }
 
@@ -171,7 +171,7 @@ BaseState* CheckersGameState::event()
 
 						// Switch players
 						m_currentPlayer = (m_currentPlayer + 1) % 2;
-						m_players.at(m_currentPlayer)->takeTurn();
+						m_players.at(m_currentPlayer)->startTurn();
 					}
 					else if (numBots == 1 && !m_players.at(m_currentPlayer)->isBot())
 					{
@@ -192,7 +192,7 @@ BaseState* CheckersGameState::event()
 						delete pCommand;
 
 						// Re-take the current player's turn
-						m_players.at(m_currentPlayer)->takeTurn();
+						m_players.at(m_currentPlayer)->startTurn();
 					}
 				}
 			}
@@ -233,7 +233,7 @@ BaseState* CheckersGameState::event()
 		// Increment the number of times we've encountered the current board state
 		++m_boardStateFrequency[checkerboard::encode(m_board, m_currentPlayer)];
 
-		m_players.at(m_currentPlayer)->takeTurn();
+		m_players.at(m_currentPlayer)->startTurn();
 	}
 
 	//if (!m_players.at(m_currentPlayer)->isTurn())
