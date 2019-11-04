@@ -246,7 +246,7 @@ BaseState* CheckersGameState::event()
 		//++m_boardStateFrequency[checkerboard::encode(m_board, m_currentPlayer)];
 
 		GameOverCondition gameOverCondition;
-		if (isGameOver(gameOverCondition))
+		if (checkerboard::isGameOver(m_board, gameOverCondition))
 		{
 			return new GameOverState{ m_pResources, gameOverCondition };
 		}
@@ -331,65 +331,65 @@ void CheckersGameState::exit()
 	}
 }
 
-bool CheckersGameState::isGameOver(GameOverCondition& outGameOverCondition)
-{
-	// Check if black has captured all of red's pieces
-	bool isRedOutOfPieces = true;
-	for (const auto& square : m_board.capturedRedSquares)
-	{
-		if (square.isEmpty())
-		{
-			isRedOutOfPieces = false;
-			break;
-		}
-	}
-	if (isRedOutOfPieces)
-	{
-		outGameOverCondition = kRedHasNoPiecesLeft;
-		return true;
-	}
-
-	// Check if red has captured all of black's pieces
-	bool isBlackOutOfPieces = true;
-	for (const auto& square : m_board.capturedBlackSquares)
-	{
-		if (square.isEmpty())
-		{
-			isBlackOutOfPieces = false;
-			break;
-		}
-	}
-	if (isBlackOutOfPieces)
-	{
-		outGameOverCondition = kBlackHasNoPiecesLeft;
-		return true;
-	}
-
-	// Both players have at least one piece on the board, so check if the next player to move has any moves available
-	CheckerColor playerColor = m_players.at(m_board.currentPlayer)->getColor();
-	if (findAllValidFullMoves(m_board, playerColor).empty())
-	{
-		outGameOverCondition = playerColor == kBlack ? kBlackCannotMove : kRedCannotMove;
-		return true;
-	}
-
-	// A move can be made, so check if the turn limit has been reached
-	if (m_board.numTurnsSinceCaptureOrKinging >= config::kNumMovesWithoutCaptureOrKingingNeededToDraw)
-	{
-		outGameOverCondition = kTurnLimitReached;
-		return true;
-	}
-
-	// The turn limit hasn't been reached, so check if we have encountered the current board state too many times
-	for (const auto& pair : m_board.boardStateFrequency)
-	{
-		if (pair.second >= config::kBoardStateFrequencyNeededToDraw)
-		{
-			outGameOverCondition = kBoardStateRepetitionLimitReached;
-			return true;
-		}
-	}
-
-	// If we reach this point, the game is not over yet
-	return false;
-}
+//bool CheckersGameState::isGameOver(GameOverCondition& outGameOverCondition)
+//{
+//	// Check if black has captured all of red's pieces
+//	bool isRedOutOfPieces = true;
+//	for (const auto& square : m_board.capturedRedSquares)
+//	{
+//		if (square.isEmpty())
+//		{
+//			isRedOutOfPieces = false;
+//			break;
+//		}
+//	}
+//	if (isRedOutOfPieces)
+//	{
+//		outGameOverCondition = kRedHasNoPiecesLeft;
+//		return true;
+//	}
+//
+//	// Check if red has captured all of black's pieces
+//	bool isBlackOutOfPieces = true;
+//	for (const auto& square : m_board.capturedBlackSquares)
+//	{
+//		if (square.isEmpty())
+//		{
+//			isBlackOutOfPieces = false;
+//			break;
+//		}
+//	}
+//	if (isBlackOutOfPieces)
+//	{
+//		outGameOverCondition = kBlackHasNoPiecesLeft;
+//		return true;
+//	}
+//
+//	// Both players have at least one piece on the board, so check if the next player to move has any moves available
+//	CheckerColor playerColor = m_players.at(m_board.currentPlayer)->getColor();
+//	if (findAllValidFullMoves(m_board, playerColor).empty())
+//	{
+//		outGameOverCondition = playerColor == kBlack ? kBlackCannotMove : kRedCannotMove;
+//		return true;
+//	}
+//
+//	// A move can be made, so check if the turn limit has been reached
+//	if (m_board.numTurnsSinceCaptureOrKinging >= config::kNumMovesWithoutCaptureOrKingingNeededToDraw)
+//	{
+//		outGameOverCondition = kTurnLimitReached;
+//		return true;
+//	}
+//
+//	// The turn limit hasn't been reached, so check if we have encountered the current board state too many times
+//	for (const auto& pair : m_board.boardStateFrequency)
+//	{
+//		if (pair.second >= config::kBoardStateFrequencyNeededToDraw)
+//		{
+//			outGameOverCondition = kBoardStateRepetitionLimitReached;
+//			return true;
+//		}
+//	}
+//
+//	// If we reach this point, the game is not over yet
+//	return false;
+//}

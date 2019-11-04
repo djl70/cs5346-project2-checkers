@@ -10,7 +10,7 @@ class MinimaxSearchAlgorithm : public SearchAlgorithm
 public:
 	MinimaxSearchAlgorithm(Heuristic* pHeuristic);
 
-	FullMoveInfo findBestMove(const checkerboard::Checkerboard& initialState, CheckerColor currentPlayer, int maxDepth) override;
+	FullMoveInfo findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth) override;
 
 private:
 	struct ResultStructure

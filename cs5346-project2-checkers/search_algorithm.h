@@ -8,7 +8,7 @@ public:
 	SearchAlgorithm(Heuristic* pHeuristic);
 	~SearchAlgorithm();
 
-	virtual FullMoveInfo findBestMove(const checkerboard::Checkerboard& initialState, CheckerColor currentPlayer, int maxDepth) = 0;
+	virtual FullMoveInfo findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth) = 0;
 
 protected:
 	Heuristic* m_pHeuristic;

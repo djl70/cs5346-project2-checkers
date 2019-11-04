@@ -6,4 +6,9 @@ class Heuristic_1 : public Heuristic
 {
 public:
 	int value(const checkerboard::Checkerboard& board) const override;
+
+private:
+	int earlyGame(const checkerboard::Checkerboard& board) const;
+	int lateGame(const checkerboard::Checkerboard& board) const;
+	int terminal(GameOverCondition condition, CheckerColor playerColor) const;
 };

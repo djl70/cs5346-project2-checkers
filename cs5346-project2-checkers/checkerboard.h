@@ -5,6 +5,7 @@
 #include "jump_command.h"
 #include "move_command.h"
 #include "full_move_command.h"
+#include "game_over_state.h"
 
 #include <bitset>
 #include <unordered_map>
@@ -35,6 +36,8 @@ namespace checkerboard
 	int releasePieceTo(Checkerboard& board, CheckerColor color, int fromCapturedIndex, int toIndex);
 
 	int nextPlayer(int currentPlayer);
+
+	bool isGameOver(const Checkerboard& board, GameOverCondition& outGameOverCondition);
 
 	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board);
 

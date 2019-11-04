@@ -1,15 +1,33 @@
 #include "heuristic_1.h"
 
-int Heuristic_1::value(const checkerboard::Checkerboard& board) const
+#include <limits>
+
+int Heuristic_1::terminal(GameOverCondition condition, CheckerColor playerColor) const
 {
+	switch (condition)
+	{
+	case kBlackCannotMove:
+	case kBlackHasNoPiecesLeft:
+		return playerColor == kBlack ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
+	case kRedCannotMove:
+	case kRedHasNoPiecesLeft:
+		return playerColor == kRed ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
+	case kTurnLimitReached:
+	case kBoardStateRepetitionLimitReached:
+		return 0;
+	}
+}
+
+int Heuristic_1::earlyGame(const checkerboard::Checkerboard& board) const
+{
+	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
+
 	// Value breakdown:
 	// +1 for each friendly neighboring piece around the current piece
 	// +50 for each man
 	// +100 for each king
 	// +10 for each piece on an edge (+20 if on the row closest to the player)
 	// Determine for opponent, too, and get difference
-
-	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
 
 	int myValue = 0;
 	int otherValue = 0;
@@ -98,4 +116,37 @@ int Heuristic_1::value(const checkerboard::Checkerboard& board) const
 	}
 
 	return myValue - otherValue;
+}
+
+int Heuristic_1::lateGame(const checkerboard::Checkerboard& board) const
+{
+	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
+
+	// TODO: For now, just do the same thing as the early game. But this should be changed to a more specialized heuristic for the late game.
+	return earlyGame(board);
+}
+
+int Heuristic_1::value(const checkerboard::Checkerboard& board) const
+{
+	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
+
+	// First, check if the game is over for the current board state
+	// Victory = max value
+	// Loss = min value
+	// Draw = 0
+	GameOverCondition gameOverCondition;
+	if (checkerboard::isGameOver(board, gameOverCondition))
+	{
+		return terminal(gameOverCondition, playerColor);
+	}
+
+	// If the game is not over, value the board differently depending on the turn number
+	if (board.turnNumber < 50)
+	{
+		return earlyGame(board);
+	}
+	else
+	{
+		return lateGame(board);
+	}
 }

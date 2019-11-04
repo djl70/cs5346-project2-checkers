@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ai_player.cpp" />
+    <ClCompile Include="alphabeta_search_algorithm.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="checkerboard.cpp" />
     <ClCompile Include="checkers_game_engine.cpp" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ai_player.h" />
+    <ClInclude Include="alphabeta_search_algorithm.h" />
     <ClInclude Include="base_state.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="checkerboard.h" />

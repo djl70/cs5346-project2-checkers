@@ -17,8 +17,6 @@ enum CheckerRank
 class CheckerPiece
 {
 public:
-	// TODO: Allow these parameters to be set after instantiation, like we did with buttons
-	//CheckerPiece(CheckerColor color, sf::Texture* manTexture, sf::Texture* kingTexture);
 	CheckerPiece();
 
 	void setPosition(const sf::Vector2f& position);

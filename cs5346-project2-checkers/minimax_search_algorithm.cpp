@@ -10,11 +10,12 @@ MinimaxSearchAlgorithm::MinimaxSearchAlgorithm(Heuristic* pHeuristic)
 
 }
 
-FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, CheckerColor currentPlayer, int maxDepth)
+FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth)
 {
 	m_maxDepth = maxDepth;
-	ResultStructure bestResult = minimaxAB(initialState, 0, currentPlayer, std::numeric_limits<int>::max(), -std::numeric_limits<int>::max());
-	return bestResult.path.front();
+	CheckerColor currentPlayer = initialState.currentPlayer == 0 ? kBlack : kRed;
+	ResultStructure searchResult = minimaxAB(initialState, 0, currentPlayer, std::numeric_limits<int>::max(), -std::numeric_limits<int>::max());
+	return searchResult.path.front();
 }
 
 MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const checkerboard::Checkerboard& position, int depth, CheckerColor player, int useThreshold, int passThreshold) const
@@ -31,7 +32,7 @@ MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const 
 	}
 
 	// Shuffle possible moves so that we are not making moves that are as deterministic
-	std::random_shuffle(successors.begin(), successors.end());
+	//std::random_shuffle(successors.begin(), successors.end());
 
 	std::deque<FullMoveInfo> bestPath;
 	for (const FullMoveInfo& succ : successors)
@@ -66,7 +67,6 @@ bool MinimaxSearchAlgorithm::deepEnough(const checkerboard::Checkerboard& positi
 
 int MinimaxSearchAlgorithm::value(const checkerboard::Checkerboard& position, CheckerColor player) const
 {
-	// Assume player 0 is black and player 1 is red
 	return m_pHeuristic->value(position);
 }
 

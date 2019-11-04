@@ -10,6 +10,7 @@
 #include "heuristic_1.h"
 #include "sum_bits_heuristic.h"
 #include "minimax_search_algorithm.h"
+#include "alphabeta_search_algorithm.h"
 
 PlayerConfigurationMenuState::PlayerConfigurationMenuState(ResourceManager* pResources, unsigned int aiPlayerCount)
 	: m_pResources{ pResources }
@@ -141,13 +142,58 @@ BaseState* PlayerConfigurationMenuState::event()
 		if (m_startGameButton.update(event, mousePositionInWindow))
 		{
 			m_pResources->playSound("sound_move");
+
+			Heuristic* leftHeuristic = nullptr;
+			switch (m_leftHeuristicButtons.getActiveButtonIndex())
+			{
+			case 0:
+				leftHeuristic = new Heuristic_1;
+				break;
+			case 1:
+				leftHeuristic = new SumBitsHeuristic;
+				break;
+			}
+
+			SearchAlgorithm* leftAlgorithm = nullptr;
+			switch (m_leftAlgorithmButtons.getActiveButtonIndex())
+			{
+			case 0:
+				leftAlgorithm = new MinimaxSearchAlgorithm{ leftHeuristic };
+				break;
+			case 1:
+				leftAlgorithm = new AlphabetaSearchAlgorithm{ leftHeuristic };
+				break;
+			}
+
 			if (m_aiPlayerCount == 1)
 			{
-				return new CheckersGameState{ m_pResources, new HumanPlayer{ kBlack }, new AIPlayer{ kRed, new MinimaxSearchAlgorithm{ new SumBitsHeuristic } } };
+				return new CheckersGameState{ m_pResources, new HumanPlayer{ kBlack }, new AIPlayer{ kRed, leftAlgorithm } };
 			}
 			else if (m_aiPlayerCount == 2)
 			{
-				return new CheckersGameState{ m_pResources, new AIPlayer{ kBlack, new MinimaxSearchAlgorithm{ new Heuristic_1 } }, new AIPlayer{ kRed , new MinimaxSearchAlgorithm{ new Heuristic_1 } } };
+				Heuristic* rightHeuristic = nullptr;
+				switch (m_rightHeuristicButtons.getActiveButtonIndex())
+				{
+				case 0:
+					rightHeuristic = new Heuristic_1;
+					break;
+				case 1:
+					rightHeuristic = new SumBitsHeuristic;
+					break;
+				}
+
+				SearchAlgorithm* rightAlgorithm = nullptr;
+				switch (m_rightAlgorithmButtons.getActiveButtonIndex())
+				{
+				case 0:
+					rightAlgorithm = new MinimaxSearchAlgorithm{ rightHeuristic };
+					break;
+				case 1:
+					rightAlgorithm = new AlphabetaSearchAlgorithm{ rightHeuristic };
+					break;
+				}
+
+				return new CheckersGameState{ m_pResources, new AIPlayer{ kBlack, leftAlgorithm }, new AIPlayer{ kRed , rightAlgorithm } };
 			}
 		}
 

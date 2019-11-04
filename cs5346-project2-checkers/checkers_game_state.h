@@ -47,5 +47,5 @@ private:
 
 	std::stack<Command*> m_commands;
 
-	bool isGameOver(GameOverCondition& outGameOverCondition);
+	//bool isGameOver(GameOverCondition& outGameOverCondition);
 };

@@ -154,7 +154,7 @@ void AIPlayer::selectMove()
 	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(m_simulatedBoard, m_color);
 	if (!possibleMoves.empty())
 	{
-		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, m_color, config::kMaxSearchDepth);
+		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, config::kMaxSearchDepth);
 		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
 		m_doneStepping = false;
 		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));

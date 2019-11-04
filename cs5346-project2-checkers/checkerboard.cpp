@@ -1,5 +1,7 @@
 #include "checkerboard.h"
 
+#include "config.h"
+
 namespace checkerboard
 {
 	int index(const sf::Vector2i& coord)
@@ -72,6 +74,69 @@ namespace checkerboard
 	{
 		// Player is either 0 or 1, so we turn 0 -> 1 or 1 -> 0
 		return 1 - currentPlayer;
+	}
+
+	bool isGameOver(const Checkerboard& board, GameOverCondition& outGameOverCondition)
+	{
+		// Check if black has captured all of red's pieces
+		bool isRedOutOfPieces = true;
+		for (const auto& square : board.capturedRedSquares)
+		{
+			if (square.isEmpty())
+			{
+				isRedOutOfPieces = false;
+				break;
+			}
+		}
+		if (isRedOutOfPieces)
+		{
+			outGameOverCondition = kRedHasNoPiecesLeft;
+			return true;
+		}
+
+		// Check if red has captured all of black's pieces
+		bool isBlackOutOfPieces = true;
+		for (const auto& square : board.capturedBlackSquares)
+		{
+			if (square.isEmpty())
+			{
+				isBlackOutOfPieces = false;
+				break;
+			}
+		}
+		if (isBlackOutOfPieces)
+		{
+			outGameOverCondition = kBlackHasNoPiecesLeft;
+			return true;
+		}
+
+		// Both players have at least one piece on the board, so check if the next player to move has any moves available
+		CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
+		if (findAllValidFullMoves(board, playerColor).empty())
+		{
+			outGameOverCondition = playerColor == kBlack ? kBlackCannotMove : kRedCannotMove;
+			return true;
+		}
+
+		// A move can be made, so check if the turn limit has been reached
+		if (board.numTurnsSinceCaptureOrKinging >= config::kNumMovesWithoutCaptureOrKingingNeededToDraw)
+		{
+			outGameOverCondition = kTurnLimitReached;
+			return true;
+		}
+
+		// The turn limit hasn't been reached, so check if we have encountered the current board state too many times
+		for (const auto& pair : board.boardStateFrequency)
+		{
+			if (pair.second >= config::kBoardStateFrequencyNeededToDraw)
+			{
+				outGameOverCondition = kBoardStateRepetitionLimitReached;
+				return true;
+			}
+		}
+
+		// If we reach this point, the game is not over yet
+		return false;
 	}
 
 	std::bitset<kBitsToEncodeBoardState> encode(const Checkerboard& board)
