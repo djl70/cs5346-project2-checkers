@@ -82,6 +82,10 @@ namespace config
 		{ "winner", "res/winner.png" }
 	};
 
+	const std::unordered_map<std::string, std::string> fontFiles = {
+		{ "font_arial", "res/arial.ttf" }
+	};
+
 	const std::unordered_map<std::string, std::string> soundFiles = {
 		{ "sound_move", "res/snap.wav" },
 		{ "sound_jump", "res/pop_meow.wav" }

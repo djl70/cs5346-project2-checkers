@@ -37,5 +37,6 @@ namespace config
 	extern const int kMaxSearchDepth;
 
 	extern const std::unordered_map<std::string, std::string> textureFiles;
+	extern const std::unordered_map<std::string, std::string> fontFiles;
 	extern const std::unordered_map<std::string, std::string> soundFiles;
 }

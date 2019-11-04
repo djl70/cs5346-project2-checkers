@@ -15,6 +15,7 @@ public:
 
 	sf::RenderWindow* getWindow();
 	sf::Texture* getTexture(const std::string& name);
+	sf::Font* getFont(const std::string& name);
 	void playSound(const std::string& name);
 
 	void update();
@@ -23,6 +24,7 @@ private:
 	sf::RenderWindow* m_pWindow;
 	std::unordered_map<std::string, sf::Texture> m_textures;
 	std::unordered_map<std::string, sf::SoundBuffer> m_soundBuffers;
+	std::unordered_map<std::string, sf::Font> m_fonts;
 
 	std::deque<sf::Sound> m_playingSounds;
 };

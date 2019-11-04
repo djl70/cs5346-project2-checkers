@@ -11,12 +11,18 @@
 CheckersGameState::CheckersGameState(ResourceManager* pResources, Player* firstPlayer, Player* secondPlayer)
 	: m_pResources{ pResources }
 	, m_players{ firstPlayer, secondPlayer }
-	, m_turnIndicators{
-		CheckerPiece{ firstPlayer->getColor(), pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_man" : "red_man"), pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_king" : "red_king") },
-		CheckerPiece{ secondPlayer->getColor(), pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_man" : "red_man"), pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_king" : "red_king") }
-	}
+	//, m_turnIndicators{
+	//	CheckerPiece{ firstPlayer->getColor(), pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_man" : "red_man"), pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_king" : "red_king") },
+	//	CheckerPiece{ secondPlayer->getColor(), pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_man" : "red_man"), pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_king" : "red_king") }
+	//}
 	, m_turnIndicatorSquares{ CheckerSquare{ kCapturedBlack }, CheckerSquare{ kCapturedBlack } }
 {
+	m_turnIndicators.at(0).setColor(firstPlayer->getColor());
+	m_turnIndicators.at(0).setTextures(m_pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_man" : "red_man"), m_pResources->getTexture(firstPlayer->getColor() == kBlack ? "black_king" : "red_king"));
+	
+	m_turnIndicators.at(1).setColor(secondPlayer->getColor());
+	m_turnIndicators.at(1).setTextures(m_pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_man" : "red_man"), m_pResources->getTexture(secondPlayer->getColor() == kBlack ? "black_king" : "red_king"));
+	
 	for (int i = 0; i < m_players.size(); ++i)
 	{
 		CheckerColor color = m_turnIndicators.at(i).getColor();
@@ -41,13 +47,19 @@ void CheckersGameState::enter()
 			{
 				if (r < 3)
 				{
-					CheckerPiece piece{ kRed, m_pResources->getTexture("red_man"), m_pResources->getTexture("red_king") };
+					//CheckerPiece piece{ kRed, m_pResources->getTexture("red_man"), m_pResources->getTexture("red_king") };
+					CheckerPiece piece;
+					piece.setColor(kRed);
+					piece.setTextures(m_pResources->getTexture("red_man"), m_pResources->getTexture("red_king"));
 					//piece.setPosition(position);
 					m_board.pieces.push_back(piece);
 				}
 				else if (r > 4)
 				{
-					CheckerPiece piece{ kBlack, m_pResources->getTexture("black_man"), m_pResources->getTexture("black_king") };
+					//CheckerPiece piece{ kBlack, m_pResources->getTexture("black_man"), m_pResources->getTexture("black_king") };
+					CheckerPiece piece;
+					piece.setColor(kBlack);
+					piece.setTextures(m_pResources->getTexture("black_man"), m_pResources->getTexture("black_king"));
 					//piece.setPosition(position);
 					m_board.pieces.push_back(piece);
 				}
@@ -233,10 +245,10 @@ BaseState* CheckersGameState::event()
 		//// Increment the number of times we've encountered the current board state
 		//++m_boardStateFrequency[checkerboard::encode(m_board, m_currentPlayer)];
 
-		CheckerColor winningColor;
-		if (isGameOver(winningColor))
+		GameOverCondition gameOverCondition;
+		if (isGameOver(gameOverCondition))
 		{
-			return new GameOverState{ m_pResources, winningColor };
+			return new GameOverState{ m_pResources, gameOverCondition };
 		}
 
 		m_players.at(m_board.currentPlayer)->startTurn();
@@ -319,34 +331,65 @@ void CheckersGameState::exit()
 	}
 }
 
-bool CheckersGameState::isGameOver(CheckerColor& outWinningColor)
+bool CheckersGameState::isGameOver(GameOverCondition& outGameOverCondition)
 {
-	// Game is over when the current player has no moves available
-	bool isGameOver = false;
+	// Check if black has captured all of red's pieces
+	bool isRedOutOfPieces = true;
+	for (const auto& square : m_board.capturedRedSquares)
+	{
+		if (square.isEmpty())
+		{
+			isRedOutOfPieces = false;
+			break;
+		}
+	}
+	if (isRedOutOfPieces)
+	{
+		outGameOverCondition = kRedHasNoPiecesLeft;
+		return true;
+	}
 
+	// Check if red has captured all of black's pieces
+	bool isBlackOutOfPieces = true;
+	for (const auto& square : m_board.capturedBlackSquares)
+	{
+		if (square.isEmpty())
+		{
+			isBlackOutOfPieces = false;
+			break;
+		}
+	}
+	if (isBlackOutOfPieces)
+	{
+		outGameOverCondition = kBlackHasNoPiecesLeft;
+		return true;
+	}
+
+	// Both players have at least one piece on the board, so check if the next player to move has any moves available
 	CheckerColor playerColor = m_players.at(m_board.currentPlayer)->getColor();
 	if (findAllValidFullMoves(m_board, playerColor).empty())
 	{
-		outWinningColor = playerColor == kBlack ? kRed : kBlack;
-		isGameOver = true;
+		outGameOverCondition = playerColor == kBlack ? kBlackCannotMove : kRedCannotMove;
+		return true;
 	}
-	else if (m_board.numTurnsSinceCaptureOrKinging >= config::kNumMovesWithoutCaptureOrKingingNeededToDraw)
+
+	// A move can be made, so check if the turn limit has been reached
+	if (m_board.numTurnsSinceCaptureOrKinging >= config::kNumMovesWithoutCaptureOrKingingNeededToDraw)
 	{
-		outWinningColor = kBlack;
-		isGameOver = true;
+		outGameOverCondition = kTurnLimitReached;
+		return true;
 	}
-	else
+
+	// The turn limit hasn't been reached, so check if we have encountered the current board state too many times
+	for (const auto& pair : m_board.boardStateFrequency)
 	{
-		for (const auto& pair : m_board.boardStateFrequency)
+		if (pair.second >= config::kBoardStateFrequencyNeededToDraw)
 		{
-			if (pair.second >= config::kBoardStateFrequencyNeededToDraw)
-			{
-				outWinningColor = kBlack;
-				isGameOver = true;
-				break;
-			}
+			outGameOverCondition = kBoardStateRepetitionLimitReached;
+			return true;
 		}
 	}
 
-	return isGameOver;
+	// If we reach this point, the game is not over yet
+	return false;
 }

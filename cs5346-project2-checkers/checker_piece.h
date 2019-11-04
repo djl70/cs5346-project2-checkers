@@ -18,15 +18,18 @@ class CheckerPiece
 {
 public:
 	// TODO: Allow these parameters to be set after instantiation, like we did with buttons
-	CheckerPiece(CheckerColor color, sf::Texture* manTexture, sf::Texture* kingTexture);
+	//CheckerPiece(CheckerColor color, sf::Texture* manTexture, sf::Texture* kingTexture);
+	CheckerPiece();
 
+	void setPosition(const sf::Vector2f& position);
+	void setColor(CheckerColor color);
+	void setTextures(sf::Texture* manTexture, sf::Texture* kingTexture);
 	void demote();
 	void promote();
-	void setPosition(const sf::Vector2f& position);
 
 	bool isKing() const;
 	CheckerColor getColor() const;
-	bool contains(const sf::Vector2f& point) const;
+	//bool contains(const sf::Vector2f& point) const;
 
 	void render(sf::RenderWindow* pWindow) const;
 

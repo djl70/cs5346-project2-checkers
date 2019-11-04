@@ -7,10 +7,20 @@
 
 #include <SFML/Graphics.hpp>
 
+enum GameOverCondition
+{
+	kBlackHasNoPiecesLeft,
+	kRedHasNoPiecesLeft,
+	kBlackCannotMove,
+	kRedCannotMove,
+	kTurnLimitReached,
+	kBoardStateRepetitionLimitReached
+};
+
 class GameOverState : public BaseState
 {
 public:
-	GameOverState(ResourceManager* pResources, CheckerColor winningColor);
+	GameOverState(ResourceManager* pResources, GameOverCondition condition);
 
 	void enter() override;
 	BaseState* event() override;
@@ -19,8 +29,11 @@ public:
 
 private:
 	ResourceManager* m_pResources;
-	CheckerPiece m_piece;
+	CheckerPiece m_blackPiece;
+	CheckerPiece m_redPiece;
 	sf::Sprite m_background;
-	sf::Sprite m_winnerText;
+	//sf::Sprite m_winnerText;
+	sf::Text m_mainText;
+	sf::Text m_subText;
 	Button m_menuButton;
 };

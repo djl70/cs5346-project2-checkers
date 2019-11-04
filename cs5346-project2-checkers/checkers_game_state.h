@@ -5,6 +5,7 @@
 #include "checker_square.h"
 #include "checkerboard.h"
 #include "resource_manager.h"
+#include "game_over_state.h"
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -46,5 +47,5 @@ private:
 
 	std::stack<Command*> m_commands;
 
-	bool isGameOver(CheckerColor& outWinningColor);
+	bool isGameOver(GameOverCondition& outGameOverCondition);
 };

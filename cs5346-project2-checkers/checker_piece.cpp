@@ -2,13 +2,37 @@
 
 #include "config.h"
 
-CheckerPiece::CheckerPiece(CheckerColor color, sf::Texture* manTexture, sf::Texture* kingTexture)
-	: m_color{ color }
-	, m_rank{ kMan }
-	, m_manTexture{ manTexture }
-	, m_kingTexture{ kingTexture }
+//CheckerPiece::CheckerPiece(CheckerColor color, sf::Texture* manTexture, sf::Texture* kingTexture)
+//	: m_color{ color }
+//	, m_rank{ kMan }
+//	, m_manTexture{ manTexture }
+//	, m_kingTexture{ kingTexture }
+//{
+//	m_sprite.setScale({ config::kScaling, config::kScaling });
+//	updateTexture();
+//}
+
+CheckerPiece::CheckerPiece()
+	: m_rank{ kMan }
 {
 	m_sprite.setScale({ config::kScaling, config::kScaling });
+}
+
+void CheckerPiece::setPosition(const sf::Vector2f& position)
+{
+	m_position = position;
+	m_sprite.setPosition(position);
+}
+
+void CheckerPiece::setColor(CheckerColor color)
+{
+	m_color = color;
+}
+
+void CheckerPiece::setTextures(sf::Texture* manTexture, sf::Texture* kingTexture)
+{
+	m_manTexture = manTexture;
+	m_kingTexture = kingTexture;
 	updateTexture();
 }
 
@@ -24,12 +48,6 @@ void CheckerPiece::promote()
 	updateTexture();
 }
 
-void CheckerPiece::setPosition(const sf::Vector2f& position)
-{
-	m_position = position;
-	m_sprite.setPosition(position);
-}
-
 bool CheckerPiece::isKing() const
 {
 	return m_rank == kKing;
@@ -40,11 +58,11 @@ CheckerColor CheckerPiece::getColor() const
 	return m_color;
 }
 
-bool CheckerPiece::contains(const sf::Vector2f& point) const
-{
-	sf::FloatRect rect({ m_position.x, m_position.y, config::kSquareWidth, config::kSquareWidth });
-	return rect.contains(point);
-}
+//bool CheckerPiece::contains(const sf::Vector2f& point) const
+//{
+//	sf::FloatRect rect({ m_position.x, m_position.y, config::kSquareWidth, config::kSquareWidth });
+//	return rect.contains(point);
+//}
 
 void CheckerPiece::render(sf::RenderWindow* pWindow) const
 {

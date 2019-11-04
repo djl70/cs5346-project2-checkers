@@ -12,6 +12,10 @@ bool ResourceManager::loadResources(sf::RenderWindow* pWindow)
 	{
 		success &= m_textures[pair.first].loadFromFile(pair.second);
 	}
+	for (const auto& pair : config::fontFiles)
+	{
+		success &= m_fonts[pair.first].loadFromFile(pair.second);
+	}
 	for (const auto& pair : config::soundFiles)
 	{
 		success &= m_soundBuffers[pair.first].loadFromFile(pair.second);
@@ -39,6 +43,11 @@ sf::RenderWindow* ResourceManager::getWindow()
 sf::Texture* ResourceManager::getTexture(const std::string& name)
 {
 	return &m_textures.at(name);
+}
+
+sf::Font* ResourceManager::getFont(const std::string& name)
+{
+	return &m_fonts.at(name);
 }
 
 void ResourceManager::playSound(const std::string& name)
