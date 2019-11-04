@@ -11,6 +11,7 @@ class Player
 {
 public:
 	Player(CheckerColor color, bool isBot);
+	virtual ~Player() {};
 
 	void setBoard(checkerboard::Checkerboard* pBoard);
 	void setResources(ResourceManager* pResources);

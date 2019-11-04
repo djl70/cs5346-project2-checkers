@@ -16,8 +16,9 @@ class AIPlayer : public Player
 {
 public:
 	AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm);
-	~AIPlayer();
 	// AIPlayer(CheckerColor color, EvaluationFunction* eval);
+	~AIPlayer();
+
 	void startTurn() override;
 	void stop() override;
 	void event(const sf::Event& event) override;
