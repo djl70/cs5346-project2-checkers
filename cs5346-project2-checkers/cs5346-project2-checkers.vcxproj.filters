@@ -126,6 +126,9 @@
     <ClCompile Include="alphabeta_search_algorithm.cpp">
       <Filter>Source Files\Heuristics</Filter>
     </ClCompile>
+    <ClCompile Include="heuristic_2.cpp">
+      <Filter>Source Files\Heuristics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h">
@@ -207,6 +210,9 @@
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
     <ClInclude Include="alphabeta_search_algorithm.h">
+      <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="heuristic_2.h">
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
   </ItemGroup>

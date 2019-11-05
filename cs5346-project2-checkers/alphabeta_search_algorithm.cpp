@@ -39,7 +39,6 @@ int AlphabetaSearchAlgorithm::maxValue(const checkerboard::Checkerboard& state, 
 		int vNew = minValue(result(state, a), depth + 1, alpha, beta);
 		v = std::max(v, vNew);
 
-		// TODO: I think the way we handle m_actionWithBestValue can potentially lead to repeated moves, which are invalid and will cause an exception
 		// Keep track of the action that leads to the best value
 		if (depth == 0 && vNew > m_bestValue)
 		{

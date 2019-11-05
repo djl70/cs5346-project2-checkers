@@ -42,7 +42,7 @@ namespace config
 	const sf::Vector2f rightAlgorithmButtonGroupPosition{ kScreenWidth * 0.7f - (menuButtonSize.x * 0.5f), leftAlgorithmButtonGroupPosition.y };
 	const sf::Vector2f rightHeuristicButtonGroupPosition{ rightAlgorithmButtonGroupPosition.x,             leftHeuristicButtonGroupPosition.y };
 
-	const int kMaxSearchDepth = 4;
+	const int kMaxSearchDepth = 10;
 
 	const std::unordered_map<std::string, std::string> textureFiles = {
 		{ "plain_background", "res/background.png" },

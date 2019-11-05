@@ -143,6 +143,7 @@
     <ClCompile Include="full_move_command.cpp" />
     <ClCompile Include="game_over_state.cpp" />
     <ClCompile Include="heuristic_1.cpp" />
+    <ClCompile Include="heuristic_2.cpp" />
     <ClCompile Include="human_player.cpp" />
     <ClCompile Include="jump_command.cpp" />
     <ClCompile Include="main.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="game_over_state.h" />
     <ClInclude Include="heuristic.h" />
     <ClInclude Include="heuristic_1.h" />
+    <ClInclude Include="heuristic_2.h" />
     <ClInclude Include="human_player.h" />
     <ClInclude Include="jump_command.h" />
     <ClInclude Include="main_menu_state.h" />

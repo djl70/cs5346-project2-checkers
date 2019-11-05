@@ -8,12 +8,13 @@ int Heuristic_1::terminal(GameOverCondition condition, CheckerColor playerColor)
 	{
 	case kBlackCannotMove:
 	case kBlackHasNoPiecesLeft:
-		return playerColor == kBlack ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
+		return playerColor == kBlack ? -std::numeric_limits<int>::max() + 1 : std::numeric_limits<int>::max() - 1;
 	case kRedCannotMove:
 	case kRedHasNoPiecesLeft:
-		return playerColor == kRed ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
+		return playerColor == kRed ? -std::numeric_limits<int>::max() + 1 : std::numeric_limits<int>::max() - 1;
 	case kTurnLimitReached:
 	case kBoardStateRepetitionLimitReached:
+	default:
 		return 0;
 	}
 }
@@ -123,7 +124,49 @@ int Heuristic_1::lateGame(const checkerboard::Checkerboard& board) const
 	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
 
 	// TODO: For now, just do the same thing as the early game. But this should be changed to a more specialized heuristic for the late game.
-	return earlyGame(board);
+	//return earlyGame(board);
+
+	// Value breakdown:
+	// +2 per piece (man or king)
+	// +1 per king if not trapped
+	// Determine for opponent, too, and get difference
+
+	int myValue = 0;
+	int otherValue = 0;
+	for (int r = 0; r < 8; ++r)
+	{
+		for (int c = 0; c < 8; ++c)
+		{
+			if ((r + c) % 2 == 1)
+			{
+				const CheckerSquare& square = board.board.at(checkerboard::index({ c, r }));
+				if (square.isEmpty())
+				{
+					continue;
+				}
+
+				const CheckerPiece& piece = board.pieces.at(square.getPieceIndex());
+				int squareOwner = piece.getColor() == playerColor ? board.currentPlayer : checkerboard::nextPlayer(board.currentPlayer);
+				CheckerColor squareOwnerColor = squareOwner == 0 ? kBlack : kRed;
+				int* value = squareOwnerColor == playerColor ? &myValue : &otherValue;
+
+				*value += 2;
+
+				if (piece.isKing() && !isTrapped(board, { c, r }))
+				{
+					*value += 1;
+				}
+			}
+		}
+	}
+
+	return myValue - otherValue;
+}
+
+bool Heuristic_1::isTrapped(const checkerboard::Checkerboard& board, const sf::Vector2i& squareCoord) const
+{
+	// A king is trapped if it cannot move in any direction
+	return checkerboard::findValidFullMoves(board, board.currentPlayer == 0 ? kBlack : kRed, squareCoord).empty();
 }
 
 int Heuristic_1::value(const checkerboard::Checkerboard& board) const

@@ -8,6 +8,7 @@
 #include "human_player.h"
 
 #include "heuristic_1.h"
+#include "heuristic_2.h"
 #include "sum_bits_heuristic.h"
 #include "minimax_search_algorithm.h"
 #include "alphabeta_search_algorithm.h"
@@ -150,7 +151,7 @@ BaseState* PlayerConfigurationMenuState::event()
 				leftHeuristic = new Heuristic_1;
 				break;
 			case 1:
-				leftHeuristic = new SumBitsHeuristic;
+				leftHeuristic = new Heuristic_2;
 				break;
 			}
 
@@ -178,7 +179,7 @@ BaseState* PlayerConfigurationMenuState::event()
 					rightHeuristic = new Heuristic_1;
 					break;
 				case 1:
-					rightHeuristic = new SumBitsHeuristic;
+					rightHeuristic = new Heuristic_2;
 					break;
 				}
 
