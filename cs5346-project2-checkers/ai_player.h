@@ -27,6 +27,7 @@ public:
 
 private:
 	SearchAlgorithm* m_pAlgorithm;
+	std::promise<void>* exitSignal;
 	std::thread m_moveSelectionThread;
 	sf::Clock m_turnClock;
 	sf::Time m_moveStepTime;

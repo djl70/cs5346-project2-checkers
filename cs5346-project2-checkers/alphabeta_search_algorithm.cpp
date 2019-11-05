@@ -9,8 +9,9 @@ AlphabetaSearchAlgorithm::AlphabetaSearchAlgorithm(Heuristic* pHeuristic)
 
 }
 
-FullMoveInfo AlphabetaSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth)
+FullMoveInfo AlphabetaSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth, std::promise<void>* exitPromise)
 {
+	this->terminate = exitPromise->get_future();
 	m_maxDepth = maxDepth;
 	m_bestValue = -std::numeric_limits<int>::max();
 	FullMoveInfo searchResult = alphaBetaSearch(initialState);
@@ -27,6 +28,9 @@ FullMoveInfo AlphabetaSearchAlgorithm::alphaBetaSearch(const checkerboard::Check
 
 int AlphabetaSearchAlgorithm::maxValue(const checkerboard::Checkerboard& state, int depth, int alpha, int beta)
 {
+	if (this->terminate.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout)
+		return 0;
+
 	if (cutoffTest(state, depth))
 	{
 		return eval(state);
@@ -60,6 +64,9 @@ int AlphabetaSearchAlgorithm::maxValue(const checkerboard::Checkerboard& state, 
 
 int AlphabetaSearchAlgorithm::minValue(const checkerboard::Checkerboard& state, int depth, int alpha, int beta)
 {
+	if (this->terminate.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout)
+		return 0;
+
 	if (cutoffTest(state, depth))
 	{
 		return eval(state);

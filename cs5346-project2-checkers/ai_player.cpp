@@ -1,3 +1,6 @@
+#include <iostream>
+#include <future>
+
 #include "ai_player.h"
 
 #include "checkerboard.h"
@@ -13,6 +16,7 @@ AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 	, m_doneStepping{ false }
 	, m_stepDelay{ sf::milliseconds(500) }
 	, m_stepCount{ 0 }
+	, exitSignal{ nullptr }
 {
 
 }
@@ -20,6 +24,12 @@ AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 AIPlayer::~AIPlayer()
 {
 	stop();
+
+	if (m_pCommand)
+	{
+		delete m_pCommand;
+		m_pCommand = nullptr;
+	}
 
 	if (m_pAlgorithm)
 	{
@@ -54,6 +64,10 @@ void AIPlayer::startTurn()
 	m_pFromSquare = nullptr;
 	m_pToSquare = nullptr;
 
+	// Simulate thread termination through the use of futures
+	delete exitSignal;
+	exitSignal = new std::promise<void>;
+
 	// Select moves in a separate thread so it doesn't block input
 	if (m_moveSelectionThread.joinable())
 	{
@@ -67,11 +81,16 @@ void AIPlayer::startTurn()
 
 void AIPlayer::stop()
 {
+	try {
+		exitSignal->set_value();
+	}
+	catch (std::exception ex) { }
 	// Join the move selection thread here
 	if (m_moveSelectionThread.joinable())
 	{
 		m_moveSelectionThread.join();
 	}
+
 }
 
 void AIPlayer::event(const sf::Event& event)
@@ -83,7 +102,7 @@ FullMoveCommand* AIPlayer::update()
 {
 	FullMoveCommand* pCommand = nullptr;
 
-	// Wait until we have chosen which move to take
+	// Wait until we have chosen which move to take 
 	if (!m_doneBuildingMove)
 	{
 		return nullptr;
@@ -151,10 +170,11 @@ void AIPlayer::render(sf::RenderWindow* pWindow)
 
 void AIPlayer::selectMove()
 {
+
 	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(m_simulatedBoard, m_color);
 	if (!possibleMoves.empty())
 	{
-		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, config::kMaxSearchDepth);
+		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, config::kMaxSearchDepth, this->exitSignal);
 		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
 		m_doneStepping = false;
 		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));
