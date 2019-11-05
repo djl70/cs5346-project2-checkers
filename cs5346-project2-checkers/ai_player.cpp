@@ -81,13 +81,10 @@ void AIPlayer::startTurn()
 
 void AIPlayer::stop()
 {
-	try {
-		exitSignal->set_value();
-	}
-	catch (std::exception ex) { }
 	// Join the move selection thread here
 	if (m_moveSelectionThread.joinable())
 	{
+		exitSignal->set_value();
 		m_moveSelectionThread.join();
 	}
 
