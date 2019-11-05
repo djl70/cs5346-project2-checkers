@@ -16,8 +16,9 @@ class AIPlayer : public Player
 {
 public:
 	AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm);
-	~AIPlayer();
 	// AIPlayer(CheckerColor color, EvaluationFunction* eval);
+	~AIPlayer();
+
 	void startTurn() override;
 	void stop() override;
 	void event(const sf::Event& event) override;
@@ -26,6 +27,7 @@ public:
 
 private:
 	SearchAlgorithm* m_pAlgorithm;
+	std::promise<void>* exitSignal;
 	std::thread m_moveSelectionThread;
 	sf::Clock m_turnClock;
 	sf::Time m_moveStepTime;

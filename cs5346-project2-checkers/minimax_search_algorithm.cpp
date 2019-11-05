@@ -10,8 +10,9 @@ MinimaxSearchAlgorithm::MinimaxSearchAlgorithm(Heuristic* pHeuristic)
 
 }
 
-FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth)
+FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth, std::promise<void>* exitPromise)
 {
+	this->terminate = exitPromise->get_future();
 	m_maxDepth = maxDepth;
 	CheckerColor currentPlayer = initialState.currentPlayer == 0 ? kBlack : kRed;
 	ResultStructure searchResult = minimaxAB(initialState, 0, currentPlayer, std::numeric_limits<int>::max(), -std::numeric_limits<int>::max());
@@ -20,6 +21,9 @@ FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboa
 
 MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const checkerboard::Checkerboard& position, int depth, CheckerColor player, int useThreshold, int passThreshold) const
 {
+	if (this->terminate._Is_ready())
+		return ResultStructure{ 0, { } };
+
 	if (deepEnough(position, depth))
 	{
 		return ResultStructure{ value(position, player), { } };

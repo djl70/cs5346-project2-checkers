@@ -10,7 +10,7 @@ class AlphabetaSearchAlgorithm : public SearchAlgorithm
 public:
 	AlphabetaSearchAlgorithm(Heuristic* pHeuristic);
 
-	FullMoveInfo findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth) override;
+	FullMoveInfo findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth, std::promise<void>* exitPromise) override;
 
 private:
 	int m_maxDepth;
