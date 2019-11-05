@@ -34,10 +34,6 @@ CheckersGameState::CheckersGameState(ResourceManager* pResources, Player* firstP
 
 CheckersGameState::~CheckersGameState()
 {
-	// We need to call stop here for the AI so that we can join its move selection thread.
-	// Without doing so, the program will throw an exception if we exit this state while the AI is selecting a move.
-	m_players.at(m_board.currentPlayer)->stop();
-
 	while (!m_commands.empty())
 	{
 		delete m_commands.top();
