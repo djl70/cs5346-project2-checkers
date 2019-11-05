@@ -21,7 +21,7 @@ FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboa
 
 MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const checkerboard::Checkerboard& position, int depth, CheckerColor player, int useThreshold, int passThreshold) const
 {
-	if (this->terminate.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout)
+	if (this->terminate._Is_ready())
 		return ResultStructure{ 0, { } };
 
 	if (deepEnough(position, depth))

@@ -28,7 +28,7 @@ FullMoveInfo AlphabetaSearchAlgorithm::alphaBetaSearch(const checkerboard::Check
 
 int AlphabetaSearchAlgorithm::maxValue(const checkerboard::Checkerboard& state, int depth, int alpha, int beta)
 {
-	if (this->terminate.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout)
+	if (this->terminate._Is_ready())
 		return 0;
 
 	if (cutoffTest(state, depth))
@@ -64,7 +64,7 @@ int AlphabetaSearchAlgorithm::maxValue(const checkerboard::Checkerboard& state, 
 
 int AlphabetaSearchAlgorithm::minValue(const checkerboard::Checkerboard& state, int depth, int alpha, int beta)
 {
-	if (this->terminate.wait_for(std::chrono::milliseconds(1)) != std::future_status::timeout)
+	if (this->terminate._Is_ready())
 		return 0;
 
 	if (cutoffTest(state, depth))
