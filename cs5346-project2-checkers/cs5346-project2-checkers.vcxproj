@@ -146,6 +146,7 @@
     <ClCompile Include="heuristic_2.cpp" />
     <ClCompile Include="human_player.cpp" />
     <ClCompile Include="jump_command.cpp" />
+    <ClCompile Include="kevin_gregor_heuristic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu_state.cpp" />
     <ClCompile Include="minimax_search_algorithm.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="heuristic.h" />
     <ClInclude Include="heuristic_1.h" />
     <ClInclude Include="heuristic_2.h" />
+    <ClInclude Include="kevin_gregor_heuristic.h" />
     <ClInclude Include="human_player.h" />
     <ClInclude Include="jump_command.h" />
     <ClInclude Include="main_menu_state.h" />
