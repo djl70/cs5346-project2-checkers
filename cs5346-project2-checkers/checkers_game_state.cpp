@@ -32,6 +32,25 @@ CheckersGameState::CheckersGameState(ResourceManager* pResources, Player* firstP
 	}
 }
 
+CheckersGameState::~CheckersGameState()
+{
+	// We need to call stop here for the AI so that we can join its move selection thread.
+	// Without doing so, the program will throw an exception if we exit this state while the AI is selecting a move.
+	m_players.at(m_board.currentPlayer)->stop();
+
+	while (!m_commands.empty())
+	{
+		delete m_commands.top();
+		m_commands.pop();
+	}
+
+	for (auto& player : m_players)
+	{
+		delete player;
+		player = nullptr;
+	}
+}
+
 void CheckersGameState::enter()
 {
 	m_background.setTexture(*m_pResources->getTexture("background"));
@@ -310,25 +329,6 @@ void CheckersGameState::render()
 	m_players.at(m_board.currentPlayer)->render(m_pResources->getWindow());
 
 	m_pResources->getWindow()->display();
-}
-
-void CheckersGameState::exit()
-{
-	// We need to call stop here for the AI so that we can join its move selection thread.
-	// Without doing so, the program will throw an exception if we exit this state while the AI is selecting a move.
-	m_players.at(m_board.currentPlayer)->stop();
-
-	while (!m_commands.empty())
-	{
-		delete m_commands.top();
-		m_commands.pop();
-	}
-
-	for (auto& player : m_players)
-	{
-		delete player;
-		player = nullptr;
-	}
 }
 
 //bool CheckersGameState::isGameOver(GameOverCondition& outGameOverCondition)

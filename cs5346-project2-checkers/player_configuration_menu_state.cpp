@@ -21,6 +21,10 @@ PlayerConfigurationMenuState::PlayerConfigurationMenuState(ResourceManager* pRes
 	
 }
 
+PlayerConfigurationMenuState::~PlayerConfigurationMenuState() {
+
+}
+
 void PlayerConfigurationMenuState::enter()
 {
 	// TODO: If P1 vs COM, allow the choice of moving first or second
@@ -228,9 +232,4 @@ void PlayerConfigurationMenuState::render()
 	m_mainMenuButton.render(m_pResources->getWindow());
 
 	m_pResources->getWindow()->display();
-}
-
-void PlayerConfigurationMenuState::exit()
-{
-
 }

@@ -74,6 +74,11 @@ GameOverState::GameOverState(ResourceManager* pResources, GameOverCondition cond
 	//m_winnerText.setPosition({ config::titleRect.left, config::titleRect.top });
 }
 
+GameOverState::~GameOverState()
+{
+
+}
+
 void GameOverState::enter()
 {
 
@@ -116,9 +121,4 @@ void GameOverState::render()
 	m_menuButton.render(m_pResources->getWindow());
 
 	m_pResources->getWindow()->display();
-}
-
-void GameOverState::exit()
-{
-
 }

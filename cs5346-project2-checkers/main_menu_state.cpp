@@ -33,6 +33,10 @@ MainMenuState::MainMenuState(ResourceManager* resources)
 	m_background.setScale({ config::kScaling, config::kScaling });
 }
 
+MainMenuState::~MainMenuState() {
+
+}
+
 void MainMenuState::enter()
 {
 
@@ -89,9 +93,4 @@ void MainMenuState::render()
 	m_autoPlayButton.render(m_pResources->getWindow());
 
 	m_pResources->getWindow()->display();
-}
-
-void MainMenuState::exit()
-{
-
 }

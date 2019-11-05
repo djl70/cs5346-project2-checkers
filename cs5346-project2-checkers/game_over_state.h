@@ -21,11 +21,12 @@ class GameOverState : public BaseState
 {
 public:
 	GameOverState(ResourceManager* pResources, GameOverCondition condition);
+	~GameOverState();
 
 	void enter() override;
 	BaseState* event() override;
 	void render() override;
-	void exit() override;
+	// void exit() override;
 
 private:
 	ResourceManager* m_pResources;

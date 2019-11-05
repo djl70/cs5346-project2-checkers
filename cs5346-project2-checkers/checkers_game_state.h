@@ -23,11 +23,12 @@ class CheckersGameState : public BaseState
 {
 public:
 	CheckersGameState(ResourceManager* pResources, Player* firstPlayer, Player* secondPlayer);
+	~CheckersGameState();
 
 	void enter() override;
 	BaseState* event() override;
 	void render() override;
-	void exit() override;
+	// void exit() override;
 
 private:
 	ResourceManager* m_pResources;

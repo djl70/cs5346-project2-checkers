@@ -23,7 +23,6 @@ CheckersGameEngine::~CheckersGameEngine()
 {
 	if (m_pState)
 	{
-		m_pState->exit();
 		delete m_pState;
 		m_pState = nullptr;
 	}
@@ -42,7 +41,6 @@ void CheckersGameEngine::run()
 
 		if (pNextState)
 		{
-			m_pState->exit();
 			delete m_pState;
 			m_pState = pNextState;
 			m_pState->enter();
