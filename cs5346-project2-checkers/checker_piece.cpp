@@ -85,10 +85,12 @@ void CheckerPiece::updateTexture()
 	switch (m_rank)
 	{
 	case kMan:
-		m_sprite.setTexture(*m_manTexture);
+		if (m_manTexture)
+			m_sprite.setTexture(*m_manTexture);
 		break;
 	case kKing:
-		m_sprite.setTexture(*m_kingTexture);
+		if (m_kingTexture)
+			m_sprite.setTexture(*m_kingTexture);
 		break;
 	}
 }

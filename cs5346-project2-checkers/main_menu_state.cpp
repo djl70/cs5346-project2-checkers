@@ -3,6 +3,7 @@
 #include "checkers_game_state.h"
 #include "config.h"
 #include "player_configuration_menu_state.h"
+#include "simulation_state.h"
 
 MainMenuState::MainMenuState(ResourceManager* resources)
 	: m_pResources{ resources }
@@ -72,7 +73,8 @@ BaseState* MainMenuState::event()
 		if (m_autoPlayButton.update(event, mousePositionInWindow))
 		{
 			m_pResources->playSound("sound_move");
-			return new PlayerConfigurationMenuState{ m_pResources, 2 };
+			//return new PlayerConfigurationMenuState{ m_pResources, 2 };
+			return new SimulationState{ m_pResources };
 		}
 	}
 

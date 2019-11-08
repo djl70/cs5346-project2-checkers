@@ -142,6 +142,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="full_move_command.cpp" />
     <ClCompile Include="game_over_state.cpp" />
+    <ClCompile Include="genetic_algorithm.cpp" />
     <ClCompile Include="genetic_heuristic.cpp" />
     <ClCompile Include="heuristic_1.cpp" />
     <ClCompile Include="heuristic_2.cpp" />

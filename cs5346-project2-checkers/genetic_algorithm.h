@@ -1,22 +1,58 @@
 #pragma once
 
-#include "genetic_heuristic.h"
+#include <algorithm>
+#include <cassert>
+#include <chrono>
+#include <cstddef>
+#include <random>
 #include <vector>
 
-class GeneticMutator
+class Gene
 {
 public:
-	virtual GeneticHeuristicWeights mutate(const GeneticHeuristicWeights& source) const = 0;
-};
+	Gene();
+	Gene(float min, float max);
+	Gene(float min, float max, float value);
 
-class GeneticAlgorithm
-{
-public:
-	std::vector<GeneticHeuristicWeights> initialize(int populationSize);
-	// TODO: Selection (evaluate fitness of each element of the population and build a mating pool)
-	// TODO: Reproduction (pick 2 parents with probability according to relative fitness, create a child by combining DNA, mutate child's DNA based on a probability, and add child to new population)
-	// TODO: Replace old population with new population of mutated children
+	void setConstraints(float min, float max);
+	void setValue(float value);
+	
+	float getMinConstraint() const;
+	float getMaxConstraint() const;
+	float getValue() const;
 
 private:
-
+	float m_min;
+	float m_max;
+	float m_value;
 };
+
+Gene randomGene(std::default_random_engine& rng, const Gene& baseline);
+
+
+
+class GeneticEntity
+{
+public:
+	GeneticEntity();
+	GeneticEntity(const std::vector<Gene>& genome);
+
+	void setGenome(const std::vector<Gene>& genome);
+	void addGene(const Gene& gene);
+	void insertGene(std::size_t index, const Gene& gene);
+	void setGene(std::size_t index, const Gene& gene);
+	void removeGene(std::size_t index);
+	void improveFitness(int amount);
+	void resetFitness();
+
+	std::size_t countGenes() const;
+	Gene getGene(std::size_t index) const;
+	std::vector<Gene> getGenome() const;
+	int getFitness() const;
+
+private:
+	std::vector<Gene> m_genome;
+	int m_fitness;
+};
+
+GeneticEntity randomEntity(std::default_random_engine& rng, const GeneticEntity& baseline);

@@ -6,43 +6,39 @@
 #include <functional>
 #include <random>
 
-GeneticHeuristicWeights randomWeights(bool enableAging)
+GeneticHeuristicWeights weightsFromGenome(const GeneticEntity& entity)
 {
-	GeneticHeuristicWeights w;
-	std::default_random_engine generator{ std::chrono::system_clock::now().time_since_epoch().count() };
+	const auto& genome = entity.getGenome();
+	auto it = genome.cbegin();
 
-	std::uniform_int_distribution<int> intDistribution{ -100, 100 };
-	auto rng = std::bind(intDistribution, generator);
-	w.weightPieces = rng();
-	w.weightKings = rng();
-	w.weightBackRow = rng();
-	w.weightMiddleBox = rng();
-	w.weightOnALine = rng();
-	w.weightBehindALine = rng();
-	w.weightBeyondALine = rng();
-	w.weightOnDLine = rng();
-	w.weightBehindDLine = rng();
-	w.weightBeyondDLine = rng();
-	w.weightProtected = rng();
-	w.weightVulnerable = rng();
+	GeneticHeuristicWeights weights;
+	weights.weightPieces = 100 * (it++)->getValue();
+	weights.weightKings = 100 * (it++)->getValue();
+	weights.weightBackRow = 100 * (it++)->getValue();
+	weights.weightMiddleBox = 100 * (it++)->getValue();
+	weights.weightOnALine = 100 * (it++)->getValue();
+	weights.weightBehindALine = 100 * (it++)->getValue();
+	weights.weightBeyondALine = 100 * (it++)->getValue();
+	weights.weightOnDLine = 100 * (it++)->getValue();
+	weights.weightBehindDLine = 100 * (it++)->getValue();
+	weights.weightBeyondDLine = 100 * (it++)->getValue();
+	weights.weightProtected = 100 * (it++)->getValue();
+	weights.weightVulnerable = 100 * (it++)->getValue();
 
-	std::uniform_real_distribution<float> realDistribution{ 0.96, 1.04 };
-	auto rngAge = std::bind(realDistribution, generator);
-	w.maxAge = enableAging ? 100 : 0;
-	w.agePieces = enableAging ? rngAge() : 1.0f;
-	w.ageKings = enableAging ? rngAge() : 1.0f;
-	w.ageBackRow = enableAging ? rngAge() : 1.0f;
-	w.ageMiddleBox = enableAging ? rngAge() : 1.0f;
-	w.ageOnALine = enableAging ? rngAge() : 1.0f;
-	w.ageBehindALine = enableAging ? rngAge() : 1.0f;
-	w.ageBeyondALine = enableAging ? rngAge() : 1.0f;
-	w.ageOnDLine = enableAging ? rngAge() : 1.0f;
-	w.ageBehindDLine = enableAging ? rngAge() : 1.0f;
-	w.ageBeyondDLine = enableAging ? rngAge() : 1.0f;
-	w.ageProtected = enableAging ? rngAge() : 1.0f;
-	w.ageVulnerable = enableAging ? rngAge() : 1.0f;
-
-	return w;
+	weights.maxAge = 0;
+	weights.agePieces = 1.0f;
+	weights.ageKings = 1.0f;
+	weights.ageBackRow = 1.0f;
+	weights.ageMiddleBox = 1.0f;
+	weights.ageOnALine = 1.0f;
+	weights.ageBehindALine = 1.0f;
+	weights.ageBeyondALine = 1.0f;
+	weights.ageOnDLine = 1.0f;
+	weights.ageBehindDLine = 1.0f;
+	weights.ageBeyondDLine = 1.0f;
+	weights.ageProtected = 1.0f;
+	weights.ageVulnerable = 1.0f;
+	return weights;
 }
 
 GeneticHeuristic::GeneticHeuristic(const GeneticHeuristicWeights& weights)

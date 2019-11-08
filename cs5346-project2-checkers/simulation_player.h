@@ -21,5 +21,5 @@ public:
 private:
 	SearchAlgorithm* m_pAlgorithm;
 	std::promise<void>* m_pExitSignal;
-	Command* m_pCommand;
+	FullMoveInfo m_moveInfo;
 };

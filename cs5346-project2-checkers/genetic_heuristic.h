@@ -1,6 +1,7 @@
 #pragma once
 
 #include "heuristic.h"
+#include "genetic_algorithm.h"
 
 struct GeneticHeuristicWeights
 {
@@ -33,7 +34,7 @@ struct GeneticHeuristicWeights
 	float ageVulnerable;
 };
 
-GeneticHeuristicWeights randomWeights(bool enableAging);
+GeneticHeuristicWeights weightsFromGenome(const GeneticEntity& entity);
 
 class GeneticHeuristic : public Heuristic
 {
