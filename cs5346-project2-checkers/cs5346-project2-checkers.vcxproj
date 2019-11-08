@@ -142,6 +142,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="full_move_command.cpp" />
     <ClCompile Include="game_over_state.cpp" />
+    <ClCompile Include="genetic_heuristic.cpp" />
     <ClCompile Include="heuristic_1.cpp" />
     <ClCompile Include="heuristic_2.cpp" />
     <ClCompile Include="human_player.cpp" />
@@ -155,6 +156,8 @@
     <ClCompile Include="player_configuration_menu_state.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="search_algorithm.cpp" />
+    <ClCompile Include="simulation_player.cpp" />
+    <ClCompile Include="simulation_state.cpp" />
     <ClCompile Include="sum_bits_heuristic.cpp" />
     <ClCompile Include="toggle_button.cpp" />
     <ClCompile Include="toggle_button_group.cpp" />
@@ -173,6 +176,8 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="full_move_command.h" />
     <ClInclude Include="game_over_state.h" />
+    <ClInclude Include="genetic_algorithm.h" />
+    <ClInclude Include="genetic_heuristic.h" />
     <ClInclude Include="heuristic.h" />
     <ClInclude Include="heuristic_1.h" />
     <ClInclude Include="heuristic_2.h" />
@@ -186,6 +191,8 @@
     <ClInclude Include="player_configuration_menu_state.h" />
     <ClInclude Include="resource_manager.h" />
     <ClInclude Include="search_algorithm.h" />
+    <ClInclude Include="simulation_player.h" />
+    <ClInclude Include="simulation_state.h" />
     <ClInclude Include="sum_bits_heuristic.h" />
     <ClInclude Include="toggle_button.h" />
     <ClInclude Include="toggle_button_group.h" />

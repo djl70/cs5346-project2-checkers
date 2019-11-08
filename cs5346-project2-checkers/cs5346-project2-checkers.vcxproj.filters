@@ -132,6 +132,15 @@
     <ClCompile Include="kevin_gregor_heuristic.cpp">
       <Filter>Source Files\Heuristics</Filter>
     </ClCompile>
+    <ClCompile Include="simulation_state.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="simulation_player.cpp">
+      <Filter>Source Files\Players</Filter>
+    </ClCompile>
+    <ClCompile Include="genetic_heuristic.cpp">
+      <Filter>Source Files\Heuristics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h">
@@ -220,6 +229,18 @@
     </ClInclude>
     <ClInclude Include="kevin_gregor_heuristic.h">
       <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="simulation_state.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="simulation_player.h">
+      <Filter>Header Files\Players</Filter>
+    </ClInclude>
+    <ClInclude Include="genetic_heuristic.h">
+      <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="genetic_algorithm.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
