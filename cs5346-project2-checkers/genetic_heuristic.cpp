@@ -12,18 +12,18 @@ GeneticHeuristicWeights weightsFromGenome(const GeneticEntity& entity)
 	auto it = genome.cbegin();
 
 	GeneticHeuristicWeights weights;
-	weights.weightPieces = 100 * (it++)->getValue();
-	weights.weightKings = 100 * (it++)->getValue();
-	weights.weightBackRow = 100 * (it++)->getValue();
-	weights.weightMiddleBox = 100 * (it++)->getValue();
-	weights.weightOnALine = 100 * (it++)->getValue();
-	weights.weightBehindALine = 100 * (it++)->getValue();
-	weights.weightBeyondALine = 100 * (it++)->getValue();
-	weights.weightOnDLine = 100 * (it++)->getValue();
-	weights.weightBehindDLine = 100 * (it++)->getValue();
-	weights.weightBeyondDLine = 100 * (it++)->getValue();
-	weights.weightProtected = 100 * (it++)->getValue();
-	weights.weightVulnerable = 100 * (it++)->getValue();
+	weights.weightPieces = (it++)->getValue();
+	weights.weightKings = (it++)->getValue();
+	weights.weightBackRow = (it++)->getValue();
+	weights.weightMiddleBox = (it++)->getValue();
+	weights.weightOnALine = (it++)->getValue();
+	weights.weightBehindALine = (it++)->getValue();
+	weights.weightBeyondALine = (it++)->getValue();
+	weights.weightOnDLine = (it++)->getValue();
+	weights.weightBehindDLine = (it++)->getValue();
+	weights.weightBeyondDLine = (it++)->getValue();
+	weights.weightProtected = (it++)->getValue();
+	weights.weightVulnerable = (it++)->getValue();
 
 	weights.maxAge = 0;
 	weights.agePieces = 1.0f;
@@ -60,22 +60,22 @@ int GeneticHeuristic::value(const checkerboard::Checkerboard& board) const
 
 	// Values are calculated for both players and the difference is returned
 
-	const int exponent = std::max(board.turnNumber, m_kWeights.maxAge);
-	const int weightPieces      = std::powf(m_kWeights.agePieces,      exponent) * m_kWeights.weightPieces;
-	const int weightKings       = std::powf(m_kWeights.ageKings,       exponent) * m_kWeights.weightKings;
-	const int weightBackRow     = std::powf(m_kWeights.ageBackRow,     exponent) * m_kWeights.weightBackRow;
-	const int weightMiddleBox   = std::powf(m_kWeights.ageMiddleBox,   exponent) * m_kWeights.weightMiddleBox;
-	const int weightOnALine     = std::powf(m_kWeights.ageOnALine,     exponent) * m_kWeights.weightOnALine;
-	const int weightBehindALine = std::powf(m_kWeights.ageBehindALine, exponent) * m_kWeights.weightBehindALine;
-	const int weightBeyondALine = std::powf(m_kWeights.ageBeyondALine, exponent) * m_kWeights.weightBeyondALine;
-	const int weightOnDLine     = std::powf(m_kWeights.ageOnDLine,     exponent) * m_kWeights.weightOnDLine;
-	const int weightBehindDLine = std::powf(m_kWeights.ageBehindDLine, exponent) * m_kWeights.weightBehindDLine;
-	const int weightBeyondDLine = std::powf(m_kWeights.ageBeyondDLine, exponent) * m_kWeights.weightBeyondDLine;
-	const int weightProtected   = std::powf(m_kWeights.ageProtected,   exponent) * m_kWeights.weightProtected;
-	const int weightVulnerable  = std::powf(m_kWeights.ageVulnerable,  exponent) * m_kWeights.weightVulnerable;
+	const float exponent = std::min(board.turnNumber, m_kWeights.maxAge);
+	const float weightPieces      = std::powf(m_kWeights.agePieces,      exponent) * m_kWeights.weightPieces;
+	const float weightKings       = std::powf(m_kWeights.ageKings,       exponent) * m_kWeights.weightKings;
+	const float weightBackRow     = std::powf(m_kWeights.ageBackRow,     exponent) * m_kWeights.weightBackRow;
+	const float weightMiddleBox   = std::powf(m_kWeights.ageMiddleBox,   exponent) * m_kWeights.weightMiddleBox;
+	const float weightOnALine     = std::powf(m_kWeights.ageOnALine,     exponent) * m_kWeights.weightOnALine;
+	const float weightBehindALine = std::powf(m_kWeights.ageBehindALine, exponent) * m_kWeights.weightBehindALine;
+	const float weightBeyondALine = std::powf(m_kWeights.ageBeyondALine, exponent) * m_kWeights.weightBeyondALine;
+	const float weightOnDLine     = std::powf(m_kWeights.ageOnDLine,     exponent) * m_kWeights.weightOnDLine;
+	const float weightBehindDLine = std::powf(m_kWeights.ageBehindDLine, exponent) * m_kWeights.weightBehindDLine;
+	const float weightBeyondDLine = std::powf(m_kWeights.ageBeyondDLine, exponent) * m_kWeights.weightBeyondDLine;
+	const float weightProtected   = std::powf(m_kWeights.ageProtected,   exponent) * m_kWeights.weightProtected;
+	const float weightVulnerable  = std::powf(m_kWeights.ageVulnerable,  exponent) * m_kWeights.weightVulnerable;
 
-	int myValue = 0;
-	int otherValue = 0;
+	float myValue = 0.0f;
+	float otherValue = 0.0f;
 
 	for (int r = 0; r < 8; ++r)
 	{
@@ -88,7 +88,7 @@ int GeneticHeuristic::value(const checkerboard::Checkerboard& board) const
 
 			const CheckerPiece& piece = board.pieces.at(square.getPieceIndex());
 			CheckerColor squareOwnerColor = piece.getColor();
-			int* pValue = squareOwnerColor == playerColor ? &myValue : &otherValue;
+			float* pValue = squareOwnerColor == playerColor ? &myValue : &otherValue;
 
 			// Value piece
 			*pValue += weightPieces;
@@ -141,7 +141,7 @@ int GeneticHeuristic::value(const checkerboard::Checkerboard& board) const
 		}
 	}
 
-	return myValue - otherValue;
+	return static_cast<int>(10000.0f * (myValue - otherValue));
 }
 
 int GeneticHeuristic::terminal(GameOverCondition condition, CheckerColor playerColor) const

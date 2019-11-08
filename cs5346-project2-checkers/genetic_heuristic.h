@@ -5,18 +5,18 @@
 
 struct GeneticHeuristicWeights
 {
-	int weightPieces;
-	int weightKings;
-	int weightBackRow;
-	int weightMiddleBox;
-	int weightOnALine;
-	int weightBehindALine;
-	int weightBeyondALine;
-	int weightOnDLine;
-	int weightBehindDLine;
-	int weightBeyondDLine;
-	int weightProtected;
-	int weightVulnerable;
+	float weightPieces;
+	float weightKings;
+	float weightBackRow;
+	float weightMiddleBox;
+	float weightOnALine;
+	float weightBehindALine;
+	float weightBeyondALine;
+	float weightOnDLine;
+	float weightBehindDLine;
+	float weightBeyondDLine;
+	float weightProtected;
+	float weightVulnerable;
 
 	// Ages should probably be within the range [0.95, 1.05] to prevent insane scaling
 	int maxAge;
