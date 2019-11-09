@@ -1,8 +1,9 @@
 #include "simulation_player.h"
 
-SimulationPlayer::SimulationPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
+SimulationPlayer::SimulationPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm, int maxDepth)
 	: Player{ color, true }
 	, m_pAlgorithm{ pAlgorithm }
+	, m_maxDepth{ maxDepth }
 	, m_pExitSignal{ nullptr }
 {
 
@@ -29,7 +30,7 @@ void SimulationPlayer::startTurn()
 	}
 	m_pExitSignal = new std::promise<void>;
 
-	m_moveInfo = m_pAlgorithm->findBestMove(*m_pBoard, 2, m_pExitSignal);
+	m_moveInfo = m_pAlgorithm->findBestMove(*m_pBoard, m_maxDepth, m_pExitSignal);
 }
 
 void SimulationPlayer::stop()

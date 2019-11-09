@@ -4,6 +4,7 @@
 #include "minimax_search_algorithm.h"
 #include "genetic_heuristic.h"
 
+#include <algorithm>
 #include <iostream>
 
 SimulationState::SimulationState(ResourceManager* pResources)
@@ -58,12 +59,12 @@ BaseState* SimulationState::event()
 			m_pResources->getWindow()->close();
 			break;
 
-		case sf::Event::KeyReleased:
-			if (event.key.code == sf::Keyboard::Key::Enter && m_isGameOver && m_gamesToPlay.empty())
-			{
-				setupCompetition();
-			}
-			break;
+		//case sf::Event::KeyReleased:
+		//	if (event.key.code == sf::Keyboard::Key::Enter && m_isGameOver && m_gamesToPlay.empty())
+		//	{
+		//		setupCompetition();
+		//	}
+		//	break;
 		}
 
 		//m_players.at(m_board.currentPlayer)->event(event);
@@ -71,10 +72,13 @@ BaseState* SimulationState::event()
 
 	if (m_isGameOver)
 	{
-		if (!m_gamesToPlay.empty())
+		if (m_gamesToPlay.empty())
 		{
-			startGame(m_gamesToPlay.front());
+			nextGeneration();
+			setupCompetition();
 		}
+
+		startGame(m_gamesToPlay.front());
 	}
 
 	FullMoveCommand* pCommand = m_players.at(m_board.currentPlayer)->update();
@@ -91,25 +95,25 @@ BaseState* SimulationState::event()
 			{
 			case kBlackCannotMove:
 			case kBlackHasNoPiecesLeft:
-				m_population.at(m_gamesToPlay.front().first).improveFitness(0);
-				m_population.at(m_gamesToPlay.front().second).improveFitness(2);
-				std::cout << "Gen " << m_currentGeneration << ": Entity " << m_gamesToPlay.front().first << " (B) lost against " << m_gamesToPlay.front().second << " (R)\n";
+				m_gamesToPlay.front().first.improveFitness(0);
+				m_gamesToPlay.front().second.improveFitness(2);
+				std::cout << "Gen " << m_currentGeneration << ": " << m_gamesToPlay.front().first.getID() << " < " << m_gamesToPlay.front().second.getID() << "\n";
 				break;
 			case kRedCannotMove:
 			case kRedHasNoPiecesLeft:
-				m_population.at(m_gamesToPlay.front().first).improveFitness(2);
-				m_population.at(m_gamesToPlay.front().second).improveFitness(0);
-				std::cout << "Gen " << m_currentGeneration << ": Entity " << m_gamesToPlay.front().first << " (B) won against " << m_gamesToPlay.front().second << " (R)\n";
+				m_gamesToPlay.front().first.improveFitness(2);
+				m_gamesToPlay.front().second.improveFitness(0);
+				std::cout << "Gen " << m_currentGeneration << ": " << m_gamesToPlay.front().first.getID() << " > " << m_gamesToPlay.front().second.getID() << "\n";
 				break;
 			case kBoardStateRepetitionLimitReached:
 			case kTurnLimitReached:
 			default:
-				m_population.at(m_gamesToPlay.front().first).improveFitness(1);
-				m_population.at(m_gamesToPlay.front().second).improveFitness(1);
-				std::cout << "Gen " << m_currentGeneration << ": Entity " << m_gamesToPlay.front().first << " (B) tied against " << m_gamesToPlay.front().second << " (R)\n";
+				m_gamesToPlay.front().first.improveFitness(1);
+				m_gamesToPlay.front().second.improveFitness(1);
+				std::cout << "Gen " << m_currentGeneration << ": " << m_gamesToPlay.front().first.getID() << " = " << m_gamesToPlay.front().second.getID() << "\n";
 				break;
 			}
-			
+
 			m_gamesToPlay.pop();
 			m_isGameOver = true;
 		}
@@ -224,10 +228,15 @@ void SimulationState::resetBoard()
 void SimulationState::initializePopulation(std::size_t populationSize, const GeneticEntity& baseline)
 {
 	m_population.clear();
-	while (populationSize != 0)
+	int numToKeep = 5;
+	for (std::size_t i = 0; i < populationSize; ++i)
 	{
 		m_population.push_back(randomEntity(m_generator, baseline));
-		--populationSize;
+		if (i < numToKeep)
+		{
+			m_bestFromPreviousGeneration.push_back(randomEntity(m_generator, baseline));
+			m_population.push_back(m_bestFromPreviousGeneration.back());
+		}
 	}
 	m_currentGeneration = 0;
 	m_totalFitness = 0;
@@ -236,22 +245,20 @@ void SimulationState::initializePopulation(std::size_t populationSize, const Gen
 void SimulationState::setupCompetition()
 {
 	// Have each entity play against the others as both black and red
-	for (int p1 = 0; p1 < m_population.size(); ++p1)
+	for (auto& p1 : m_population)
 	{
-		for (int p2 = 0; p2 < m_population.size(); ++p2)
+		for (auto& p2 : m_bestFromPreviousGeneration)
 		{
-			if (p1 == p2) { continue; }
+			//if (p1 == p2) { continue; }
 			//testFitness(m_population.at(p1), m_population.at(p2));
 			m_gamesToPlay.push({ p1, p2 });
+			m_gamesToPlay.push({ p2, p1 });
 		}
 	}
 }
 
-void SimulationState::startGame(const std::pair<int, int>& players)
+void SimulationState::startGame(const std::pair<GeneticEntity&, GeneticEntity&>& players)
 {
-	const GeneticEntity& player1 = m_population.at(players.first);
-	const GeneticEntity& player2 = m_population.at(players.second);
-
 	for (auto& player : m_players)
 	{
 		if (player)
@@ -261,8 +268,8 @@ void SimulationState::startGame(const std::pair<int, int>& players)
 		}
 	}
 
-	m_players.at(0) = new SimulationPlayer{ kBlack, new MinimaxSearchAlgorithm{ new GeneticHeuristic{ weightsFromGenome(player1) } } };
-	m_players.at(1) = new SimulationPlayer{ kRed,   new MinimaxSearchAlgorithm{ new GeneticHeuristic{ weightsFromGenome(player2) } } };
+	m_players.at(0) = new SimulationPlayer{ kBlack, new MinimaxSearchAlgorithm{ new GeneticHeuristic{ weightsFromGenome(players.first) } }, 4 };
+	m_players.at(1) = new SimulationPlayer{ kRed,   new MinimaxSearchAlgorithm{ new GeneticHeuristic{ weightsFromGenome(players.second) } }, 4 };
 
 	resetBoard();
 	for (auto& player : m_players)
@@ -277,19 +284,42 @@ void SimulationState::startGame(const std::pair<int, int>& players)
 
 void SimulationState::nextGeneration()
 {
+	m_totalFitness = 0;
+	for (const auto& entity : m_population)
+	{
+		m_totalFitness += entity.getFitness();
+	}
+
 	std::vector<GeneticEntity> children;
-	for (std::size_t i = 0; i < m_population.size(); ++i)
+	for (std::size_t i = 0; i < m_population.size() - m_bestFromPreviousGeneration.size(); ++i)
 	{
 		children.push_back(reproduce());
 	}
+
+	std::sort(m_population.begin(), m_population.end(), [](const auto& a, const auto& b) { return a.getFitness() > b.getFitness(); });
+	std::vector<GeneticEntity> best{ m_population.begin(), m_population.begin() + 5 };
+	for (int i = 0; i < best.size(); ++i)
+	{
+		auto& entity = best.at(i);
+		std::cout << "Gen " << m_currentGeneration << ": #" << i + 1 << " (fitness = " << entity.getFitness() << ")\n";
+		const auto& genome = entity.getGenome();
+		for (int j = 0; j < genome.size(); ++j)
+		{
+			std::cout << "\tGene " << j + 1 << ": " << genome.at(j).getValue() << "\n";
+		}
+		entity.resetFitness();
+	}
+	children.insert(children.end(), best.begin(), best.end());
+
 	m_population = children;
+	m_bestFromPreviousGeneration = best;
 	m_totalFitness = 0;
 	++m_currentGeneration;
 }
 
 GeneticEntity SimulationState::reproduce()
 {
-	const float mutationChance = 0.05f;
+	const float mutationChance = 0.25f;
 	return createOffspring(selectParent(), selectParent(), mutationChance);
 }
 
@@ -298,11 +328,16 @@ GeneticEntity SimulationState::selectParent()
 	std::uniform_int_distribution<int> distribution{ 1, m_totalFitness };
 	int remaining = distribution(m_generator);
 	auto it = m_population.cbegin();
-	while (remaining > 0)
+	for (auto it = m_population.cbegin(); it != m_population.cend(); ++it)
 	{
 		remaining -= it->getFitness();
+		if (remaining <= 0)
+		{
+			return *it;
+		}
 	}
-	return *it;
+
+	throw ("This should never be reached");
 }
 
 GeneticEntity SimulationState::createOffspring(const GeneticEntity& parent1, const GeneticEntity& parent2, float mutationChance)
@@ -322,6 +357,7 @@ GeneticEntity SimulationState::crossover(const GeneticEntity& parent1, const Gen
 {
 	GeneticEntity child{ parent2 };
 	child.resetFitness();
+	child.newID();
 
 	std::uniform_int_distribution<std::size_t> distribution{ 0, parent1.countGenes() };
 	std::size_t numGenesFromParent1 = distribution(m_generator);
@@ -330,7 +366,7 @@ GeneticEntity SimulationState::crossover(const GeneticEntity& parent1, const Gen
 	auto it = genome.cbegin();
 	for (std::size_t i = 0; i < numGenesFromParent1; ++i)
 	{
-		child.setGene(i, *it);
+		child.setGene(i, *(it++));
 	}
 
 	return child;
@@ -338,6 +374,7 @@ GeneticEntity SimulationState::crossover(const GeneticEntity& parent1, const Gen
 
 GeneticEntity SimulationState::mutate(const GeneticEntity& entity)
 {
+	std::cout << "Mutation\n";
 	std::uniform_int_distribution<std::size_t> distribution{ 0, entity.countGenes() - 1 };
 	std::size_t geneIndex = distribution(m_generator);
 

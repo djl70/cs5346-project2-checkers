@@ -24,18 +24,19 @@ private:
 	std::array<Player*, 2> m_players;
 	checkerboard::Checkerboard m_board;
 	std::vector<GeneticEntity> m_population;
+	std::vector<GeneticEntity> m_bestFromPreviousGeneration;
 	std::default_random_engine m_generator;
 	int m_currentGeneration;
 	int m_totalFitness;
 
 	bool m_isGameOver;
-	std::queue<std::pair<int, int>> m_gamesToPlay;
+	std::queue<std::pair<GeneticEntity&, GeneticEntity&>> m_gamesToPlay;
 
 	void resetBoard();
 
 	void initializePopulation(std::size_t populationSize, const GeneticEntity& baseline);
 	void setupCompetition();
-	void startGame(const std::pair<int, int>& players);
+	void startGame(const std::pair<GeneticEntity&, GeneticEntity&>& players);
 	void nextGeneration();
 
 	GeneticEntity reproduce();

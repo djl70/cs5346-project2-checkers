@@ -64,6 +64,7 @@ Gene randomGene(std::default_random_engine& rng, const Gene& baseline)
 
 GeneticEntity::GeneticEntity()
 	: m_fitness{ 0 }
+	, m_id{ nextID++ }
 {
 
 }
@@ -71,6 +72,7 @@ GeneticEntity::GeneticEntity()
 GeneticEntity::GeneticEntity(const std::vector<Gene>& genome)
 	: m_genome{ genome }
 	, m_fitness{ 0 }
+	, m_id{ nextID++ }
 {
 
 }
@@ -116,6 +118,11 @@ void GeneticEntity::resetFitness()
 	m_fitness = 0;
 }
 
+void GeneticEntity::newID()
+{
+	m_id = nextID++;
+}
+
 std::size_t GeneticEntity::countGenes() const
 {
 	return m_genome.size();
@@ -138,6 +145,11 @@ int GeneticEntity::getFitness() const
 	return m_fitness;
 }
 
+int GeneticEntity::getID() const
+{
+	return m_id;
+}
+
 GeneticEntity randomEntity(std::default_random_engine& rng, const GeneticEntity& baseline)
 {
 	std::vector<Gene> genome = baseline.getGenome();
@@ -147,3 +159,5 @@ GeneticEntity randomEntity(std::default_random_engine& rng, const GeneticEntity&
 	}
 	return GeneticEntity{ genome };
 }
+
+int GeneticEntity::nextID = 0;

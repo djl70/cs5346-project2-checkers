@@ -44,15 +44,20 @@ public:
 	void removeGene(std::size_t index);
 	void improveFitness(int amount);
 	void resetFitness();
+	void newID();
 
 	std::size_t countGenes() const;
 	Gene getGene(std::size_t index) const;
 	std::vector<Gene> getGenome() const;
 	int getFitness() const;
+	int getID() const;
 
 private:
 	std::vector<Gene> m_genome;
 	int m_fitness;
+	int m_id;
+
+	static int nextID;
 };
 
 GeneticEntity randomEntity(std::default_random_engine& rng, const GeneticEntity& baseline);

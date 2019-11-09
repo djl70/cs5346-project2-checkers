@@ -9,7 +9,7 @@
 class SimulationPlayer : public Player
 {
 public:
-	SimulationPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm);
+	SimulationPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm, int maxDepth);
 	~SimulationPlayer() override;
 
 	void startTurn() override;
@@ -20,6 +20,7 @@ public:
 
 private:
 	SearchAlgorithm* m_pAlgorithm;
+	int m_maxDepth;
 	std::promise<void>* m_pExitSignal;
 	FullMoveInfo m_moveInfo;
 };
