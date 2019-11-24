@@ -10,16 +10,27 @@ MinimaxSearchAlgorithm::MinimaxSearchAlgorithm(Heuristic* pHeuristic)
 
 }
 
-FullMoveInfo MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth, std::promise<void>* exitPromise)
+SearchResult MinimaxSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth, std::promise<void>* exitPromise)
 {
+	m_result.nodesExpanded = 0;
+	m_result.nodesGenerated = 0;
+	m_result.searchTime = std::chrono::milliseconds::zero();
+
+	auto t0 = std::chrono::steady_clock::now();
 	this->terminate = exitPromise->get_future();
 	m_maxDepth = maxDepth;
 	CheckerColor currentPlayer = initialState.currentPlayer == 0 ? kBlack : kRed;
+
 	ResultStructure searchResult = minimaxAB(initialState, 0, currentPlayer, std::numeric_limits<int>::max(), -std::numeric_limits<int>::max());
-	return searchResult.path.front();
+
+	auto t1 = std::chrono::steady_clock::now();
+	m_result.searchTime = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+	m_result.bestMove = searchResult.path.front();
+
+	return m_result;
 }
 
-MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const checkerboard::Checkerboard& position, int depth, CheckerColor player, int useThreshold, int passThreshold) const
+MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const checkerboard::Checkerboard& position, int depth, CheckerColor player, int useThreshold, int passThreshold)
 {
 	if (this->terminate._Is_ready())
 		return ResultStructure{ 0, { } };
@@ -30,6 +41,8 @@ MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const 
 	}
 
 	std::vector<FullMoveInfo> successors = moveGen(position, player);
+	++m_result.nodesExpanded;
+	m_result.nodesGenerated += successors.size();
 	if (successors.empty())
 	{
 		return ResultStructure{ value(position, player), { } };

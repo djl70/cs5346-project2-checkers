@@ -9,13 +9,24 @@ AlphabetaSearchAlgorithm::AlphabetaSearchAlgorithm(Heuristic* pHeuristic)
 
 }
 
-FullMoveInfo AlphabetaSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth, std::promise<void>* exitPromise)
+SearchResult AlphabetaSearchAlgorithm::findBestMove(const checkerboard::Checkerboard& initialState, int maxDepth, std::promise<void>* exitPromise)
 {
+	m_result.nodesExpanded = 0;
+	m_result.nodesGenerated = 0;
+	m_result.searchTime = std::chrono::milliseconds::zero();
+
+	auto t0 = std::chrono::steady_clock::now();
 	this->terminate = exitPromise->get_future();
 	m_maxDepth = maxDepth;
 	m_bestValue = -std::numeric_limits<int>::max();
+	
 	FullMoveInfo searchResult = alphaBetaSearch(initialState);
-	return searchResult;
+	
+	auto t1 = std::chrono::steady_clock::now();
+	m_result.searchTime = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+	m_result.bestMove = searchResult;
+	
+	return m_result;
 }
 
 FullMoveInfo AlphabetaSearchAlgorithm::alphaBetaSearch(const checkerboard::Checkerboard& state)
@@ -37,7 +48,11 @@ int AlphabetaSearchAlgorithm::maxValue(const checkerboard::Checkerboard& state, 
 	}
 
 	int v = -std::numeric_limits<int>::max();
+	
 	std::vector<FullMoveInfo> moves = actions(state);
+	++m_result.nodesExpanded;
+	m_result.nodesGenerated += moves.size();
+
 	for (const auto& a : moves)
 	{
 		int vNew = minValue(result(state, a), depth + 1, alpha, beta);
@@ -72,7 +87,11 @@ int AlphabetaSearchAlgorithm::minValue(const checkerboard::Checkerboard& state, 
 	}
 
 	int v = std::numeric_limits<int>::max();
+
 	std::vector<FullMoveInfo> moves = actions(state);
+	++m_result.nodesExpanded;
+	m_result.nodesGenerated += moves.size();
+
 	for (const auto& a : moves)
 	{
 		v = std::min(v, maxValue(result(state, a), depth + 1, alpha, beta));

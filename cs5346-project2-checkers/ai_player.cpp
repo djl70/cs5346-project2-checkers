@@ -17,6 +17,9 @@ AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 	, m_stepDelay{ sf::milliseconds(500) }
 	, m_stepCount{ 0 }
 	, exitSignal{ nullptr }
+	, m_totalNodesGenerated{ 0 }
+	, m_totalNodesExpanded{ 0 }
+	, m_totalSearchTime{ std::chrono::milliseconds::zero() }
 {
 
 }
@@ -88,6 +91,11 @@ void AIPlayer::stop()
 		m_moveSelectionThread.join();
 	}
 
+	std::cout << "\nMetrics for P" << static_cast<int>(m_color) + 1
+		<< "\nTotal nodes generated: " << m_totalNodesGenerated
+		<< "\nTotal nodes expanded: " << m_totalNodesExpanded
+		<< "\nTotal search time (ms): " << m_totalSearchTime.count()
+		<< '\n';
 }
 
 void AIPlayer::event(const sf::Event& event)
@@ -167,11 +175,15 @@ void AIPlayer::render(sf::RenderWindow* pWindow)
 
 void AIPlayer::selectMove()
 {
-
 	std::vector<FullMoveInfo> possibleMoves = checkerboard::findAllValidFullMoves(m_simulatedBoard, m_color);
 	if (!possibleMoves.empty())
 	{
-		m_commandInfo = m_pAlgorithm->findBestMove(m_simulatedBoard, config::kMaxSearchDepth, this->exitSignal);
+		SearchResult result = m_pAlgorithm->findBestMove(m_simulatedBoard, config::kMaxSearchDepth, this->exitSignal);
+		m_commandInfo = result.bestMove;
+		m_totalNodesGenerated += result.nodesGenerated;
+		m_totalNodesExpanded += result.nodesExpanded;
+		m_totalSearchTime += result.searchTime;
+
 		m_pCommand = new FullMoveCommand{ m_simulatedBoard, m_commandInfo };
 		m_doneStepping = false;
 		m_pFromSquare = &m_simulatedBoard.board.at(checkerboard::index(m_commandInfo.from));
@@ -188,13 +200,3 @@ void AIPlayer::selectMove()
 
 	m_doneBuildingMove = true;
 }
-
-//JumpInfo AIPlayer::chooseBestJump(const std::vector<JumpInfo>& jumps)
-//{
-//	return jumps[0];
-//}
-//
-//MoveInfo AIPlayer::chooseBestMove(const std::vector<MoveInfo>& moves)
-//{
-//	return moves[0];
-//}

@@ -35,6 +35,10 @@ private:
 	bool m_doneStepping;
 	int m_stepCount;
 
+	int m_totalNodesGenerated;
+	int m_totalNodesExpanded;
+	std::chrono::milliseconds m_totalSearchTime;
+
 	const CheckerSquare* m_pFromSquare;
 	const CheckerSquare* m_pToSquare;
 
