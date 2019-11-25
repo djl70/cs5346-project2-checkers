@@ -144,6 +144,7 @@
     <ClCompile Include="game_over_state.cpp" />
     <ClCompile Include="heuristic_1.cpp" />
     <ClCompile Include="heuristic_2.cpp" />
+    <ClCompile Include="heuristic_DK.cpp" />
     <ClCompile Include="human_player.cpp" />
     <ClCompile Include="jump_command.cpp" />
     <ClCompile Include="kevin_gregor_heuristic.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="heuristic.h" />
     <ClInclude Include="heuristic_1.h" />
     <ClInclude Include="heuristic_2.h" />
+    <ClInclude Include="heuristic_DK.h" />
     <ClInclude Include="kevin_gregor_heuristic.h" />
     <ClInclude Include="human_player.h" />
     <ClInclude Include="jump_command.h" />

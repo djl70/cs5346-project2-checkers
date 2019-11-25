@@ -1,8 +1,8 @@
 #include "checkerboard.h"
-#include "heuristic_JM.h"
+#include "heuristic_DK.h"
 
-std::vector<JMHeuristic::PieceInfo> JMHeuristic::getPiecesInfo(const checkerboard::Checkerboard& board) const {
-	std::vector<JMHeuristic::PieceInfo> info;
+std::vector<DKHeuristic::PieceInfo> DKHeuristic::getPiecesInfo(const checkerboard::Checkerboard& board) const {
+	std::vector<DKHeuristic::PieceInfo> info;
 
 	for (int r = 0; r < 8; ++r)
 	{
@@ -25,14 +25,14 @@ std::vector<JMHeuristic::PieceInfo> JMHeuristic::getPiecesInfo(const checkerboar
 	return info;
 }
 
-bool JMHeuristic::ifPieceOfCurrentPlayer(const checkerboard::Checkerboard& board, const CheckerPiece& piece) const {
+bool DKHeuristic::ifPieceOfCurrentPlayer(const checkerboard::Checkerboard& board, const CheckerPiece& piece) const {
 	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
 	int squareOwner = piece.getColor() == playerColor ? board.currentPlayer : checkerboard::nextPlayer(board.currentPlayer);
 	CheckerColor squareOwnerColor = squareOwner == 0 ? kBlack : kRed;
 	return squareOwnerColor == playerColor;
 }
 
-int JMHeuristic::value(const checkerboard::Checkerboard& board) const
+int DKHeuristic::value(const checkerboard::Checkerboard& board) const
 {
 	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
 
@@ -42,39 +42,36 @@ int JMHeuristic::value(const checkerboard::Checkerboard& board) const
 		return terminal(gameOverCondition, playerColor);
 	}
 
-	// Heuristic from https://www.mini.pw.edu.pl/~mandziuk/PRACE/es_init.pdf by Jacek Mandziuk et al.
+	// Some elements of the evaluation function are used from
+	// https://www.mini.pw.edu.pl/~mandziuk/PRACE/es_init.pdf by Jacek Mandziuk et al.
 	// Values are calculated for both players and the difference is returned
 
 	// The best so far
-	/*const int wMen = 1;
-	const int wKings = 2;
+	/*const int wMen = 10;
+	const int wKings = 20;
 	const int wSafeMen = 3;
-	const int wSafeKings = 6;
-	const int wMovableMen = 2;
-	const int wMovableKings = 4;
+	const int wSafeKings = 1;
+	const int wMovableMen = 3;
+	const int wMovableKings = 5;
 	const double wSumOfDistancesToPromote = -0.1;
-	const int wFreeSquaresForPromotion = 6;
+	const int wFreeSquaresForPromotion = 2;
 	const int wAttackers = 3;
-	const int wDefenders = 6;
-	const int wCentralMen = 3;
-	const int wCentralKings = 6;
-	const int wMainDiagonalMen = 2;
-	const int wMainDiagonalKings = 4;
-	const int wDoubleDiagonalMen = 1;
-	const int wDoubleDiagonalKings = 2;*/
+	const int wDefenders = 2;
+	const int wCentralMen = -2;
+	const int wCentralKings = 2;*/
 
 	const int wMen = 10;
 	const int wKings = 20;
-	const int wSafeMen = 5;
+	const int wSafeMen = 3;
 	const int wSafeKings = 1;
-	const int wMovableMen = 10;
-	const int wMovableKings = 20;
-	const double wSumOfDistancesToPromote = -2. / countMen(board);
+	const int wMenCanCapture = 3;
+	const int wKingsCanCapture = 5;
+	const double wSumOfDistancesToPromote = -0.1;
 	const int wFreeSquaresForPromotion = 2;
 	const int wAttackers = 3;
-	const int wDefenders = 4;
-	const int wCentralMen = -4;
-	const int wCentralKings = 4;
+	const int wDefenders = 2;
+	const int wCentralMen = -2;
+	const int wCentralKings = 2;
 	/*const int wMainDiagonalMen = -2;
 	const int wMainDiagonalKings = 2;*/
 	/*const int wDoubleDiagonalMen = -1;
@@ -86,8 +83,8 @@ int JMHeuristic::value(const checkerboard::Checkerboard& board) const
 	value += wKings * countKings(board);
 	value += wSafeMen * countSafeMen(board);
 	value += wSafeKings * countSafeKings(board);
-	value += wMovableMen * countMoveableMen(board);
-	value += wMovableKings * countMoveableKings(board);
+	value += wMenCanCapture * countMenCanCapture(board);
+	value += wKingsCanCapture * countKingsCanCapture(board);
 	value += wSumOfDistancesToPromote * sumOfDistancesToPromote(board);
 	value += wFreeSquaresForPromotion * freeSquaresForPromotion(board);
 	value += wAttackers * countAttackers(board);
@@ -102,7 +99,7 @@ int JMHeuristic::value(const checkerboard::Checkerboard& board) const
 	return value;
 }
 
-int JMHeuristic::terminal(GameOverCondition condition, CheckerColor playerColor) const
+int DKHeuristic::terminal(GameOverCondition condition, CheckerColor playerColor) const
 {
 	switch (condition)
 	{
@@ -119,7 +116,7 @@ int JMHeuristic::terminal(GameOverCondition condition, CheckerColor playerColor)
 	}
 }
 
-int JMHeuristic::countMen(const checkerboard::Checkerboard& board) const
+int DKHeuristic::countMen(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -134,7 +131,7 @@ int JMHeuristic::countMen(const checkerboard::Checkerboard& board) const
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countKings(const checkerboard::Checkerboard& board) const
+int DKHeuristic::countKings(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -149,7 +146,7 @@ int JMHeuristic::countKings(const checkerboard::Checkerboard& board) const
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countSafeMen(const checkerboard::Checkerboard& board) const
+int DKHeuristic::countSafeMen(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -166,7 +163,7 @@ int JMHeuristic::countSafeMen(const checkerboard::Checkerboard& board) const
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countSafeKings(const checkerboard::Checkerboard& board) const
+int DKHeuristic::countSafeKings(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -183,7 +180,7 @@ int JMHeuristic::countSafeKings(const checkerboard::Checkerboard& board) const
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countMoveableMen(const checkerboard::Checkerboard& board) const
+int DKHeuristic::countMenCanCapture(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -203,7 +200,7 @@ int JMHeuristic::countMoveableMen(const checkerboard::Checkerboard& board) const
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countMoveableKings(const checkerboard::Checkerboard& board) const
+int DKHeuristic::countKingsCanCapture(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -223,7 +220,7 @@ int JMHeuristic::countMoveableKings(const checkerboard::Checkerboard& board) con
 	return myValue - otherValue;
 }
 
-int JMHeuristic::sumOfDistancesToPromote(const checkerboard::Checkerboard& board) const
+int DKHeuristic::sumOfDistancesToPromote(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -244,7 +241,7 @@ int JMHeuristic::sumOfDistancesToPromote(const checkerboard::Checkerboard& board
 	return myValue - otherValue;
 }
 
-int JMHeuristic::freeSquaresForPromotion(const checkerboard::Checkerboard& board) const
+int DKHeuristic::freeSquaresForPromotion(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -264,7 +261,7 @@ int JMHeuristic::freeSquaresForPromotion(const checkerboard::Checkerboard& board
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countDefenders(const checkerboard::Checkerboard& board) const
+int DKHeuristic::countDefenders(const checkerboard::Checkerboard& board) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -284,7 +281,7 @@ int JMHeuristic::countDefenders(const checkerboard::Checkerboard& board) const
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countAttackers(const checkerboard::Checkerboard& board, bool checkForKing) const
+int DKHeuristic::countAttackers(const checkerboard::Checkerboard& board, bool checkForKing) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -305,7 +302,7 @@ int JMHeuristic::countAttackers(const checkerboard::Checkerboard& board, bool ch
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countCentral(const checkerboard::Checkerboard& board, bool checkForKing) const
+int DKHeuristic::countCentral(const checkerboard::Checkerboard& board, bool checkForKing) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -326,7 +323,7 @@ int JMHeuristic::countCentral(const checkerboard::Checkerboard& board, bool chec
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countMainDiagonal(const checkerboard::Checkerboard& board, bool checkForKing) const
+int DKHeuristic::countMainDiagonal(const checkerboard::Checkerboard& board, bool checkForKing) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -347,7 +344,7 @@ int JMHeuristic::countMainDiagonal(const checkerboard::Checkerboard& board, bool
 	return myValue - otherValue;
 }
 
-int JMHeuristic::countDoubleDiagonal(const checkerboard::Checkerboard& board, bool checkForKing) const
+int DKHeuristic::countDoubleDiagonal(const checkerboard::Checkerboard& board, bool checkForKing) const
 {
 	int myValue = 0;
 	int otherValue = 0;
@@ -368,7 +365,7 @@ int JMHeuristic::countDoubleDiagonal(const checkerboard::Checkerboard& board, bo
 	return myValue - otherValue;
 }
 
-//int JMHeuristic::countVulnerablePieces(const checkerboard::Checkerboard& board) const
+//int DKHeuristic::countVulnerablePieces(const checkerboard::Checkerboard& board) const
 //{
 //	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
 //	int myValue = 0;

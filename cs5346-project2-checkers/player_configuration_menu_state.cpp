@@ -9,7 +9,7 @@
 
 #include "heuristic_1.h"
 #include "heuristic_2.h"
-#include "heuristic_JM.h"
+#include "heuristic_DK.h"
 #include "kevin_gregor_heuristic.h"
 #include "sum_bits_heuristic.h"
 #include "minimax_search_algorithm.h"
@@ -154,7 +154,7 @@ BaseState* PlayerConfigurationMenuState::event()
 			switch (m_leftHeuristicButtons.getActiveButtonIndex())
 			{
 			case 0:
-				leftHeuristic = new JMHeuristic;
+				leftHeuristic = new DKHeuristic;
 				break;
 			case 1:
 				leftHeuristic = new Heuristic_1;
@@ -182,7 +182,7 @@ BaseState* PlayerConfigurationMenuState::event()
 				switch (m_rightHeuristicButtons.getActiveButtonIndex())
 				{
 				case 0:
-					rightHeuristic = new JMHeuristic;
+					rightHeuristic = new DKHeuristic;
 					break;
 				case 1:
 					rightHeuristic = new Heuristic_1;

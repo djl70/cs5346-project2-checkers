@@ -2,7 +2,7 @@
 
 #include "heuristic.h"
 
-class JMHeuristic : public Heuristic
+class DKHeuristic : public Heuristic
 {
 public:
 	int value(const checkerboard::Checkerboard& board) const override;
@@ -24,8 +24,8 @@ private:
 	int countKings(const checkerboard::Checkerboard& board) const;
 	int countSafeMen(const checkerboard::Checkerboard& board) const;
 	int countSafeKings(const checkerboard::Checkerboard& board) const;
-	int countMoveableMen(const checkerboard::Checkerboard& board) const;
-	int countMoveableKings(const checkerboard::Checkerboard& board) const;
+	int countMenCanCapture(const checkerboard::Checkerboard& board) const;
+	int countKingsCanCapture(const checkerboard::Checkerboard& board) const;
 	int sumOfDistancesToPromote(const checkerboard::Checkerboard& board) const;
 	int freeSquaresForPromotion(const checkerboard::Checkerboard& board) const;
 

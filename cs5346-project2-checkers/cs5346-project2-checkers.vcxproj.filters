@@ -132,6 +132,9 @@
     <ClCompile Include="kevin_gregor_heuristic.cpp">
       <Filter>Source Files\Heuristics</Filter>
     </ClCompile>
+    <ClCompile Include="heuristic_DK.cpp">
+      <Filter>Source Files\Heuristics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base_state.h">
@@ -219,6 +222,9 @@
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
     <ClInclude Include="kevin_gregor_heuristic.h">
+      <Filter>Header Files\Heuristics</Filter>
+    </ClInclude>
+    <ClInclude Include="heuristic_DK.h">
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
   </ItemGroup>
