@@ -9,6 +9,16 @@
 
 #include "config.h"
 
+#include<Windows.h>
+#include<Psapi.h>
+
+float getCurrentMemoryUsage() {
+	auto myHandle = GetCurrentProcess();
+	PROCESS_MEMORY_COUNTERS pmc;
+	GetProcessMemoryInfo(myHandle, &pmc, sizeof(pmc));
+	return pmc.WorkingSetSize / 1024. / 1024.;
+}
+
 AIPlayer::AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm)
 	: Player{ color, true }
 	, m_pAlgorithm{ pAlgorithm }
@@ -82,6 +92,7 @@ void AIPlayer::stop()
 		<< "\nTotal nodes generated: " << m_totalNodesGenerated
 		<< "\nTotal nodes expanded: " << m_totalNodesExpanded
 		<< "\nTotal search time (ms): " << m_totalSearchTime.count()
+		<< "\nTotal memory consumed (Mb):" << getCurrentMemoryUsage()
 		<< '\n';
 }
 
