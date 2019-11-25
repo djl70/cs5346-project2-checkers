@@ -2,22 +2,6 @@
 
 #include "config.h"
 
-//Button::Button(const sf::FloatRect& rect, const sf::Texture& normal, const sf::Texture& hover, const sf::Texture& press, const sf::SoundBuffer& clickSound)
-//	: m_state{ kDefault }
-//	, m_rect{ rect }
-//	, m_kDefaultTexture{ normal }
-//	, m_kHoveredTexture{ hover }
-//	, m_kPressedTexture{ press }
-//	, m_soundBuffer{ clickSound }
-//{
-//	m_sprite.setTexture(m_kDefaultTexture);
-//	m_sprite.setPosition({ m_rect.left, m_rect.top });
-//	m_sprite.setScale({ config::kScaling, config::kScaling });
-//
-//	// For some reason, we can't call setBuffer here, otherwise it'll throw an exception on close.
-//	// So, we store the buffer in a variable and set it later on.
-//}
-
 Button::Button()
 	: m_state{ kDefault }
 	, m_enabled{ true }
@@ -27,11 +11,7 @@ Button::Button()
 
 Button::~Button()
 {
-	//while (m_clickSound.getStatus() == sf::Sound::Status::Playing)
-	//{
-	//
-	//}
-	//m_clickSound.resetBuffer();
+
 }
 
 void Button::setRect(const sf::FloatRect& rect)
@@ -59,11 +39,6 @@ void Button::setTexture(ButtonState state, sf::Texture* texture)
 		break;
 	}
 }
-
-//void Button::setClickSound(sf::SoundBuffer* sound)
-//{
-//	m_clickSound.setBuffer(*sound);
-//}
 
 void Button::setEnabled(bool enabled)
 {
@@ -128,16 +103,6 @@ bool Button::update(const sf::Event& event, const sf::Vector2f& mousePositionInW
 			{
 				changeState(kHovered);
 				isButtonClicked = true;
-				// We have to set the buffer outside of the constructor for some reason, so we set it here.
-				//m_clickSound.setBuffer(m_soundBuffer);
-				//m_clickSound.play();
-				// We have to wait until the sound finishes, then reset the buffer for some reason. Otherwise, it'll throw an exception on close.
-				// And we can't call this from the destructor.
-				//while (m_clickSound.getStatus() == sf::Sound::Status::Playing)
-				//{
-				//
-				//}
-				//m_clickSound.resetBuffer();
 			}
 		}
 		else

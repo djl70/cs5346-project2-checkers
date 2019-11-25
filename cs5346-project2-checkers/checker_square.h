@@ -15,15 +15,11 @@ enum CheckerSquareType
 class CheckerSquare
 {
 public:
-	// TODO: Allow this to be set after instantiation
 	CheckerSquare(CheckerSquareType type);
 
 	void setPromotionColor(CheckerColor color);
 	void setPositionOnBoard(const sf::Vector2i& coords, const sf::Vector2f& referencePoint);
 	void setPieceIndex(int pieceIndex);
-
-	//void setNeighbors(const NeighboringSquares& neighbors);
-	//NeighboringSquares getNeighbors() const;
 
 	bool promotesColor(CheckerColor color) const;
 	sf::Vector2i getPositionOnBoard() const;
@@ -43,8 +39,6 @@ private:
 	int m_piece;
 	bool m_isKingRow;
 	CheckerColor m_promoteColor;
-
-	//NeighboringSquares m_neighbors;
 
 	sf::RectangleShape m_shape;
 	sf::RectangleShape m_highlightShape;

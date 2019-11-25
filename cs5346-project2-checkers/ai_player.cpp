@@ -43,16 +43,6 @@ AIPlayer::~AIPlayer()
 
 void AIPlayer::startTurn()
 {
-	// Determine what we can do: a single move, or as many jumps as possible for a single piece
-	//m_mustJump = !findAllValidJumps(*m_pBoard, m_color).empty();
-	//m_checkForAnotherJump = false;
-
-	// Reset the move
-	//m_fullMove.from = nullptr;
-	//m_fullMove.jumped.clear();
-	//m_fullMove.to.clear();
-	//m_fullMove.promoted = false;
-
 	// Clear the previous move if necessary
 	if (m_pCommand)
 	{
@@ -77,9 +67,6 @@ void AIPlayer::startTurn()
 		m_moveSelectionThread.join();
 	}
 	m_moveSelectionThread = std::thread{ &AIPlayer::selectMove, this };
-
-	// Call the base function to actually start our turn
-	//Player::startTurn();
 }
 
 void AIPlayer::stop()

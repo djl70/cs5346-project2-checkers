@@ -27,7 +27,6 @@ public:
 
 	bool isKing() const;
 	CheckerColor getColor() const;
-	//bool contains(const sf::Vector2f& point) const;
 
 	void render(sf::RenderWindow* pWindow) const;
 

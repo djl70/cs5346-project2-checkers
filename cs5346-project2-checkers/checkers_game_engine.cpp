@@ -14,7 +14,6 @@ CheckersGameEngine::CheckersGameEngine()
 
 	m_resources.loadResources(&m_window);
 
-	// m_pState = new CheckersGameState;
 	m_pState = new MainMenuState{ &m_resources };
 	m_pState->enter();
 }

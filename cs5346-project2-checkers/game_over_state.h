@@ -26,14 +26,12 @@ public:
 	void enter() override;
 	BaseState* event() override;
 	void render() override;
-	// void exit() override;
 
 private:
 	ResourceManager* m_pResources;
 	CheckerPiece m_blackPiece;
 	CheckerPiece m_redPiece;
 	sf::Sprite m_background;
-	//sf::Sprite m_winnerText;
 	sf::Text m_mainText;
 	sf::Text m_subText;
 	Button m_menuButton;

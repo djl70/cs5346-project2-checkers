@@ -123,9 +123,6 @@ int Heuristic_1::lateGame(const checkerboard::Checkerboard& board) const
 {
 	CheckerColor playerColor = board.currentPlayer == 0 ? kBlack : kRed;
 
-	// TODO: For now, just do the same thing as the early game. But this should be changed to a more specialized heuristic for the late game.
-	//return earlyGame(board);
-
 	// Value breakdown:
 	// +2 per piece (man or king)
 	// +1 per king if not trapped

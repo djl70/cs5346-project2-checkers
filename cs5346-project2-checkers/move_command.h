@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "checkerboard.h"
 #include "command.h"
 
 #include <SFML/Graphics.hpp>

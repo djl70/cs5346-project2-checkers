@@ -3,7 +3,6 @@
 Player::Player(CheckerColor color, bool isBot)
 	: m_color{ color }
 	, m_isBot{ isBot }
-	//, m_isTurn{ false }
 {
 
 }
@@ -23,22 +22,7 @@ bool Player::isBot() const
 	return m_isBot;
 }
 
-//bool Player::isTurn() const
-//{
-//	return m_isTurn;
-//}
-
 CheckerColor Player::getColor() const
 {
 	return m_color;
 }
-
-//void Player::startTurn()
-//{
-//	m_isTurn = true;
-//}
-
-//void Player::endTurn()
-//{
-//	m_isTurn = false;
-//}

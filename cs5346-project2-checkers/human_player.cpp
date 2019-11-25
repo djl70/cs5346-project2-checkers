@@ -19,7 +19,6 @@ void HumanPlayer::startTurn()
 	m_doneBuildingMove = false;
 
 	// Reset the move
-	//m_fullMove.from = nullptr;
 	m_fullMove.jumped.clear();
 	m_fullMove.to.clear();
 	m_fullMove.promoted = false;
@@ -30,9 +29,6 @@ void HumanPlayer::startTurn()
 	// Start our turn with no square selected
 	m_pSelectedSquare = nullptr;
 	m_validMovesFromSelectedSquare.clear();
-
-	// Call the base function to actually start our turn
-	//Player::startTurn();
 }
 
 void HumanPlayer::stop()
@@ -164,7 +160,6 @@ FullMoveCommand* HumanPlayer::update()
 	if (m_doneBuildingMove)
 	{
 		pCommand = new FullMoveCommand(*m_pBoard, m_fullMove);
-		//m_isTurn = false;
 	}
 
 	return pCommand;

@@ -48,16 +48,6 @@ void CheckerSquare::setPieceIndex(int pieceIndex)
 	m_piece = pieceIndex;
 }
 
-/*void CheckerSquare::setNeighbors(const NeighboringSquares& neighbors)
-{
-	m_neighbors = neighbors;
-}
-
-NeighboringSquares CheckerSquare::getNeighbors() const
-{
-	return m_neighbors;
-}*/
-
 bool CheckerSquare::promotesColor(CheckerColor color) const
 {
 	return m_isKingRow && m_promoteColor == color;
@@ -91,10 +81,6 @@ bool CheckerSquare::contains(const sf::Vector2f& point) const
 void CheckerSquare::render(sf::RenderWindow* pWindow) const
 {
 	pWindow->draw(m_shape);
-	//if (m_piece)
-	//{
-	//	m_piece->render(pWindow);
-	//}
 }
 
 void CheckerSquare::renderHighlight(sf::RenderWindow* pWindow) const

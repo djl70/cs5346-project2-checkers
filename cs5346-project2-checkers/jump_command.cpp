@@ -39,22 +39,6 @@ void JumpCommand::execute()
 	const CheckerPiece* jumpedPiece = jumpedSquare.isEmpty() ? nullptr : &m_board.pieces.at(jumpedSquare.getPieceIndex());
 	if (!jumpedPiece) { throw ("Error: No piece to jump over"); }
 	if (jumpedPiece->getColor() == fromPiece->getColor()) { throw ("Error: Cannot jump over same-colored piece"); }
-		
-	/*std::vector<CheckerSquare>& capturedArea = jumpedPiece->getColor() == kRed ? m_board.capturedRedSquares : m_board.capturedBlackSquares;
-	for (auto& square : capturedArea)
-	{
-		if (square.isEmpty())
-		{
-			square.setPiece(jumpedPiece);
-			jumpedSquare.setPiece(nullptr);
-			m_capturedSquare = &square;
-			break;
-		}
-	}
-	if (!m_capturedSquare)
-	{
-		throw ("Error: No more space in the captured area");
-	}*/
 
 	m_capturedSquare = checkerboard::capturePieceFrom(m_board, jumpedSquare.getPieceIndex(), checkerboard::index(m_info.jumped));
 	if (m_capturedSquare == -1) { throw ("Error: No more space in the captured area"); }
@@ -77,12 +61,7 @@ void JumpCommand::undo()
 
 	// We will assume that <from> had a piece, <to> did not, and <jumped> had its piece moved to <m_capturedSquare>
 	CheckerPiece* fromPiece = toSquare.isEmpty() ? nullptr : &m_board.pieces.at(toSquare.getPieceIndex());
-	//fromSquare.setPiece(fromPiece);
-	//toSquare.setPiece(nullptr);
 	checkerboard::movePieceFromTo(m_board, toSquare.getPieceIndex(), checkerboard::index(m_info.to), checkerboard::index(m_info.from));
-	//CheckerPiece* jumpedPiece = m_capturedSquare->getPiece();
-	//jumpedSquare.setPiece(jumpedPiece);
-	//m_capturedSquare->setPiece(nullptr);
 	checkerboard::releasePieceTo(m_board, fromPiece->getColor() == kBlack ? kRed : kBlack, m_capturedSquare, checkerboard::index(m_info.jumped));
 	if (m_info.promoted)
 	{

@@ -20,7 +20,6 @@ public:
 	void render(sf::RenderWindow* pWindow) override;
 
 private:
-	//bool m_isJumpPossible;
 	std::vector<const CheckerSquare*> m_validMovesFromSelectedSquare;
 	const CheckerSquare* m_pSelectedSquare;
 	bool m_mustJump;

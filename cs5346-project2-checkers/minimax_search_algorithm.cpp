@@ -48,9 +48,6 @@ MinimaxSearchAlgorithm::ResultStructure MinimaxSearchAlgorithm::minimaxAB(const 
 		return ResultStructure{ value(position, player), { } };
 	}
 
-	// Shuffle possible moves so that we are not making moves that are as deterministic
-	//std::random_shuffle(successors.begin(), successors.end());
-
 	std::deque<FullMoveInfo> bestPath;
 	for (const FullMoveInfo& succ : successors)
 	{

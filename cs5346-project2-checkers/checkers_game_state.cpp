@@ -204,6 +204,17 @@ BaseState* CheckersGameState::event()
 	FullMoveCommand* pCommand = m_players.at(m_board.currentPlayer)->update();
 	if (pCommand)
 	{
+		// Print move code to the console
+		std::string moveCode = pCommand->getMoveCode();
+		if (m_board.currentPlayer == 0)
+		{
+			std::cout << '\n' << (m_board.turnNumber + 2) / 2 << ". " << moveCode << "  ";
+		}
+		else
+		{
+			std::cout << moveCode;
+		}
+
 		pCommand->execute();
 		m_commands.push(pCommand);
 

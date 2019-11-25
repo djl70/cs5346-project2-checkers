@@ -15,7 +15,6 @@ public:
 	void enter() override;
 	BaseState* event() override;
 	void render() override;
-	// void exit() override;
 
 private:
 	ResourceManager* m_pResources;

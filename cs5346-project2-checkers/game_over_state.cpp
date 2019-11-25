@@ -64,14 +64,9 @@ GameOverState::GameOverState(ResourceManager* pResources, GameOverCondition cond
 	m_menuButton.setTexture(kDefault, m_pResources->getTexture("button_menu"));
 	m_menuButton.setTexture(kHovered, m_pResources->getTexture("button_menu_hover"));
 	m_menuButton.setTexture(kPressed, m_pResources->getTexture("button_menu_press"));
-	//m_menuButton.setClickSound(m_pResources->getSoundBuffer("sound_move"));
 
 	m_background.setTexture(*m_pResources->getTexture("plain_background"));
 	m_background.setScale({ config::kScaling, config::kScaling });
-
-	//m_winnerText.setTexture(*m_pResources->getTexture("winner"));
-	//m_winnerText.setScale({ config::kScaling, config::kScaling });
-	//m_winnerText.setPosition({ config::titleRect.left, config::titleRect.top });
 }
 
 GameOverState::~GameOverState()
@@ -113,7 +108,6 @@ void GameOverState::render()
 	m_pResources->getWindow()->clear();
 
 	m_pResources->getWindow()->draw(m_background);
-	//m_pResources->getWindow()->draw(m_winnerText);
 	m_pResources->getWindow()->draw(m_mainText);
 	m_pResources->getWindow()->draw(m_subText);
 	m_blackPiece.render(m_pResources->getWindow());

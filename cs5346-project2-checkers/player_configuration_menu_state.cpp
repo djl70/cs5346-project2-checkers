@@ -8,10 +8,7 @@
 #include "human_player.h"
 
 #include "heuristic_1.h"
-#include "heuristic_2.h"
 #include "heuristic_DK.h"
-#include "kevin_gregor_heuristic.h"
-#include "sum_bits_heuristic.h"
 #include "minimax_search_algorithm.h"
 #include "alphabeta_search_algorithm.h"
 
@@ -28,8 +25,6 @@ PlayerConfigurationMenuState::~PlayerConfigurationMenuState() {
 
 void PlayerConfigurationMenuState::enter()
 {
-	// TODO: If P1 vs COM, allow the choice of moving first or second
-
 	if (m_aiPlayerCount == 0)
 	{
 		return;

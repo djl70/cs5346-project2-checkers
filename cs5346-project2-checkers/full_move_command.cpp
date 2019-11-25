@@ -19,13 +19,9 @@ bool FullMoveCommand::executeStep()
 		const CheckerSquare& fromSquare = m_board.board.at(checkerboard::index(m_info.from));
 		const CheckerSquare& toSquare = m_board.board.at(checkerboard::index(m_info.to.at(0)));
 
-		// CheckerPiece* fromPiece = fromSquare.isEmpty() ? nullptr : &m_board.pieces.at(fromSquare.getPieceIndex());
-
 		if (fromSquare.isEmpty()) { throw ("No piece to move"); }
 		if (!toSquare.isEmpty()) { throw ("Cannot move piece to occupied square"); }
 
-		//toSquare.setPieceIndex(fromSquare.getPieceIndex());
-		//fromSquare.setPieceIndex(-1);
 		movePieceFromTo(m_board, fromSquare.getPieceIndex(), checkerboard::index(m_info.from), checkerboard::index(m_info.to.at(0)));
 		return true;
 	}
@@ -45,8 +41,6 @@ bool FullMoveCommand::executeStep()
 	if (!movedPiece) { throw ("No piece to move"); }
 	if (!toSquare.isEmpty()) { throw ("Cannot move piece to occupied square"); }
 
-	//toSquare.setPieceIndex(fromSquare.getPieceIndex());
-	//fromSquare.setPieceIndex(-1);
 	movePieceFromTo(m_board, fromSquare.getPieceIndex(), checkerboard::index(fromCoords), checkerboard::index(toCoords));
 
 	// Capture the piece from <jumped>
@@ -55,32 +49,11 @@ bool FullMoveCommand::executeStep()
 	if (!jumpedPiece) { throw ("Cannot jump unoccupied square"); }
 	if (jumpedPiece->getColor() == movedPiece->getColor()) { throw ("Cannot jump piece of the same color"); }
 
-	//std::vector<CheckerSquare>& capturedArea = movedPiece->getColor() == kBlack ? m_board.capturedRedSquares : m_board.capturedBlackSquares;
-
-	//// Determine the first available spot in the captured area on the first step
-	//if (m_partialExecutionStep == -1)
-	//{
-	//	for (int i = 0; i < capturedArea.size(); ++i)
-	//	{
-	//		if (capturedArea.at(i).isEmpty())
-	//		{
-	//			m_firstCapturedIndex = i;
-	//			break;
-	//		}
-	//	}
-	//}
-
-	//CheckerSquare& capturedSquare = capturedArea.at(m_firstCapturedIndex + m_partialExecutionStep + 1);
-
-	//if (!capturedSquare.isEmpty()) { throw ("Cannot place captured piece onto occupied capture area"); }
-
 	int toCapturedIndex = checkerboard::capturePieceFrom(m_board, jumpedSquare.getPieceIndex(), checkerboard::index(jumpedCoords));
 	if (m_partialExecutionStep == -1)
 	{
 		m_firstCapturedIndex = toCapturedIndex;
 	}
-	//capturedSquare.setPiece(jumpedPiece);
-	//jumpedSquare.setPiece(nullptr);
 
 	// Move to the next step
 	++m_partialExecutionStep;
@@ -99,8 +72,6 @@ bool FullMoveCommand::undoStep()
 		CheckerPiece* fromPiece = toSquare.isEmpty() ? nullptr : &m_board.pieces.at(toSquare.getPieceIndex());
 
 		checkerboard::movePieceFromTo(m_board, toSquare.getPieceIndex(), checkerboard::index(m_info.to.at(0)), checkerboard::index(m_info.from));
-		//toSquare.setPiece(nullptr);
-		//fromSquare.setPiece(fromPiece);
 		if (m_info.promoted)
 		{
 			fromPiece->demote();
@@ -120,14 +91,8 @@ bool FullMoveCommand::undoStep()
 	// Move the piece from <to> to <from>
 	CheckerPiece* movedPiece = toSquare.isEmpty() ? nullptr : &m_board.pieces.at(toSquare.getPieceIndex());
 	checkerboard::movePieceFromTo(m_board, toSquare.getPieceIndex(), checkerboard::index(toCoords), checkerboard::index(fromCoords));
-	//toSquare.setPiece(nullptr);
-	//fromSquare.setPiece(movedPiece);
 
 	// Return the captured piece to <jumped>
-	//std::vector<CheckerSquare>& capturedArea = movedPiece->getColor() == kBlack ? m_board.capturedRedSquares : m_board.capturedBlackSquares;
-	//CheckerPiece* jumpedPiece = capturedArea.at(m_firstCapturedIndex + m_partialExecutionStep).getPiece();
-	//capturedArea.at(m_firstCapturedIndex + m_partialExecutionStep).setPiece(nullptr);
-	//jumpedSquare.setPiece(jumpedPiece);
 	checkerboard::releasePieceTo(m_board, movedPiece->getColor() == kBlack ? kRed : kBlack, m_firstCapturedIndex + m_partialExecutionStep, checkerboard::index(jumpedCoords));
 
 	// Undo promotion if necessary
@@ -189,6 +154,20 @@ bool FullMoveCommand::isJump() const
 bool FullMoveCommand::didPromote() const
 {
 	return m_info.promoted;
+}
+
+std::string FullMoveCommand::getMoveCode() const
+{
+	// We encode rows as 1-8 from bottom to top and columns as A-H from left to right.
+	// A simple move joins the starting square and the ending square by a '-'.
+	// A (multi-)jump joins the starting square and final ending square by a ':'.
+	std::string code = "";
+	code += 'A' + m_info.from.x;
+	code += '8' - m_info.from.y;
+	code += isJump() ? ':' : '-';
+	code += 'A' + m_info.to.back().x;
+	code += '8' - m_info.to.back().y;
+	return code;
 }
 
 bool equal(const FullMoveInfo& lhs, const FullMoveInfo& rhs)

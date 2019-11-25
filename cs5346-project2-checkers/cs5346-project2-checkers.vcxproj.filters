@@ -111,9 +111,6 @@
     <ClCompile Include="toggle_button_group.cpp">
       <Filter>Source Files\Buttons</Filter>
     </ClCompile>
-    <ClCompile Include="sum_bits_heuristic.cpp">
-      <Filter>Source Files\Heuristics</Filter>
-    </ClCompile>
     <ClCompile Include="search_algorithm.cpp">
       <Filter>Source Files\Heuristics</Filter>
     </ClCompile>
@@ -124,12 +121,6 @@
       <Filter>Source Files\Heuristics</Filter>
     </ClCompile>
     <ClCompile Include="alphabeta_search_algorithm.cpp">
-      <Filter>Source Files\Heuristics</Filter>
-    </ClCompile>
-    <ClCompile Include="heuristic_2.cpp">
-      <Filter>Source Files\Heuristics</Filter>
-    </ClCompile>
-    <ClCompile Include="kevin_gregor_heuristic.cpp">
       <Filter>Source Files\Heuristics</Filter>
     </ClCompile>
     <ClCompile Include="heuristic_DK.cpp">
@@ -203,9 +194,6 @@
     <ClInclude Include="heuristic.h">
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
-    <ClInclude Include="sum_bits_heuristic.h">
-      <Filter>Header Files\Heuristics</Filter>
-    </ClInclude>
     <ClInclude Include="search_algorithm.h">
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
@@ -216,12 +204,6 @@
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
     <ClInclude Include="alphabeta_search_algorithm.h">
-      <Filter>Header Files\Heuristics</Filter>
-    </ClInclude>
-    <ClInclude Include="heuristic_2.h">
-      <Filter>Header Files\Heuristics</Filter>
-    </ClInclude>
-    <ClInclude Include="kevin_gregor_heuristic.h">
       <Filter>Header Files\Heuristics</Filter>
     </ClInclude>
     <ClInclude Include="heuristic_DK.h">

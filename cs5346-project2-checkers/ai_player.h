@@ -16,7 +16,6 @@ class AIPlayer : public Player
 {
 public:
 	AIPlayer(CheckerColor color, SearchAlgorithm* pAlgorithm);
-	// AIPlayer(CheckerColor color, EvaluationFunction* eval);
 	~AIPlayer();
 
 	void startTurn() override;
@@ -49,13 +48,4 @@ private:
 	const sf::Time m_stepDelay;
 
 	void selectMove();
-
-	//bool m_mustJump;
-	//bool m_checkForAnotherJump;
-	//FullMoveInfo m_fullMove;
-
-	//Checkerboard m_simulatedBoard;
-
-	//JumpInfo chooseBestJump(const std::vector<JumpInfo>& jumps);
-	//MoveInfo chooseBestMove(const std::vector<MoveInfo>& moves);
 };

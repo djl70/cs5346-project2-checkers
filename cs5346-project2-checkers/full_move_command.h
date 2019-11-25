@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <string>
+
 namespace checkerboard
 {
 	struct Checkerboard;
@@ -31,6 +33,8 @@ public:
 
 	bool isJump() const;
 	bool didPromote() const;
+
+	std::string getMoveCode() const;
 
 private:
 	checkerboard::Checkerboard& m_board;
