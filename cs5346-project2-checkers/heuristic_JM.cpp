@@ -64,21 +64,21 @@ int JMHeuristic::value(const checkerboard::Checkerboard& board) const
 	const int wDoubleDiagonalKings = 2;*/
 
 	const int wMen = 10;
-	const int wKings = 15;
-	const int wSafeMen = 7;
-	const int wSafeKings = 7;
-	const int wMovableMen = 3;
-	const int wMovableKings = 5;
-	const double wSumOfDistancesToPromote = -4. / countMen(board);
-	const int wFreeSquaresForPromotion = 3;
-	const int wAttackers = 2;
-	const int wDefenders = 1;
-	const int wCentralMen = -3;
-	const int wCentralKings = 0;
-	const int wMainDiagonalMen = -2;
-	const int wMainDiagonalKings = 0;
-	const int wDoubleDiagonalMen = -1;
-	const int wDoubleDiagonalKings = 0;
+	const int wKings = 20;
+	const int wSafeMen = 5;
+	const int wSafeKings = 1;
+	const int wMovableMen = 10;
+	const int wMovableKings = 20;
+	const double wSumOfDistancesToPromote = -2. / countMen(board);
+	const int wFreeSquaresForPromotion = 2;
+	const int wAttackers = 3;
+	const int wDefenders = 4;
+	const int wCentralMen = -4;
+	const int wCentralKings = 4;
+	/*const int wMainDiagonalMen = -2;
+	const int wMainDiagonalKings = 2;*/
+	/*const int wDoubleDiagonalMen = -1;
+	const int wDoubleDiagonalKings = 1;*/
 
 	int value = 0;
 
@@ -94,10 +94,10 @@ int JMHeuristic::value(const checkerboard::Checkerboard& board) const
 	value += wDefenders * countDefenders(board);
 	value += wCentralMen * countCentral(board);
 	value += wCentralKings * countCentral(board, true);
-	value += wMainDiagonalMen * countMainDiagonal(board);
-	value += wMainDiagonalKings * countMainDiagonal(board, true);
-	value += wDoubleDiagonalMen * countDoubleDiagonal(board);
-	value += wDoubleDiagonalKings * countDoubleDiagonal(board, true);
+	/*value += wMainDiagonalMen * countMainDiagonal(board);
+	value += wMainDiagonalKings * countMainDiagonal(board, true);*/
+	/*value += wDoubleDiagonalMen * countDoubleDiagonal(board);
+	value += wDoubleDiagonalKings * countDoubleDiagonal(board, true);*/
 
 	return value;
 }
@@ -196,7 +196,7 @@ int JMHeuristic::countMoveableMen(const checkerboard::Checkerboard& board) const
 		bool isMen = !i.piece.isKing();
 		bool captureAvailable = !checkerboard::findValidJumps(board, playerColor, { i.c, i.r }).empty();
 		bool moveAvailable = !checkerboard::findValidMoves(board, playerColor, { i.c, i.r }).empty();
-		if (isMen && !captureAvailable && moveAvailable)
+		if (isMen && captureAvailable && moveAvailable)
 			++(*value);
 	}
 
@@ -216,7 +216,7 @@ int JMHeuristic::countMoveableKings(const checkerboard::Checkerboard& board) con
 		bool isKing = i.piece.isKing();
 		bool captureAvailable = !checkerboard::findValidJumps(board, playerColor, { i.c, i.r }).empty();
 		bool moveAvailable = !checkerboard::findValidMoves(board, playerColor, { i.c, i.r }).empty();
-		if (isKing && !captureAvailable && moveAvailable)
+		if (isKing && captureAvailable && moveAvailable)
 			++(*value);
 	}
 
